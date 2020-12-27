@@ -229,7 +229,7 @@ end;
 
 class function TManyThreadsTest.GetBenchmarkName: string;
 begin
-   Result := 'ManyShortLivedThreads';
+   Result := 'Many Short Lived Threads';
 end;
 
 class function TManyThreadsTest.GetCategory: TBenchmarkCategory;

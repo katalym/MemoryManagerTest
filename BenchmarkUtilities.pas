@@ -73,12 +73,12 @@ uses
 
 function GetCompilerAbbr: string;
 begin
-  Result := 'Tokyo';
+  Result := '10.4';
 end;
 
 function GetCompilerName: string;
 begin
-  Result := 'Delphi Tokyo 10.3';
+  Result := 'Delphi 10.4';
 end;
 
 {$ifdef FPC}
