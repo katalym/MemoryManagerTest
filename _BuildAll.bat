@@ -1,6 +1,6 @@
 @echo off
 
-echo !!! Make sure there is no memory manader defined in FASTCODE_MM.INC !!!
+echo !!! Make sure there is no memory manader defined in MemoryManagerTest.inc !!!
 pause
 
 del MemoryManagerTest*.exe /q

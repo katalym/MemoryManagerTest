@@ -2,7 +2,7 @@ unit BenchmarkUtilities;
 
 interface
 
-{$I FASTCODE_MM.INC}
+{$I MemoryManagerTest.inc}
 
 type
   {Virtual memory state}
@@ -31,7 +31,7 @@ var
 
 const
 {$IFDEF MM_DEFAULT}
-  {ScaleMM2}
+  {Default}
   MemoryManager_Name = 'Default';
   PassValidations = True;
   FastCodeQualityLabel = False;

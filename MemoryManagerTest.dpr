@@ -1,6 +1,6 @@
 program MemoryManagerTest;
 
-{$I FASTCODE_MM.INC}
+{$I MemoryManagerTest.inc}
 {$R *.res}
 
 uses
