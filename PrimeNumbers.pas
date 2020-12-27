@@ -808,9 +808,6 @@ procedure FindGoodPrimes;
         if Length(VeryGoodPrimes) < 20 then
           SetLength(VeryGoodPrimes, Length(VeryGoodPrimes) + 1);
         VeryGoodPrimes[Length(VeryGoodPrimes) - 1] := w;
-      end else
-      begin
-        w := w;
       end;
     end;
   end;

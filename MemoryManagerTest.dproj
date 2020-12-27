@@ -53,7 +53,6 @@
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_Optimize>false</DCC_Optimize>
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
-        <DCC_Define>madExcept;$(DCC_Define)</DCC_Define>
         <DCC_UnitSearchPath>MadExcept\Win32;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
@@ -64,7 +63,6 @@
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_UnitSearchPath>MadExcept\Win64;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
-        <DCC_Define>madExcept;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -124,9 +122,6 @@
         <DCCReference Include="WildThreadsBenchmarkUnit.pas"/>
         <DCCReference Include="BenchmarkForm.pas">
             <Form>BenchmarkFrm</Form>
-        </DCCReference>
-        <DCCReference Include="RenameMMForm.pas">
-            <Form>RenameFrm</Form>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

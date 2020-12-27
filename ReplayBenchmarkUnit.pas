@@ -239,7 +239,7 @@ end;
 function TReplayBenchmark.GetBenchmarkOverhead: NativeUInt;
 begin
   {Take into account the size of the replay file}
-  Result := InitialAddressSpaceUsed + (length(FOperations) + length(FPointers) * 4) shr 10;
+  Result := InitialAddressSpaceUsed + NativeUInt((length(FOperations) + length(FPointers) * 4) shr 10);
 end;
 
 class function TReplayBenchmark.GetCategory: TBenchmarkCategory;

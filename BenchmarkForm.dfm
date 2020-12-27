@@ -93,25 +93,26 @@ object BenchmarkFrm: TBenchmarkFrm
         Columns = <
           item
             Caption = 'Benchmark'
+            Width = 220
           end
           item
             Caption = 'Memory Manager'
+            Width = 90
           end
           item
             Alignment = taRightJustify
             Caption = 'CPU Usage (ms)'
+            Width = 110
           end
           item
             Alignment = taRightJustify
             Caption = 'Ticks (ms)'
+            Width = 110
           end
           item
             Alignment = taRightJustify
             Caption = 'Peak Addr Space (Kb)'
-          end
-          item
-            Caption = 'CurrentSession'
-            Width = 0
+            Width = 120
           end>
         ColumnClick = False
         HideSelection = False
@@ -127,7 +128,7 @@ object BenchmarkFrm: TBenchmarkFrm
         Height = 36
         AutoSize = True
         ButtonHeight = 36
-        ButtonWidth = 107
+        ButtonWidth = 90
         Caption = 'ToolBar1'
         Images = imlImages
         ShowCaptions = True
@@ -135,30 +136,12 @@ object BenchmarkFrm: TBenchmarkFrm
         object btnCopyResultsToClipboard: TToolButton
           Left = 0
           Top = 0
-          Caption = 'Copy to Clipboard'
-          ImageIndex = 0
-          OnClick = btnCopyResultsToClipboardClick
+          Action = actCopyResultsToClipboard
         end
-        object btnRenameMM: TToolButton
-          Left = 107
+        object btnDeleteTestResults: TToolButton
+          Left = 90
           Top = 0
-          Caption = 'Rename MM'
-          ImageIndex = 3
-          OnClick = btnRenameMMClick
-        end
-        object btnDeleteMMTestResults: TToolButton
-          Left = 214
-          Top = 0
-          Caption = 'Delete results for MM'
-          ImageIndex = 2
-          OnClick = btnDeleteMMTestResultsClick
-        end
-        object btnDeleteAllTestResults: TToolButton
-          Left = 321
-          Top = 0
-          Caption = 'Delete All Results'
-          ImageIndex = 1
-          OnClick = btnDeleteAllTestResultsClick
+          Action = actDeletelTestResults
         end
       end
     end
@@ -170,7 +153,7 @@ object BenchmarkFrm: TBenchmarkFrm
       object mResults: TMemo
         Left = 0
         Top = 0
-        Width = 857
+        Width = 1184
         Height = 198
         Margins.Right = 1
         Align = alClient
@@ -187,10 +170,10 @@ object BenchmarkFrm: TBenchmarkFrm
     object TabSheetCPU: TTabSheet
       Caption = 'Environment'
       ImageIndex = 4
-      object MemoCPU: TMemo
+      object MemoEnvironment: TMemo
         Left = 0
         Top = 0
-        Width = 857
+        Width = 1184
         Height = 198
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -232,10 +215,10 @@ object BenchmarkFrm: TBenchmarkFrm
       Width = 220
       Height = 25
       Margins.Left = 8
+      Action = actRunSelectedBenchmark
       Align = alLeft
       Caption = 'Run Selected Benchmark'
       TabOrder = 1
-      OnClick = btnRunSelectedBenchmarkClick
     end
     object btnRunAllCheckedBenchmarks: TBitBtn
       AlignWithMargins = True
@@ -243,10 +226,10 @@ object BenchmarkFrm: TBenchmarkFrm
       Top = 3
       Width = 220
       Height = 25
+      Action = actRunAllCheckedBenchmarks
       Align = alLeft
       Caption = 'Run All Checked Benchmarks'
       TabOrder = 0
-      OnClick = btnRunAllCheckedBenchmarksClick
     end
   end
   object imlImages: TImageList
@@ -529,26 +512,19 @@ object BenchmarkFrm: TBenchmarkFrm
     Left = 100
     Top = 76
     object mniPopupClearAllCheckMarks: TMenuItem
-      Caption = 'Clear All Check Marks'
-      ImageIndex = 6
-      OnClick = mniPopupClearAllCheckMarksClick
+      Action = actPopupClearAllCheckMarks
     end
     object mniPopupSelectAllCheckMarks: TMenuItem
-      Caption = 'Check All Benchmarks'
-      ImageIndex = 4
-      OnClick = mniPopupSelectAllCheckMarksClick
+      Action = actPopupSelectAllCheckMarks
     end
     object mniSep: TMenuItem
       Caption = '-'
     end
     object mniPopupCheckAllDefaultBenchmarks: TMenuItem
-      Caption = 'Check All Default Benchmarks'
-      ImageIndex = 5
-      OnClick = mniPopupCheckAllDefaultBenchmarksClick
+      Action = actPopupCheckAllDefaultBenchmarks
     end
     object mniPopupCheckAllThreadedBenchmarks: TMenuItem
-      Caption = 'Check Special Thread Benchmarks'
-      OnClick = mniPopupCheckAllThreadedBenchmarksClick
+      Action = actPopupCheckAllThreadedBenchmarks
     end
   end
   object tmrAutoRun: TTimer
@@ -556,5 +532,65 @@ object BenchmarkFrm: TBenchmarkFrm
     OnTimer = tmrAutoRunTimer
     Left = 256
     Top = 80
+  end
+  object alActions: TActionList
+    Images = imlImages
+    Left = 256
+    Top = 136
+    object actCopyResultsToClipboard: TAction
+      Category = 'Actions'
+      Caption = 'Copy to Clipboard'
+      Hint = 'Copy Results to Clipboard'
+      ImageIndex = 0
+      OnExecute = actCopyResultsToClipboardExecute
+    end
+    object actDeletelTestResults: TAction
+      Category = 'Actions'
+      Caption = 'Delete Results'
+      Hint = 'Delete Results'
+      ImageIndex = 1
+      OnExecute = actDeletelTestResultsExecute
+    end
+    object actRunAllCheckedBenchmarks: TAction
+      Category = 'Actions'
+      Caption = 'Run All Checked Benchmarks'
+      Hint = 'Run All Checked Benchmarks'
+      ImageIndex = 4
+      OnExecute = actRunAllCheckedBenchmarksExecute
+    end
+    object actRunSelectedBenchmark: TAction
+      Category = 'Actions'
+      Caption = 'Run Selected Benchmark'
+      Hint = 'Run Selected Benchmark'
+      ImageIndex = 5
+      OnExecute = actRunSelectedBenchmarkExecute
+    end
+    object actPopupClearAllCheckMarks: TAction
+      Category = 'Popup'
+      Caption = 'Clear All Check Marks'
+      Hint = 'Clear All Check Marks'
+      ImageIndex = 6
+      OnExecute = actPopupClearAllCheckMarksExecute
+    end
+    object actPopupSelectAllCheckMarks: TAction
+      Category = 'Popup'
+      Caption = 'Check All Benchmarks'
+      Hint = 'Check All Benchmarks'
+      ImageIndex = 4
+      OnExecute = actPopupSelectAllCheckMarksExecute
+    end
+    object actPopupCheckAllDefaultBenchmarks: TAction
+      Category = 'Popup'
+      Caption = 'Check All Default Benchmarks'
+      Hint = 'Check All Default Benchmarks'
+      ImageIndex = 4
+      OnExecute = actPopupCheckAllDefaultBenchmarksExecute
+    end
+    object actPopupCheckAllThreadedBenchmarks: TAction
+      Category = 'Popup'
+      Caption = 'Check Special Thread Benchmarks'
+      Hint = 'Check Special Thread Benchmarks'
+      OnExecute = actPopupCheckAllThreadedBenchmarksExecute
+    end
   end
 end

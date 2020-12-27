@@ -96,17 +96,17 @@ type
          below}
 
 const
-  VendorStr: array[Low(TVendor)..High(TVendor)] of ShortString =
+  VendorStr: array[Low(TVendor)..High(TVendor)] of String =
   ('Unknown', 'AMD', 'Centaur (VIA)', 'Cyrix', 'Intel', 'Transmeta',
     'NexGen', 'Rise', 'UMC', 'National Semiconductor', 'SiS');
 
   InstructionSupportStr:
-  array[Low(TInstructions)..High(TInstructions)] of ShortString =
+  array[Low(TInstructions)..High(TInstructions)] of String =
     ('FPU', 'TSC', 'CX8', 'SEP', 'CMOV', 'MMX', 'FXSR', 'SSE', 'SSE2', 'SSE3',
     'MONITOR', 'CX16', 'X64', 'MMX+', '3DNow!+', '3DNow!');
 
   FastCodeTargetStr:
-  array[Low(TFastCodeTarget)..High(TFastCodeTarget)] of ShortString =
+  array[Low(TFastCodeTarget)..High(TFastCodeTarget)] of String =
     ('RTLReplacement', 'Blended_IA32', 'Blended_MMX', 'Blended_SSE',
      'Blended_SSE2', 'Dothan', 'Yonah', 'Northwood', 'Presler', 'AMD_64', 'AMD_64X2');
 

@@ -3,47 +3,37 @@ unit SystemInfoUnit;
 interface
 
 {$INCLUDE Defines.inc}
+{$IFDEF FPC}
+{$MODE delphi}
+{$ASMMODE intel}
+{$ENDIF}
 
-{$ifdef FPC}
-  {$mode delphi}
-  {$asmmode intel}
-{$endif}
-
-uses  Windows;
+uses Windows;
 
 type
- TVersion = record
-  Major: integer;
-  Minor: integer;
-  Release: integer;
-  Build: integer;
- end;
+  TVersion = record
+    Major: integer;
+    Minor: integer;
+    Release: integer;
+    Build: integer;
+  end;
 
- PVS_FIXEDFILEINFO = ^VS_FIXEDFILEINFO;
+  PVS_FIXEDFILEINFO = ^VS_FIXEDFILEINFO;
 
-function SystemInfoCompiler: string;
 function SystemInfoCPU: string;
-{$IFDEF WIN32}
-function SystemInfoCPUDetails: string;
-{$ENDIF}
 function SystemInfoWindows: string;
-function SystemInfoCompilerSettings: string;
 
-function GetModuleVersionDFL(ModuleFileName: string; var Ver: TVersion; Product: Boolean = False): string;
 function GetFormattedVersion: string;
-
-function HasMMX : Boolean;
-function HasSSE : Boolean;
-function HasSSE2 : Boolean;
-function HasSSE3 : Boolean;
 
 implementation
 
 uses
-  {$ifndef fpc}
+{$IFNDEF fpc}
   System.AnsiStrings,
-  {$endif}
-  FastCodeCPUID, SysUtils;
+{$ENDIF}
+  FastCodeCPUID, SysUtils, System.Win.ComObj, System.Variants, Winapi.ActiveX;
+
+function GetModuleVersionDFL(ModuleFileName: string; var Ver: TVersion; Product: Boolean = False): string; forward;
 
 resourcestring
   TEXT_NO_VERSIONINFO = 'No version info';
@@ -69,7 +59,8 @@ function CheckHTEnabledThread(Param: Pointer): DWORD; stdcall; forward;
 function CountCPUsAMD: TCpuCount; forward;
 function CountCPUsIntel: TCpuCount; forward;
 procedure CpuId(InfoIndex: LongWord; out Res: TCpuIdRecord); forward;
-function GetCPUName(const VendorString: AnsiString; CPUType, CPUFamily, CPUModel, CPUStepping: Integer; const CPUMHz: Double): AnsiString; forward;
+function GetCPUName(const VendorString: AnsiString;
+  CPUType, CPUFamily, CPUModel, CPUStepping: integer; const CPUMHz: Double): AnsiString; forward;
 function RdTsc: Int64; forward;
 
 function CalculateFrequencyCPU: Double;
@@ -96,7 +87,7 @@ begin
     until PerfTemp >= PerfEnd;
     TscEnd := RdTsc;
 
-    FrequencyCPU := (TscEnd-TscStart)*PerfFreq / (PerfTemp-PerfStart);
+    FrequencyCPU := (TscEnd - TscStart) * PerfFreq / (PerfTemp - PerfStart);
     FrequencyCPUKnown := True;
   end;
   Result := FrequencyCPU;
@@ -105,7 +96,7 @@ end;
 function CheckHTEnabled(const CpuCount: TCpuCount): Boolean;
 var
   ApicIds: array of LongWord;
-  I: Integer;
+  I: integer;
   D, LT, HT: Cardinal;
   B: Boolean;
   Threads: array of THandle;
@@ -124,7 +115,7 @@ begin
     begin
       Threads[I] := CreateThread(nil, 0, @CheckHTEnabledThread, @ApicIds[I], CREATE_SUSPENDED, ThreadId);
       Win32Check(Threads[I] <> 0);
-      Win32Check(SetThreadAffinityMask(Threads[i], 1 shl I) <> 0);
+      Win32Check(SetThreadAffinityMask(Threads[I], 1 shl I) <> 0);
       Win32Check(ResumeThread(Threads[I]) <> $FFFFFFFF);
     end;
 
@@ -173,21 +164,21 @@ begin
   Result.LogPerCore := 1;
   Result.CorePerPhys := 1;
 
-  CPUID(0, CIR);
+  CpuId(0, CIR);
   InfoCount := CIR.EAX;
 
   if InfoCount >= 1 then
   begin
-    CPUID(1, CIR);
+    CpuId(1, CIR);
     if (CIR.EDX and (1 shl 28)) <> 0 then
     begin
       LogPerPhys := CIR.EBX shr 16 and $FF;
       if LogPerPhys >= 1 then
       begin
-        CPUID($80000000, CIR);
+        CpuId($80000000, CIR);
         if CIR.EAX >= $80000008 then
         begin
-          CPUID($80000008, CIR);
+          CpuId($80000008, CIR);
           Result.CorePerPhys := (CIR.ECX and $FF) + 1;
           Result.LogPerCore := LogPerPhys div Result.CorePerPhys;
           if (Result.LogPerCore > 1) and not CheckHTEnabled(Result) then
@@ -209,26 +200,25 @@ begin
   Result.LogPerCore := 1;
   Result.CorePerPhys := 1;
 
-  CPUID(0, CIR);
+  CpuId(0, CIR);
   InfoCount := CIR.EAX;
 
   if InfoCount >= 4 then
   begin
-    CPUID(4, CIR);
+    CpuId(4, CIR);
     Result.CorePerPhys := (CIR.EAX shr 26) + 1;
   end;
 
   if InfoCount >= 1 then
   begin
-    CPUID(1, CIR);
+    CpuId(1, CIR);
     if (CIR.EDX and (1 shl 28)) <> 0 then
     begin
       Result.LogPerCore := CIR.EBX shr 16 and $FF;
       if Result.LogPerCore < 1 then
         Result.LogPerCore := 1
-      else
-        if (Result.LogPerCore > 1) and not CheckHTEnabled(Result) then
-          Result.LogPerCore := 1;
+      else if (Result.LogPerCore > 1) and not CheckHTEnabled(Result) then
+        Result.LogPerCore := 1;
     end;
   end;
 end;
@@ -344,107 +334,73 @@ end;
 
 function RdTsc: Int64; assembler;
 asm
-   rdtsc
- {$IFDEF WIN64}
-   shl   rdx, 32
-   or    rax, rdx
-   xor   rdx, rdx
- {$ENDIF}
-end;
-
-function SystemInfoCompiler: string;
-begin
-  Result := 'Delphi'
-    {$IFDEF Ver80}+'1'{$ENDIF}
-    {$IFDEF Ver90}+'2'{$ENDIF}
-    {$IFDEF Ver100}+'3'{$ENDIF}
-    {$IFDEF Ver120}+'4'{$ENDIF}
-    {$IFDEF Ver130}+'5'{$ENDIF}
-    {$IFDEF Ver140}+'6'{$ENDIF}
-    {$IFDEF Ver150}+'7'{$ENDIF}
-    {$IFDEF Ver160}+'8'{$ENDIF}
-    {$IFDEF Ver170}+'2005'{$ENDIF}
-    {$IFDEF Ver180}+'2006'{$ENDIF};
-    {$IFDEF Ver190}+'2007'{$ENDIF};
-end;
-
-function SystemInfoCompilerSettings: string;
-begin
- {$ifopt R-}
-  Result := 'R-';
- {$else}
-  Result := 'R+';
- {$endif}
-
- {$ifopt Q-}
-  Result := Result + ' Q-';
- {$else}
-  Result := Result + ' Q+';
- {$endif}
-
- {$ifopt O-}
-  Result := Result + ' O-';
- {$else}
-  Result := Result + ' O+';
- {$endif}
+  rdtsc
+  {$IFDEF WIN64}
+  shl   rdx, 32
+  or    rax, rdx
+  xor   rdx, rdx
+  {$ENDIF}
 end;
 
 function GetFormattedVersion: string;
 var
-  ver: TVersion;
+  Ver: TVersion;
 begin
-  GetModuleVersionDFL(GetModuleName(HInstance), ver);
-  Result := Format('%d.%d.%d', [ver.Major, ver.Minor, ver.Release])
+  GetModuleVersionDFL(GetModuleName(HInstance), Ver);
+  Result := Format('%d.%d.%d', [Ver.Major, Ver.Minor, Ver.Release])
 end;
 
 function GetModuleVersionDFL(ModuleFileName: string; var Ver: TVersion; Product: Boolean = False): string;
 var
- VersionBufferLength: Integer;
- PVersionBuffer     : Pointer;
- Dummy              : Dword;
- PFixedFileInfo     : PVS_FIXEDFILEINFO;
- ModuleVersionLength: Dword;
- VerW1, VerW2       : DWord;
+  VersionBufferLength: integer;
+  PVersionBuffer: Pointer;
+  Dummy: DWORD;
+  PFixedFileInfo: PVS_FIXEDFILEINFO;
+  ModuleVersionLength: DWORD;
+  VerW1, VerW2: DWORD;
 begin
   Ver.Major := 0;
   Ver.Minor := 0;
   Ver.Release := 0;
   Ver.Build := 0;
-  VersionBufferLength:= GetFileVersionInfoSize(PChar(ModuleFileName),Dummy);
-  PVersionBuffer:= AllocMem(VersionBufferLength);
+  VersionBufferLength := GetFileVersionInfoSize(PChar(ModuleFileName), Dummy);
+  PVersionBuffer := AllocMem(VersionBufferLength);
   if (PVersionBuffer <> nil) then
-   begin
-    if (GetFileVersionInfo(PChar(ModuleFileName), VersionBufferLength,VersionBufferLength, PVersionBuffer)) then
-     begin
-      if (VerQueryValue(PVersionBuffer, '\', Pointer(PFixedFileInfo),ModuleVersionLength)) then
-       begin
+  begin
+    if (GetFileVersionInfo(PChar(ModuleFileName), VersionBufferLength,
+      VersionBufferLength, PVersionBuffer)) then
+    begin
+      if (VerQueryValue(PVersionBuffer, '\', Pointer(PFixedFileInfo),
+        ModuleVersionLength)) then
+      begin
         if Product then
-         begin
+        begin
           VerW1 := PFixedFileInfo^.dwProductVersionMS;
           VerW2 := PFixedFileInfo^.dwProductVersionLS;
-         end
+        end
         else
-         begin
+        begin
           VerW1 := PFixedFileInfo^.dwFileVersionMS;
           VerW2 := PFixedFileInfo^.dwFileVersionLS;
-         end;
-        Ver.Major :=   ((VerW1) and $FFFF0000) shr 16;
-        Ver.Minor :=   ((VerW1) and $0000FFFF);
+        end;
+        Ver.Major := ((VerW1) and $FFFF0000) shr 16;
+        Ver.Minor := ((VerW1) and $0000FFFF);
         Ver.Release := ((VerW2) and $FFFF0000) shr 16;
-        Ver.Build :=   ((VerW2) and $0000FFFF);
-        Result := Format('%d.%d.%d.%d', [Ver.Major, Ver.Minor, Ver.Release,Ver.Build]);
-       end;
-     end
+        Ver.Build := ((VerW2) and $0000FFFF);
+        Result := Format('%d.%d.%d.%d', [Ver.Major, Ver.Minor, Ver.Release,
+          Ver.Build]);
+      end;
+    end
     else
-     begin
-      Result:= TEXT_NO_VERSIONINFO;
-     end;
+    begin
+      Result := TEXT_NO_VERSIONINFO;
+    end;
     FreeMem(PVersionBuffer);
-   end
+  end
   else
-   begin
-    Result:= TEXT_NO_VERSIONINFO;
-   end;
+  begin
+    Result := TEXT_NO_VERSIONINFO;
+  end;
 end;
 
 function SystemInfoCPU: string;
@@ -452,10 +408,10 @@ var
   CIR: TCpuIdRecord;
   CPUMHz: Double;
   CPUFamily, CPUModel, CPUStepping, CPUType, InfoCount: LongWord;
-  CPUCount: TCpuCount;
+  CpuCount: TCpuCount;
   AnsiStr, CPUCountStr, CPUName: AnsiString;
-  BrandString: array[0..47] of AnsiChar;
-  VendorString: array[0..12] of AnsiChar;
+  BrandString: array [0 .. 47] of AnsiChar;
+  VendorString: array [0 .. 12] of AnsiChar;
 begin
   CpuId(0, CIR);
   InfoCount := CIR.EAX;
@@ -498,102 +454,76 @@ begin
     end
     else
     begin
-      CPUName := GetCPUName(VendorString, CPUType, CPUFamily, CPUModel, CPUStepping, CPUMHz);
+      CPUName := GetCPUName(VendorString, CPUType, CPUFamily, CPUModel,
+        CPUStepping, CPUMHz);
       if CPUName <> '' then
         Result := Format('%s (%s)', [CPUName, Result]);
     end;
   end;
 
   if VendorString = 'AuthenticAMD' then
-    CPUCount := CountCPUsAMD
+    CpuCount := CountCPUsAMD
   else
-    CPUCount := CountCPUsIntel;
+    CpuCount := CountCPUsIntel;
 
   CPUCountStr := '';
-  if CPUCount.Log > 1 then
+  if CpuCount.Log > 1 then
   begin
-    if CPUCount.LogPerCore > 1 then
+    if CpuCount.LogPerCore > 1 then
     begin
       AnsiStr := ', %d logical CPUs';
-      CPUCountStr := CPUCountStr + {$ifndef FPC}System.AnsiStrings.{$endif}Format(AnsiStr, [CPUCount.Log]);
+      CPUCountStr := CPUCountStr +
+{$IFNDEF FPC}System.AnsiStrings.{$ENDIF}Format(AnsiStr, [CpuCount.Log]);
     end;
-    if CPUCount.CorePerPhys > 1 then
+    if CpuCount.CorePerPhys > 1 then
     begin
       AnsiStr := ', %d CPU cores';
-      CPUCountStr := CPUCountStr + {$ifndef FPC}System.AnsiStrings.{$endif}Format(AnsiStr, [CPUCount.Log div CPUCount.LogPerCore]);
+      CPUCountStr := CPUCountStr +
+{$IFNDEF FPC}System.AnsiStrings.{$ENDIF}Format(AnsiStr,
+        [CpuCount.Log div CpuCount.LogPerCore]);
     end;
     AnsiStr := ', %d physical CPUs';
-    CPUCountStr := CPUCountStr + {$ifndef FPC}System.AnsiStrings.{$endif}Format(AnsiStr, [CPUCount.Log div (CPUCount.LogPerCore * CPUCount.CorePerPhys)]);
+    CPUCountStr := CPUCountStr +
+{$IFNDEF FPC}System.AnsiStrings.{$ENDIF}Format(AnsiStr,
+      [CpuCount.Log div (CpuCount.LogPerCore * CpuCount.CorePerPhys)]);
   end;
 
   Result := Format('%s, %.1f MHz%s', [Result, CPUMHz, CPUCountStr]);
 end;
 
 function SystemInfoWindows: string;
+const
+  WbemUser = '';
+  WbemPassword = '';
+  WbemComputer = 'localhost';
+  wbemFlagForwardOnly = $00000020;
 var
-  VI: TOSVersionInfo;
-begin
+  FSWbemLocator: OLEVariant;
+  FWMIService: OLEVariant;
+  FWbemObjectSet: OLEVariant;
+  FWbemObject: OLEVariant;
+  oEnum: IEnumvariant;
+  iValue: LongWord;
+begin;
   Result := '';
-  VI.dwOSVersionInfoSize := SizeOf(VI);
-  Win32Check(GetVersionEx(VI));
-  if VI.dwPlatformId = VER_PLATFORM_WIN32_NT then
-  begin
-    case VI.dwMajorVersion of
-      3: if VI.dwMinorVersion = 51 then Result := 'Windows NT 3.51';
-      4: if VI.dwMinorVersion = 0 then Result := 'Windows NT 4.0';
-      5: case VI.dwMinorVersion of
-           0: Result := 'Windows 2000';
-           1: Result := 'Windows XP';
-           2: Result := 'Windows Server 2003';
-         end;
-      6: if VI.dwMinorVersion = 0 then Result := 'Windows Vista';
-    end;
-    Result := Result+' (NT.';
-  end
-  else if VI.dwPlatformId = VER_PLATFORM_WIN32_WINDOWS then
-  begin
-    if VI.dwMajorVersion = 4 then
-      case VI.dwMinorVersion of
-        0: Result := Result+'Windows 95';
-        10: Result := Result+'Windows 98';
-        90: Result := Result+'Windows Me';
+
+  try
+    try
+      FSWbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
+      FWMIService := FSWbemLocator.ConnectServer(WbemComputer, 'root\CIMV2',
+        WbemUser, WbemPassword);
+      FWbemObjectSet := FWMIService.ExecQuery
+        ('SELECT * FROM Win32_OperatingSystem', 'WQL', wbemFlagForwardOnly);
+      oEnum := IUnknown(FWbemObjectSet._NewEnum) as IEnumvariant;
+      while oEnum.Next(1, FWbemObject, iValue) = 0 do
+      begin
+        Result := Format('%s, version: %s', [String(FWbemObject.Caption), String(FWbemObject.Version)]);
+        FWbemObject := Unassigned;
       end;
-    Result := Result+' (9x.';
+    except
+    end;
+  finally
   end;
-  Result := Result+
-    Format('%d.%d.%d', [VI.dwMajorVersion, VI.dwMinorVersion, VI.dwBuildNumber])+') '+
-    VI.szCSDVersion;
-end;
-
-{$IFDEF WIN32}
-function SystemInfoCPUDetails: string;
-begin
- Result := VendorStr[CPU.Vendor];
- if (isMMX in CPU.InstructionSupport) then Result := Result + ' MMX';
- if (isSSE in CPU.InstructionSupport) then Result := Result + ' SSE';
- if (isSSE2 in CPU.InstructionSupport) then Result := Result + ' SSE2';
- if (isSSE3 in CPU.InstructionSupport) then Result := Result + ' SSE3';
-end;
-{$ENDIF}
-
-function HasMMX : Boolean;
-begin
- Result := (isMMX in CPU.InstructionSupport);
-end;
-
-function HasSSE : Boolean;
-begin
- Result := (isSSE in CPU.InstructionSupport);
-end;
-
-function HasSSE2 : Boolean;
-begin
- Result := (isSSE2 in CPU.InstructionSupport);
-end;
-
-function HasSSE3 : Boolean;
-begin
- Result := (isSSE3 in CPU.InstructionSupport);
 end;
 
 end.

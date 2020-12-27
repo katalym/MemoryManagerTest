@@ -110,7 +110,7 @@ type
 implementation
 
 uses
-  PrimeNumbers, System.StrUtils;
+  PrimeNumbers;
 
 const
   NexusIterationDivider = 1;

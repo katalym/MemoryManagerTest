@@ -3,63 +3,64 @@ unit BenchmarkForm;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, VCL.Graphics, VCL.Controls, VCL.Forms,
-  VCL.Dialogs, VCL.StdCtrls, BenchmarkClassUnit, Math, VCL.Buttons,
-  VCL.ExtCtrls, VCL.ComCtrls, VCL.Clipbrd, VCL.ToolWin, VCL.ImgList, VCL.Menus, System.ImageList;
+  Windows, Messages, SysUtils, Variants, Classes, VCL.Controls, VCL.Forms,
+  VCL.StdCtrls, BenchmarkClassUnit, Math, VCL.Buttons,
+  VCL.ExtCtrls, VCL.ComCtrls, VCL.Clipbrd, VCL.Menus, System.Actions,
+  Vcl.ActnList, System.ImageList, Vcl.ImgList, Vcl.ToolWin;
 
 type
   TBenchmarkFrm = class(TForm)
+    actCopyResultsToClipboard: TAction;
+    actDeletelTestResults: TAction;
+    actPopupCheckAllDefaultBenchmarks: TAction;
+    actPopupCheckAllThreadedBenchmarks: TAction;
+    actPopupClearAllCheckMarks: TAction;
+    actPopupSelectAllCheckMarks: TAction;
+    actRunAllCheckedBenchmarks: TAction;
+    actRunSelectedBenchmark: TAction;
+    alActions: TActionList;
     btnClose: TBitBtn;
     btnCopyResultsToClipboard: TToolButton;
-    btnDeleteAllTestResults: TToolButton;
-    btnDeleteMMTestResults: TToolButton;
-    btnRenameMM: TToolButton;
+    btnDeleteTestResults: TToolButton;
     btnRunAllCheckedBenchmarks: TBitBtn;
     btnRunSelectedBenchmark: TBitBtn;
     gbBenchmarks: TGroupBox;
+    imlImages: TImageList;
     ListViewResults: TListView;
     lvBenchmarkList: TListView;
     mBenchmarkDescription: TMemo;
-    MemoCPU: TMemo;
-    mResults: TMemo;
-    mniSep: TMenuItem;
-    pcBenchmarkResults: TPageControl;
-    pnlButtons: TPanel;
+    MemoEnvironment: TMemo;
     mniPopupCheckAllDefaultBenchmarks: TMenuItem;
     mniPopupCheckAllThreadedBenchmarks: TMenuItem;
     mniPopupClearAllCheckMarks: TMenuItem;
-    mnuBenchmarks: TPopupMenu;
     mniPopupSelectAllCheckMarks: TMenuItem;
+    mniSep: TMenuItem;
+    mnuBenchmarks: TPopupMenu;
+    mResults: TMemo;
+    pcBenchmarkResults: TPageControl;
+    pnlButtons: TPanel;
     Splitter2: TSplitter;
     TabSheetBenchmarkResults: TTabSheet;
     TabSheetCPU: TTabSheet;
     TabSheetProgress: TTabSheet;
     tmrAutoRun: TTimer;
     ToolBar1: TToolBar;
-    imlImages: TImageList;
-    procedure btnCopyResultsToClipboardClick(Sender: TObject);
-    procedure btnDeleteAllTestResultsClick(Sender: TObject);
-    procedure btnDeleteMMTestResultsClick(Sender: TObject);
-    procedure btnRenameMMClick(Sender: TObject);
-    procedure btnRunAllCheckedBenchmarksClick(Sender: TObject);
-    procedure btnRunSelectedBenchmarkClick(Sender: TObject);
+    procedure actCopyResultsToClipboardExecute(Sender: TObject);
+    procedure actDeletelTestResultsExecute(Sender: TObject);
+    procedure actPopupCheckAllDefaultBenchmarksExecute(Sender: TObject);
+    procedure actPopupCheckAllThreadedBenchmarksExecute(Sender: TObject);
+    procedure actPopupClearAllCheckMarksExecute(Sender: TObject);
+    procedure actPopupSelectAllCheckMarksExecute(Sender: TObject);
+    procedure actRunAllCheckedBenchmarksExecute(Sender: TObject);
+    procedure actRunSelectedBenchmarkExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var AAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure lvBenchmarkListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
-    procedure mniPopupCheckAllDefaultBenchmarksClick(Sender: TObject);
-    procedure mniPopupCheckAllThreadedBenchmarksClick(Sender: TObject);
-    procedure mniPopupClearAllCheckMarksClick(Sender: TObject);
-    procedure mniPopupSelectAllCheckMarksClick(Sender: TObject);
     procedure tmrAutoRunTimer(Sender: TObject);
   private
     FBenchmarkHasBeenRun: Boolean;
-    FExtraValidationFailures: string;
-    FExtraValidationHasBeenRun: Boolean;
     FRanBenchmarkCount: Integer;
-    FValidationFailures: string;
-    FValidationHasBeenRun: Boolean;
-    FXMLResultList: TStringList;
-    procedure AddBenchmark;
+    FTestResultsFileName: string;
     procedure AddResultsToDisplay(
       const aBenchName, aMMName: String;
       const aCpuUsage: Int64;
@@ -68,28 +69,17 @@ type
       const InitialLoad: Boolean = False);
     procedure InitResultsDisplay;
     procedure LoadResultsToDisplay;
-    procedure LoadXMLResults;
     procedure ReadIniFile;
-    {Runs a benchmark and returns its relative speed}
     procedure RunBenchmark(ABenchmarkClass: TFastcodeMMBenchmarkClass);
     procedure SaveResults;
-    procedure SaveSummary;
-    procedure SaveXMLResults;
-    procedure UpdateBenchmark;
     procedure WriteIniFile;
   public
-    CSVResultsFileName: string;
   end;
 
 var
   BenchmarkFrm: TBenchmarkFrm;
 
-const
-  CSV_RESULT_PREFIX = 'MMTestResults';
-  SUMMARY_FILE_PREFIX = 'BVSummary';
-  XML_RESULT_BACKUP_FILENAME = 'MMTest_Backup.xml';
-  XML_RESULT_FILENAME = 'MMTest.xml';
-
+Const
   //Column indices for the ListView
   LVCOL_BENCH     = 0;
   LVCOL_MM        = 1;
@@ -110,85 +100,14 @@ const
   RESULTS_TICKS   = 3;
   RESULTS_MEM     = 4;
 
-{
-PassValidations indicates whether the MM passes all normal validations
-FastCodeQualityLabel indicates whether the MM passes the normal AND the extra validations
-If you execute a validation run and the results do not match the hardcoded values,
-you'll get a message that you should change the source code.
-}
-
 implementation
 
 uses
-  RenameMMForm, BenchmarkUtilities, GeneralFunctions, SystemInfoUnit, System.IniFiles, Winapi.PsAPI, CPU_Usage_Unit;
+  BenchmarkUtilities, GeneralFunctions, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit;
 
 {$R *.dfm}
 
-{Disables the window ghosting feature for the calling graphical user interface
- (GUI) process. Window ghosting is a Windows Manager feature that lets the user
- minimize, move, or close the main window of an application that is not
- responding. (This "feature" causes problems with form z-order and also
- modal forms not showing as modal after long periods of non-responsiveness)}
-procedure DisableProcessWindowsGhosting;
-type
-  TDisableProcessWindowsGhostingProc = procedure;
-var
-  PDisableProcessWindowsGhostingProc: TDisableProcessWindowsGhostingProc;
-begin
-  PDisableProcessWindowsGhostingProc := GetProcAddress(
-    GetModuleHandle('user32.dll'),
-    'DisableProcessWindowsGhosting');
-  if Assigned(PDisableProcessWindowsGhostingProc) then
-    PDisableProcessWindowsGhostingProc;
-end;
-
-procedure TBenchmarkFrm.AddBenchmark;
-var
-  InsertionPoint: Integer;
-begin
-  InsertionPoint := FXMLResultList.IndexOf('</benchmarks>');
-  if InsertionPoint = -1 then
-  begin
-    InsertionPoint := FXMLResultList.Count - 1;
-    FXMLResultList.Insert(InsertionPoint-1, '<benchmarks>');
-    FXMLResultList.Insert(InsertionPoint, '</benchmarks>');
-  end;
-
-  FXMLResultList.Insert(InsertionPoint,
-    Format('<benchmark version="%s" compiler="%s" MM="%s">', [GetFormattedVersion, GetCompilerAbbr, MemoryManager_Name]));
-  // FXMLResultList.Insert(InsertionPoint, '<benchmark compiler="' + GetCompilerName + '" MM="' + MemoryManager_Name + '" >');
-
-  // FXMLResultList.Insert(InsertionPoint+1, Format('<cpu>%s</cpu>', [SystemInfoCPU]));
-  FXMLResultList.Insert(InsertionPoint+1, {$IFDEF WIN32__}SystemInfoCPUAsXML{$ELSE}''{$ENDIF});
-  FXMLResultList.Insert(InsertionPoint+2, Format('<os>%s</os>', [SystemInfoWindows]));
-  FXMLResultList.Insert(InsertionPoint+3, '<result> </result>');
-  FXMLResultList.Insert(InsertionPoint+4, '</benchmark>');
-end;
-
-procedure TBenchmarkFrm.AddResultsToDisplay(
-  const aBenchName, aMMName: String;
-  const aCpuUsage: Int64;
-  const aTicks, aPeak: Cardinal;
-  const CurrentSession: string = 'T';
-  const InitialLoad: Boolean = False);
-var
-  Item: TListItem;
-begin
-  Inc(FRanBenchmarkCount);
-
-  Item := ListViewResults.Items.Add;
-  Item.Caption := aBenchName;
-  Item.SubItems.Add(aMMName);
-  Item.SubItems.Add(aCpuUsage.ToString);
-  Item.SubItems.Add(aTicks.ToString);
-  Item.SubItems.Add(aPeak.ToString);
-  Item.SubItems.Add(CurrentSession);
-
-//  if not InitialLoad then
-//    ListViewResults.AlphaSort;
-end;
-
-procedure TBenchmarkFrm.btnCopyResultsToClipboardClick(Sender: TObject);
+procedure TBenchmarkFrm.actCopyResultsToClipboardExecute(Sender: TObject);
 var
   iRow: Integer;
   iCol: Integer;
@@ -222,10 +141,8 @@ begin
   end;
 end;
 
-procedure TBenchmarkFrm.btnDeleteAllTestResultsClick(Sender: TObject);
+procedure TBenchmarkFrm.actDeletelTestResultsExecute(Sender: TObject);
 begin
-//  if (Application.MessageBox('Are you sure you want to delete all results?',
-//    'Confirm Results Clear', MB_ICONQUESTION or MB_YesNo or MB_DefButton2) = mrYes) then
   begin
     ListViewResults.Items.BeginUpdate;
     try
@@ -233,67 +150,49 @@ begin
     finally
       ListViewResults.Items.EndUpdate;
     end;
-    DeleteFile(CSVResultsFileName);
+    DeleteFile(FTestResultsFileName);
     FRanBenchmarkCount := 0;
   end;
 end;
 
-procedure TBenchmarkFrm.btnDeleteMMTestResultsClick(Sender: TObject);
+procedure TBenchmarkFrm.actPopupCheckAllDefaultBenchmarksExecute(Sender: TObject);
 var
-  LMMName: string;
-  LInd: integer;
+  i: Integer;
 begin
-  if ListViewResults.ItemIndex < 0 then
-    exit;
-  LMMName := ListViewResults.Items[ListViewResults.ItemIndex].SubItems[0];
-//  if (Application.MessageBox(PChar('Are you sure you want to delete results for ' + LMMName + '?'),
-//    'Confirm Results Delete', MB_ICONQUESTION or MB_YesNo or MB_DefButton2) = mrYes) then
-  begin
-    for LInd := ListViewResults.Items.Count - 1 downto 0 do
-    begin
-      if ListViewResults.Items[LInd].SubItems[0] = LMMName then
-      begin
-        ListViewResults.Items[LInd].Delete;
-        Dec(FRanBenchmarkCount);
-      end;
-    end;
-    SaveResults;
-  end;
+  for i := 0 to lvBenchmarkList.Items.Count - 1 do
+    lvBenchmarkList.Items[i].Checked := Benchmarks[i].RunByDefault;
 end;
 
-procedure TBenchmarkFrm.btnRenameMMClick(Sender: TObject);
+procedure TBenchmarkFrm.actPopupCheckAllThreadedBenchmarksExecute(Sender: TObject);
 var
-  LInd: integer;
-  LOldName, LNewName: String;
+  i: Integer;
 begin
-  if ListViewResults.ItemIndex >= 0 then
-  begin
-    Application.CreateForm(TRenameFrm, RenameFrm);
-    try
-      LOldName := ListViewResults.Items[ListViewResults.ItemIndex].SubItems[0];
-      RenameFrm.eMMName.Text := LOldName;
-      if (RenameFrm.ShowModal = mrOK) and (RenameFrm.eMMName.Text <> '') then
-      begin
-        LNewName := RenameFrm.eMMName.Text;
-        for LInd := 0 to ListViewResults.Items.Count - 1 do
-        begin
-          if ListViewResults.Items[LInd].SubItems[0] = LOldName then
-            ListViewResults.Items[LInd].SubItems[0] := LNewName;
-        end;
-        SaveResults;
-      end;
-    finally
-      FreeAndNil(RenameFrm);
-    end;
-  end;
+  for i := 0 to lvBenchmarkList.Items.Count - 1 do
+    lvBenchmarkList.Items[i].Checked := Benchmarks[i].IsThreadedSpecial;
 end;
 
-procedure TBenchmarkFrm.btnRunAllCheckedBenchmarksClick(Sender: TObject);
+procedure TBenchmarkFrm.actPopupClearAllCheckMarksExecute(Sender: TObject);
+var
+  i: Integer;
+begin
+  for i := 0 to lvBenchmarkList.Items.Count - 1 do
+    lvBenchmarkList.Items[i].Checked := False;
+end;
+
+procedure TBenchmarkFrm.actPopupSelectAllCheckMarksExecute(Sender: TObject);
+var
+  i: Integer;
+begin
+  for i := 0 to lvBenchmarkList.Items.Count - 1 do
+    lvBenchmarkList.Items[i].Checked := True;
+end;
+
+procedure TBenchmarkFrm.actRunAllCheckedBenchmarksExecute(Sender: TObject);
 var
   i: integer;
 begin
   Screen.Cursor := crHourglass;
-  btnRunAllCheckedBenchmarks.Caption := 'Running';
+  actRunAllCheckedBenchmarks.Caption := 'Running';
   Enabled := False;
   Application.ProcessMessages;
   Enabled := True;
@@ -317,21 +216,20 @@ begin
     end;
   end;
   mResults.Lines.Add('***All Checked Benchmarks Done***');
-  btnRunAllCheckedBenchmarks.Caption := 'Run All Checked Benchmarks';
+  actRunAllCheckedBenchmarks.Caption := 'Run All Checked Benchmarks';
   if FRanBenchmarkCount > 0 then
     SaveResults;
-  SaveSummary;
   Screen.Cursor := crDefault;
 end;
 
-procedure TBenchmarkFrm.btnRunSelectedBenchmarkClick(Sender: TObject);
+procedure TBenchmarkFrm.actRunSelectedBenchmarkExecute(Sender: TObject);
 begin
   Screen.Cursor := crHourglass;
 
   if lvBenchmarkList.Selected = nil then
     Exit;
 
-  btnRunSelectedBenchmark.Caption := 'Running';
+  actRunSelectedBenchmark.Caption := 'Running';
   Enabled := False;
   Application.ProcessMessages;
   Enabled := True;
@@ -340,14 +238,35 @@ begin
   if FRanBenchmarkCount > 0 then
     SaveResults;
 
-  SaveSummary;
-
-  btnRunSelectedBenchmark.Caption := 'Run Selected Benchmark';
+  actRunSelectedBenchmark.Caption := 'Run Selected Benchmark';
   Enabled := False;
   Application.ProcessMessages;
   Enabled := True;
 
   Screen.Cursor := crDefault;
+end;
+
+procedure TBenchmarkFrm.AddResultsToDisplay(
+  const aBenchName, aMMName: String;
+  const aCpuUsage: Int64;
+  const aTicks, aPeak: Cardinal;
+  const CurrentSession: string = 'T';
+  const InitialLoad: Boolean = False);
+var
+  Item: TListItem;
+begin
+  Inc(FRanBenchmarkCount);
+
+  Item := ListViewResults.Items.Add;
+  Item.Caption := aBenchName;
+  Item.SubItems.Add(aMMName);
+  Item.SubItems.Add(aCpuUsage.ToString);
+  Item.SubItems.Add(aTicks.ToString);
+  Item.SubItems.Add(aPeak.ToString);
+  Item.SubItems.Add(CurrentSession);
+
+//  if not InitialLoad then
+//    ListViewResults.AlphaSort;
 end;
 
 procedure TBenchmarkFrm.FormClose(Sender: TObject; var AAction: TCloseAction);
@@ -357,34 +276,9 @@ begin
 
   if FRanBenchmarkCount > 0 then
     SaveResults;
-  FreeAndNil(FXMLResultList);
 end;
 
 procedure TBenchmarkFrm.FormCreate(Sender: TObject);
-
-  {$IFDEF WIN32}
-  //From FastcodeBenchmarkTool091 - Per Dennis C. Suggestion
-  procedure ShowCPUInfo;
-  var
-   CPUID : TCPUID;
-   I : Integer;
-  begin
-    MemoCPU.Lines.Clear;
-    for I := Low(CPUID) to High(CPUID) do CPUID[I] := -1;
-      if IsCPUID_Available then
-        begin
-          CPUID  := GetCPUID;
-          MemoCPU.Lines.Add('Processor Type: ' + IntToStr(CPUID[1] shr 12 and 3));
-          MemoCPU.Lines.Add('Family:         ' + IntToStr(CPUID[1] shr 8 and $f));
-          MemoCPU.Lines.Add('Model:          ' + IntToStr(CPUID[1] shr 4 and $f));
-          MemoCPU.Lines.Add('Stepping:       ' + IntToStr(CPUID[1] and $f));
-          MemoCPU.Lines.Add('Name:           ' + DetectCPUType(Integer(CPUID[1] shr 8 and $f), Integer(CPUID[1] shr 4 and $f)));
-          MemoCPU.Lines.Add('Frequency:      ' + IntToStr(GetCPUFrequencyMHz) + ' MHz');
-          MemoCPU.Lines.Add('Vendor:         ' + GetCPUVendor);
-        end;
-  end;
-  {$ENDIF}
-
 var
   i: integer;
   Item: TListItem;
@@ -392,41 +286,26 @@ var
   LBenchmark: TFastcodeMMBenchmarkClass;
 begin
   Caption := Format('%s %s %s for "%s" memory manager', [Caption, {$IFDEF WIN32}'32-bit'{$ELSE}'64-bit'{$ENDIF}, GetFormattedVersion, MemoryManager_Name]);
-  {$IFDEF WIN32}
-  ShowCPUInfo;
-  {$ENDIF}
-  MemoCPU.Lines.Clear;
-  MemoCPU.Lines.Add(SystemInfoCPU);
-  MemoCPU.Lines.Add('');
-  MemoCPU.Lines.Add(SystemInfoWindows);
 
-  //fGraphs := TfGraphs.Create(Self);
-
-//  CSVResultsFileName := Format('%s%s_%s_%s.csv',
-//    [ExtractFilePath(GetModuleName(HInstance)), CSV_RESULT_PREFIX, GetCompilerAbbr, MemoryManager_Name]);
-  CSVResultsFileName := Format('%s%s_%s.csv',
-    [ExtractFilePath(GetModuleName(HInstance)), CSV_RESULT_PREFIX, MemoryManager_Name]);
-
-  FValidationHasBeenRun := False;
-  FValidationFailures := '';
-  FExtraValidationHasBeenRun := False;
-  FExtraValidationFailures := '';
-  FBenchmarkHasBeenRun := False;
-  FXMLResultList := TStringList.Create;
-  LoadXMLResults;
+  MemoEnvironment.Lines.Clear;
+  MemoEnvironment.Lines.Add(SystemInfoCPU);
+  MemoEnvironment.Lines.Add('****************');
+  MemoEnvironment.Lines.Add(SystemInfoWindows);
 
   // make a copy of the application's Exe for later use
   //Skip copy if this is the MM specific exe.
   if Pos('_' + MemoryManager_Name, GetModuleName(HInstance)) = 0 then
   begin
-//    CopiedExeFileName := Format('%s_%s_%s.exe',
-//      [ChangeFileExt(Application.ExeName, ''), GetCompilerAbbr, MemoryManager_Name]);
-    CopiedExeFileName := Format('%s_%s.exe',
-      [ChangeFileExt(Application.ExeName, ''), MemoryManager_Name]);
+    CopiedExeFileName := Format('%s_%s_%s.exe', [ChangeFileExt(Application.ExeName, ''), MemoryManager_Name, {$IFDEF WIN32}'32'{$ELSE}'64'{$ENDIF}]);
     CopyFile(PChar(GetModuleName(HInstance)), PChar(CopiedExeFileName), False);
-  end;
+  end else
+    CopiedExeFileName := Application.ExeName;
 
-  lvBenchmarkList.SortType := stNone; // already sorted
+  FTestResultsFileName := Format('%s.csv', [ChangeFileExt(CopiedExeFileName, '.Results')]);
+
+  FBenchmarkHasBeenRun := False;
+
+  lvBenchmarkList.SortType := stNone; // Do not perform extra sort - already sorted
   {List the benchmarks}
   for i := 0 to Benchmarks.Count - 1 do begin
     LBenchmark := Benchmarks[i];
@@ -487,7 +366,7 @@ var
   vCPUUsage: Int64;
   vTicks, vPeak: Cardinal;
 begin
-  if not FileExists(CSVResultsFileName) then
+  if not FileExists(FTestResultsFileName) then
     Exit;
 
   CSV := TStringList.Create;
@@ -495,7 +374,7 @@ begin
   try
     Bench.Delimiter := ';';
 
-    CSV.LoadFromFile(CSVResultsFileName);
+    CSV.LoadFromFile(FTestResultsFileName);
 
     ListViewResults.Items.BeginUpdate;
     try
@@ -533,32 +412,6 @@ begin
   end;
 end;
 
-// ----------------------------------------------------------------------------
-procedure TBenchmarkFrm.LoadXMLResults;
-var
-  InsertionPoint: Integer;
-begin
-  if FileExists(XML_RESULT_FILENAME) then
-  begin
-    FXMLResultList.LoadFromFile(XML_RESULT_FILENAME);
-
-    InsertionPoint := FXMLResultList.IndexOf('</mmbench>');
-    if InsertionPoint = -1 then
-    begin
-      InsertionPoint := FXMLResultList.Count - 1;
-      FXMLResultList.Insert(InsertionPoint, '<mmbench>');
-      FXMLResultList.Insert(InsertionPoint+1, '</mmbench>');
-    end;
-  end
-  else
-  begin
-    FXMLResultList.Add('<mmchallenge>');
-    FXMLResultList.Add('<mmbench>');
-    FXMLResultList.Add('</mmbench>');
-    FXMLResultList.Add('</mmchallenge>');
-  end;
-end;
-
 procedure TBenchmarkFrm.lvBenchmarkListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 var
   LBenchmarkClass: TFastcodeMMBenchmarkClass;
@@ -573,38 +426,6 @@ begin
       mBenchmarkDescription.Text := LBenchmarkClass.GetBenchmarkDescription;
     end;
   end;
-end;
-
-procedure TBenchmarkFrm.mniPopupCheckAllDefaultBenchmarksClick(Sender: TObject);
-var
-  i: Integer;
-begin
-  for i := 0 to lvBenchmarkList.Items.Count - 1 do
-    lvBenchmarkList.Items[i].Checked := Benchmarks[i].RunByDefault;
-end;
-
-procedure TBenchmarkFrm.mniPopupCheckAllThreadedBenchmarksClick(Sender: TObject);
-var
-  i: Integer;
-begin
-  for i := 0 to lvBenchmarkList.Items.Count - 1 do
-    lvBenchmarkList.Items[i].Checked := Benchmarks[i].IsThreadedSpecial;
-end;
-
-procedure TBenchmarkFrm.mniPopupClearAllCheckMarksClick(Sender: TObject);
-var
-  i: Integer;
-begin
-  for i := 0 to lvBenchmarkList.Items.Count - 1 do
-    lvBenchmarkList.Items[i].Checked := False;
-end;
-
-procedure TBenchmarkFrm.mniPopupSelectAllCheckMarksClick(Sender: TObject);
-var
-  i: Integer;
-begin
-  for i := 0 to lvBenchmarkList.Items.Count - 1 do
-    lvBenchmarkList.Items[i].Checked := True;
 end;
 
 procedure TBenchmarkFrm.ReadIniFile;
@@ -682,10 +503,8 @@ begin
                           LBenchmark.PeakAddressSpaceUsage);
       if not FBenchmarkHasBeenRun then
       begin
-        AddBenchmark;
         FBenchmarkHasBeenRun := True;
       end;
-      UpdateBenchmark;
     end
     else
       begin
@@ -724,107 +543,21 @@ begin
         CSV.Add(Bench.DelimitedText);
       end;
 
-    CSV.SaveToFile(CSVResultsFileName);
+    CSV.SaveToFile(FTestResultsFileName);
   finally
     Bench.Free;
     CSV.Free;
   end;
 end;
 
-procedure TBenchmarkFrm.SaveSummary;
-var
-  FileName: string;
-  F: TextFile;
-begin
-  FileName := Format('%s%s_%s.txt',
-    [ExtractFilePath(GetModuleName(HInstance)), SUMMARY_FILE_PREFIX, GetCompilerAbbr]);
-
-  if FileExists(FileName) then
-    DeleteFile(FileName);
-
-  AssignFile(F, FileName);
-  Rewrite(F);
-  try
-    Writeln(F, 'Summary report for Memory Manager challenge ' +
-      GetFormattedVersion + FormatDateTime('  yyyy-mmm-dd hh:nn:ss', NOW));
-    Writeln(F, '');
-    Writeln(F, 'Compiler: ' + GetCompilerName);
-    Writeln(F, SystemInfoCPU);
-    Writeln(F, SystemInfoWindows);
-    Writeln(F, '');
-    Writeln(F, '');
-
-    Flush(F);
-  finally
-    CloseFile(F);
-  end;
-end;
-
-procedure TBenchmarkFrm.SaveXMLResults;
-var
-  F: TextFile;
-  i: Integer;
-begin
-  if FileExists(XML_RESULT_FILENAME) then
-    DeleteFile(XML_RESULT_FILENAME);
-
-  AssignFile(F, XML_RESULT_FILENAME);
-  Rewrite(F);
-  try
-    for i := 0 to FXMLResultList.Count - 1 do
-      Writeln(F, FXMLResultList[i]);
-
-    Flush(F);
-  finally
-    CloseFile(F);
-  end;
-
-  // Sometimes forcing an out of memory error causes you to lose the previous
-  // results leaving you with an empty file.  This is kind of a backup plan.
-  if FileExists(XML_RESULT_BACKUP_FILENAME) then
-    DeleteFile(XML_RESULT_BACKUP_FILENAME);
-  CopyFile(XML_RESULT_FILENAME, XML_RESULT_BACKUP_FILENAME, False);
-
-//  FXMLResultList.SaveToFile(XML_RESULT_FILENAME);
-//  Application.ProcessMessages;
-end;
-
 procedure TBenchmarkFrm.tmrAutoRunTimer(Sender: TObject);
 begin
   tmrAutoRun.Enabled := False;
-  btnDeleteMMTestResults.Click;
+  actDeletelTestResults.Execute;
   Application.ProcessMessages;
-  btnRunAllCheckedBenchmarks.Click;
+  actRunAllCheckedBenchmarks.Execute;
   Application.ProcessMessages;
   btnClose.Click;
-end;
-
-procedure TBenchmarkFrm.UpdateBenchmark;
-var
-  i: Integer;
-  s: string;
-  Item: TListItem;
-  ResultIndex: Integer;
-begin
-  ResultIndex := FXMLResultList.IndexOf('</benchmarks>')-1;
-
-  while SameText(Copy(FXMLResultList[ResultIndex-1], 1, 7), '<result') do
-  begin
-    FXMLResultList.Delete(ResultIndex-1);
-    Dec(ResultIndex);
-  end;
-
-  for i := ListViewResults.Items.Count -1 downto 0 do
-  begin
-    Item := ListViewResults.Items[i];
-    if SameText('T', Item.SubItems[4]) then
-    begin
-      s := Format('<result name="%s" time="%s" cpuusage="%s" mem="%s" />',
-        [Item.Caption, Item.SubItems[1], Item.SubItems[2], Item.SubItems[3]]);
-      FXMLResultList.Insert(ResultIndex, s);
-    end;
-  end;
-  SaveXMLResults;
 end;
 
 procedure TBenchmarkFrm.WriteIniFile;
@@ -844,9 +577,5 @@ begin
   end;
 
 end;
-
-//initialization
-//  {We want the main form repainted while it's busy running}
-//  DisableProcessWindowsGhosting;
 
 end.

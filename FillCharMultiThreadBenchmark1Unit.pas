@@ -276,7 +276,7 @@ end;
 
 class function TFillCharThreads.GetBenchmarkName: string;
 begin
-  Result := 'FillCharDoubleThread';
+  Result := 'Fill Char using 2 threads';
 end;
 
 class function TFillCharThreads.GetCategory: TBenchmarkCategory;

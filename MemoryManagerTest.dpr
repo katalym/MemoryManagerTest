@@ -86,8 +86,7 @@ uses
   SystemInfoUnit in 'SystemInfoUnit.pas',
   WildThreadsBenchmarkUnit in 'WildThreadsBenchmarkUnit.pas',
 
-  BenchmarkForm in 'BenchmarkForm.pas' {BenchmarkFrm},
-  RenameMMForm in 'RenameMMForm.pas' {RenameFrm};
+  BenchmarkForm in 'BenchmarkForm.pas' {BenchmarkFrm};
 
 {$IFDEF WIN32}
 const

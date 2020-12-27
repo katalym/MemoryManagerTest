@@ -11,7 +11,7 @@ function GetCpuUsage_User: Int64;
 implementation
 
 uses
-  System.SysUtils, Winapi.Windows, System.DateUtils;
+  System.SysUtils, Winapi.Windows;
 
 type
   TCPUUsageData = record

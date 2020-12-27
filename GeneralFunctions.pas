@@ -94,9 +94,6 @@ type
  function ExecuteCPUID : TCPUIDResult; assembler;
 {$ENDIF}
  function GetCPUFeaturesInfo(FeatureSetIndex : Integer) : Boolean;
-
- function GetFormattedVersion: string;
- function GetModuleVersionDFL(ModuleFileName: string; var Ver: TVersion; Product: Boolean = False): string;
  function DetectCPUType(Family, Model: Integer): String;
  function GetCPUFrequencyMHz : Cardinal;
 
@@ -316,64 +313,6 @@ asm
 end;
 {$ENDIF}
 
-function GetFormattedVersion: string;
-var
-  ver: TVersion;
-begin
-  GetModuleVersionDFL(GetModuleName(HInstance), ver);
-  Result := Format('%d.%d.%d', [ver.Major, ver.Minor, ver.Release])
-end;
-
-function GetModuleVersionDFL(ModuleFileName: string; var Ver: TVersion; Product: Boolean = False): string;
-var
- VersionBufferLength: Integer;
- PVersionBuffer     : Pointer;
- Dummy              : Dword;
- PFixedFileInfo     : PVS_FIXEDFILEINFO;
- ModuleVersionLength: Dword;
- VerW1, VerW2       : DWord;
-begin
-  Ver.Major := 0;
-  Ver.Minor := 0;
-  Ver.Release := 0;
-  Ver.Build := 0;
-  VersionBufferLength:= GetFileVersionInfoSize(PChar(ModuleFileName),Dummy);
-  PVersionBuffer:= AllocMem(VersionBufferLength);
-  if (PVersionBuffer <> nil) then
-   begin
-    if (GetFileVersionInfo(PChar(ModuleFileName), VersionBufferLength,VersionBufferLength, PVersionBuffer)) then
-     begin
-      if (VerQueryValue(PVersionBuffer, '\', Pointer(PFixedFileInfo),ModuleVersionLength)) then
-       begin
-        if Product then
-         begin
-          VerW1 := PFixedFileInfo^.dwProductVersionMS;
-          VerW2 := PFixedFileInfo^.dwProductVersionLS;
-         end
-        else
-         begin
-          VerW1 := PFixedFileInfo^.dwFileVersionMS;
-          VerW2 := PFixedFileInfo^.dwFileVersionLS;
-         end;
-        Ver.Major :=   ((VerW1) and $FFFF0000) shr 16;
-        Ver.Minor :=   ((VerW1) and $0000FFFF);
-        Ver.Release := ((VerW2) and $FFFF0000) shr 16;
-        Ver.Build :=   ((VerW2) and $0000FFFF);
-        Result := Format('%d.%d.%d.%d', [Ver.Major, Ver.Minor, Ver.Release,Ver.Build]);
-       end;
-     end
-    else
-     begin
-      Result:= TEXT_NO_VERSIONINFO;
-     end;
-    FreeMem(PVersionBuffer);
-   end
-  else
-   begin
-    Result:= TEXT_NO_VERSIONINFO;
-   end;
-end;
-
 function DetectCPUType(Family, Model: Integer): String;
 var
  P2Array : array[0..5] of Integer; // Family : 6
@@ -387,7 +326,7 @@ var
  Athlon64Array : array[0..5] of Integer; // Family : 15
  CPUDetected : Boolean;
  I : Integer;
- Vendor: AnsiString;
+ Vendor: String;
 
 begin
  P2Array[0] := 5; //0101
