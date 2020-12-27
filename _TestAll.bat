@@ -1,0 +1,10 @@
+Win64\MemoryManagerTest_DEFAULT_64.exe autorun
+Win64\MemoryManagerTest_FASTMM4_64.exe autorun
+Win64\MemoryManagerTest_FASTMM5_64.exe autorun
+Win64\MemoryManagerTest_SCALEMM2_64.exe autorun
+rem Win64\MemoryManagerTest_BIGBRAIN_64.exe autorun
+Win32\MemoryManagerTest_DEFAULT_32.exe autorun
+Win32\MemoryManagerTest_FASTMM4_32.exe autorun
+Win32\MemoryManagerTest_FASTMM5_32.exe autorun
+Win32\MemoryManagerTest_SCALEMM2_32.exe autorun
+rem Win32\MemoryManagerTest_BIGBRAIN_32.exe autorun
