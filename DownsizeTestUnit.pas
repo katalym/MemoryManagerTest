@@ -48,12 +48,11 @@ var
 begin
   inherited;
 
-  for n := 1 to IterationCount do     // loop added to have more than 1000 MTicks for this benchmark
+  for n := 1 to IterationCount do
   begin
     {Allocate a lot of strings}
     SetLength(FStrings, 3000000);
-    for i := 0 to high(FStrings) do
-    begin
+    for i := Low(FStrings) to High(FStrings) do begin
       {Grab a 20K block}
       SetLength(FStrings[i], 20000);
       {Touch memory}
