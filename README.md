@@ -1,4 +1,4 @@
-# Delphi Memory Manager Comparison
+# Memory Manager Test for Delphi 10.3+
 Test various memory managers for Delphi 10.3+ in 32/64 bit modes.
 
 Available Memory managers are (see MemoryManagerTest.inc)
