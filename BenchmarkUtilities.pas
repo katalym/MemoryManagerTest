@@ -30,40 +30,28 @@ var
   InitialAddressSpaceUsed: NativeUInt;
 
 const
+// MemoryManager_Name is used as subfolder name - do not use special characters
 {$IFDEF MM_DEFAULT}
   {Default}
   MemoryManager_Name = 'Default';
-  PassValidations = True;
-  FastCodeQualityLabel = False;
-  DllExtension = 'DEF';
 {$ENDIF}
 {$IFDEF MM_SCALEMM2}
-  {ScaleMM2}
   MemoryManager_Name = 'ScaleMM2';
-  PassValidations = True;
-  FastCodeQualityLabel = False;
-  DllExtension = 'SMM';
 {$ENDIF}
 {$IFDEF MM_BIGBRAIN}
-  {BigBrain}
   MemoryManager_Name = 'BigBrain';
-  PassValidations = True;
-  FastCodeQualityLabel = False;
-  DllExtension = 'BBR';
 {$ENDIF}
 {$IFDEF MM_FASTMM4}
-  {Pierre le Riche's FastMM v4.xx}
   MemoryManager_Name = 'FastMM4';
-  PassValidations = True;
-  FastCodeQualityLabel = True;
-  DllExtension = 'FA4';
+{$ENDIF}
+{$IFDEF MM_FASTMM4_FullDebug}
+  MemoryManager_Name = 'FastMM4_FullDebug';
 {$ENDIF}
 {$IFDEF MM_FASTMM5}
-  {Pierre le Riche's FastMM v501}
   MemoryManager_Name = 'FastMM5';
-  PassValidations = True;
-  FastCodeQualityLabel = True;
-  DllExtension = 'FA5';
+{$ENDIF}
+{$IFDEF MM_FASTMM5_FullDebug}
+  MemoryManager_Name = 'FastMM5_FullDebug';
 {$ENDIF}
 
 implementation

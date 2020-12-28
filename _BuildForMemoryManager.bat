@@ -10,13 +10,13 @@ re, echo %DCC64%
 if %errorlevel% NEQ 0 goto errorexit
 rem madExceptPatch.exe MemoryManagerTest.exe MemoryManagerTest.mes MemoryManagerTest.map 
 rem if %errorlevel% NEQ 0 goto errorexit
-move MemoryManagerTest.exe Win32\%FILENAME%_32.exe
+move MemoryManagerTest.exe %1\Win32\%FILENAME%_32.exe
 if %errorlevel% NEQ 0 goto errorexit
 %DCC64%
 if %errorlevel% NEQ 0 goto errorexit
 rem madExceptPatch.exe MemoryManagerTest.exe MemoryManagerTest.mes MemoryManagerTest.map 
 rem if %errorlevel% NEQ 0 goto errorexit
-move MemoryManagerTest.exe Win64\%FILENAME%_64.exe
+move MemoryManagerTest.exe %1\Win64\%FILENAME%_64.exe
 if %errorlevel% NEQ 0 goto errorexit
 
 exit /B 0

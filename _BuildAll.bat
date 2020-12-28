@@ -3,10 +3,12 @@
 echo !!! Make sure there is no memory manader defined in MemoryManagerTest.inc !!!
 pause
 
-del MemoryManagerTest*.exe /q
-del Win32\MemoryManagerTest*.exe /q
-del Win64\MemoryManagerTest*.exe /q
+del MemoryManagerTest*.exe /q /s
 echo ---------------------------------------------------------------
+
+echo Building for DEFAULT
+call _BuildForMemoryManager.bat Default 
+if %errorlevel% NEQ 0 goto errorexit
 
 echo Building for SCALEMM2
 call _BuildForMemoryManager.bat ScaleMM2 
@@ -16,12 +18,16 @@ echo Building for FASTMM4
 call _BuildForMemoryManager.bat FastMM4 
 if %errorlevel% NEQ 0 goto errorexit
 
+echo Building for FASTMM4_FullDebug
+call _BuildForMemoryManager.bat FastMM4_FullDebug
+if %errorlevel% NEQ 0 goto errorexit
+
 echo Building for FASTMM5
 call _BuildForMemoryManager.bat FastMM5 
 if %errorlevel% NEQ 0 goto errorexit
 
-echo Building for DEFAULT
-call _BuildForMemoryManager.bat Default 
+echo Building for FASTMM5_FullDebug
+call _BuildForMemoryManager.bat FastMM5_FullDebug 
 if %errorlevel% NEQ 0 goto errorexit
 
 echo Building for BIGBRAIN

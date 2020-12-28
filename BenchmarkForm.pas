@@ -61,6 +61,7 @@ type
     FBenchmarkHasBeenRun: Boolean;
     FRanBenchmarkCount: Integer;
     FTestResultsFileName: string;
+    FApplicationIniFileName: string;
     procedure AddResultsToDisplay(
       const aBenchName, aMMName: String;
       const aCpuUsage: Int64;
@@ -103,7 +104,7 @@ Const
 implementation
 
 uses
-  BenchmarkUtilities, GeneralFunctions, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit;
+  BenchmarkUtilities, GeneralFunctions, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit, System.StrUtils;
 
 {$R *.dfm}
 
@@ -281,11 +282,13 @@ end;
 procedure TBenchmarkFrm.FormCreate(Sender: TObject);
 var
   i: integer;
-  Item: TListItem;
-  CopiedExeFileName: string;
-  LBenchmark: TFastcodeMMBenchmarkClass;
+  vItem: TListItem;
+  vCustomExeName: string;
+  vBenchmark: TFastcodeMMBenchmarkClass;
 begin
   Caption := Format('%s %s %s for "%s" memory manager', [Caption, {$IFDEF WIN32}'32-bit'{$ELSE}'64-bit'{$ENDIF}, GetFormattedVersion, MemoryManager_Name]);
+  Height := 900;
+  Width := 1200;
 
   MemoEnvironment.Lines.Clear;
   MemoEnvironment.Lines.Add(SystemInfoCPU);
@@ -294,28 +297,34 @@ begin
 
   // make a copy of the application's Exe for later use
   //Skip copy if this is the MM specific exe.
-  if Pos('_' + MemoryManager_Name, GetModuleName(HInstance)) = 0 then
+  if not ContainsText(ExtractFileName(Application.ExeName), '_' + MemoryManager_Name + '_') then
   begin
-    CopiedExeFileName := Format('%s_%s_%s.exe', [ChangeFileExt(Application.ExeName, ''), MemoryManager_Name, {$IFDEF WIN32}'32'{$ELSE}'64'{$ENDIF}]);
-    CopyFile(PChar(GetModuleName(HInstance)), PChar(CopiedExeFileName), False);
+    vCustomExeName := Format('%0:s%2:s\Win%3:s\%1:s_%2:s_%3:s.exe',
+      [ExtractFilePath(Application.ExeName), ChangeFileExt(ExtractFileName(Application.ExeName),''),
+       MemoryManager_Name, {$IFDEF WIN32}'32'{$ELSE}'64'{$ENDIF}]);
+    CopyFile(PChar(GetModuleName(HInstance)), PChar(vCustomExeName), False);
   end else
-    CopiedExeFileName := Application.ExeName;
+    vCustomExeName := Application.ExeName;
 
-  FTestResultsFileName := Format('%s.csv', [ChangeFileExt(CopiedExeFileName, '.Results')]);
+  FApplicationIniFileName :=
+    ReplaceText(ExtractFilePath(vCustomExeName), '\' +MemoryManager_Name + '\Win' + {$IFDEF WIN32}'32'{$ELSE}'64'{$ENDIF}, '') +
+    'MemoryManagerTest.ini';
+
+  FTestResultsFileName := Format('%s.csv', [ChangeFileExt(vCustomExeName, '.Results')]);
 
   FBenchmarkHasBeenRun := False;
 
   lvBenchmarkList.SortType := stNone; // Do not perform extra sort - already sorted
   {List the benchmarks}
   for i := 0 to Benchmarks.Count - 1 do begin
-    LBenchmark := Benchmarks[i];
-    Item := lvBenchmarkList.Items.Add;
-    Item.Data := Pointer(i);
-    if Assigned(LBenchmark) then
+    vBenchmark := Benchmarks[i];
+    vItem := lvBenchmarkList.Items.Add;
+    vItem.Data := Pointer(i);
+    if Assigned(vBenchmark) then
     begin
-      Item.Checked := LBenchmark.RunByDefault;
-      Item.Caption := LBenchmark.GetBenchmarkName;
-      Item.SubItems.Add(BenchmarkCategoryNames[LBenchmark.GetCategory]);
+      vItem.Checked := vBenchmark.RunByDefault;
+      vItem.Caption := vBenchmark.GetBenchmarkName;
+      vItem.SubItems.Add(BenchmarkCategoryNames[vBenchmark.GetCategory]);
     end;
   end;
 
@@ -432,7 +441,7 @@ procedure TBenchmarkFrm.ReadIniFile;
 var
   vIniFile: TIniFile;
 begin
-  vIniFile := TIniFile.Create(IncludeTrailingPathDelimiter(ExtractFileDir(Application.ExeName)) + 'MemoryManagerTest.ini');
+  vIniFile := TIniFile.Create(FApplicationIniFileName);
   try
 
     Left := vIniFile.ReadInteger('FormSettings', 'Left', Left);
@@ -564,7 +573,7 @@ procedure TBenchmarkFrm.WriteIniFile;
 var
   vIniFile: TIniFile;
 begin
-  vIniFile := TIniFile.Create(IncludeTrailingPathDelimiter(ExtractFileDir(Application.ExeName)) + 'MemoryManagerTest.ini');
+  vIniFile := TIniFile.Create(FApplicationIniFileName);
   try
 
     vIniFile.WriteInteger('FormSettings', 'Left', Left);

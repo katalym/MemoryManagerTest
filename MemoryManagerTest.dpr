@@ -26,8 +26,15 @@ uses
   FastMM4 in 'FastMM4/FastMM4.pas',
   FastMM4Messages in 'FastMM4/FastMM4Messages.pas',
 {$ENDIF}
+{$IFDEF MM_FASTMM4_FullDebug}
+  FastMM4 in 'FastMM4_FullDebug/FastMM4.pas',
+  FastMM4Messages in 'FastMM4_FullDebug/FastMM4Messages.pas',
+{$ENDIF}
 {$IFDEF MM_FASTMM5}
   FastMM5 in 'FastMM5/FastMM5.pas',
+{$ENDIF}
+{$IFDEF MM_FASTMM5_FullDebug}
+  FastMM5 in 'FastMM5_FullDebug/FastMM5.pas',
 {$ENDIF}
 {$IFDEF MM_BIGBRAIN}
   BigBrainUltra in 'BigBrain/BigBrainUltra.pas',

@@ -34,10 +34,6 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=2.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=2.0.0.0;Comments=;CFBundleName=</VerInfo_Keys>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_DcpOutput>$(platform)</DCC_DcpOutput>
-        <DCC_ExeOutput>$(platform)</DCC_ExeOutput>
-        <DCC_BplOutput>$(platform)</DCC_BplOutput>
-        <DCC_DcuOutput>$(platform)</DCC_DcuOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <DCC_Optimize>false</DCC_Optimize>
@@ -71,7 +67,9 @@
         <DCCReference Include="ScaleMM2\ScaleMM2.pas"/>
         <DCCReference Include="ScaleMM2\Optimize.Move.pas"/>
         <DCCReference Include="FastMM4\FastMM4.pas"/>
+        <DCCReference Include="FastMM4_FullDebug\FastMM4.pas"/>
         <DCCReference Include="FastMM5\FastMM5.pas"/>
+        <DCCReference Include="FastMM5_FullDebug\FastMM5.pas"/>
         <DCCReference Include="BigBrain\BigBrainUltra.pas"/>
         <DCCReference Include="AddressSpaceCreepBenchmark.pas"/>
         <DCCReference Include="AddressSpaceCreepBenchmarkLarge.pas"/>

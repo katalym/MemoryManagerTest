@@ -17,7 +17,6 @@
 *.~*
 *.exe
 *.csv
-*.dll
 __history
 __recovery
 *.ico
