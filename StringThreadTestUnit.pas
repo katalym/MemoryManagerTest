@@ -143,48 +143,58 @@ end;
 
 procedure TStringThreadTestAbstract.RunBenchmark;
 const
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  CIterations = 1000;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  CIterations = 1000;
+{$ELSE}
   CIterations = 5000;
+{$ENDIF}
+{$ENDIF}
 var
-  tc, ic, I, PrimeIndex: Integer;
-  Threads: TList;
-  T: TStringThreadEx;
-  Handles: PWOHandleArray;
+  vtc, vic, i, bPrimeIndex: Integer;
+  vThreads: TList;
+  vThread: TStringThreadEx;
+  vHandles: PWOHandleArray;
   wr, wrc: Cardinal;
 begin
    inherited;
    InitTest;
-   PrimeIndex := Low(VeryGoodPrimes);
-   New(Handles);
-   tc := NumThreads;
-   ic := (CIterations div tc)+1;
-   Threads := TList.Create;
-   for I := 1 to tc do // Create a loose new thread that does stringactions
+   bPrimeIndex := Low(VeryGoodPrimes);
+   New(vHandles);
+   vtc := NumThreads;
+   vic := (CIterations div vtc)+1;
+   vThreads := TList.Create;
+   for i := 1 to vtc do // Create a loose new thread that does stringactions
    begin
-     T := TStringThreadEx.Create(ic, 2000, 4096, False);
-     T.FPrime := VeryGoodPrimes[PrimeIndex];
-     Inc(PrimeIndex);
-     if PrimeIndex > High(VeryGoodPrimes) then
+     vThread := TStringThreadEx.Create(vic, 2000, 4096, False);
+     vThread.FPrime := VeryGoodPrimes[bPrimeIndex];
+     Inc(bPrimeIndex);
+     if bPrimeIndex > High(VeryGoodPrimes) then
      begin
-       PrimeIndex := Low(VeryGoodPrimes);
+       bPrimeIndex := Low(VeryGoodPrimes);
      end;
 
-     Threads.Add(T);
+     vThreads.Add(vThread);
    end;
 
-   for i := 0 to Threads.Count-1 do
+   for i := 0 to vThreads.Count-1 do
    begin
-     T := TStringThreadEx(Threads[i]);
-     Handles^[i] := T.Handle;
+     vThread := TStringThreadEx(vThreads[i]);
+     vHandles^[i] := vThread.Handle;
    end;
 
-   for i := 0 to Threads.Count-1 do
+   for i := 0 to vThreads.Count-1 do
    begin
-     T := TStringThreadEx(Threads[i]);
-     T.Suspended := False;
+     vThread := TStringThreadEx(vThreads[i]);
+     vThread.Suspended := False;
    end;
 
-   wr := WaitForMultipleObjects(Threads.Count, Handles, True, INFINITE);
-   wrc := WAIT_OBJECT_0+Threads.Count;
+   wr := WaitForMultipleObjects(vThreads.Count, vHandles, True, INFINITE);
+   wrc := WAIT_OBJECT_0+vThreads.Count;
 {$WARN COMPARISON_FALSE OFF}
    if (wr < WAIT_OBJECT_0) or (wr > wrc) then
    begin
@@ -194,28 +204,28 @@ begin
 
    {Update the peak address space usage}
    UpdateUsageStatistics;
-   Dispose(Handles);
+   Dispose(vHandles);
 
-   for i := 0 to Threads.Count-1 do
+   for i := 0 to vThreads.Count-1 do
    begin
-     T := TStringThreadEx(Threads[i]);
-     T.Terminate;
+     vThread := TStringThreadEx(vThreads[i]);
+     vThread.Terminate;
    end;
 
-   for i := 0 to Threads.Count-1 do
+   for i := 0 to vThreads.Count-1 do
    begin
-     T := TStringThreadEx(Threads[i]);
-     T.WaitFor;
+     vThread := TStringThreadEx(vThreads[i]);
+     vThread.WaitFor;
    end;
 
-   for i := 0 to Threads.Count-1 do
+   for i := 0 to vThreads.Count-1 do
    begin
-     T := TStringThreadEx(Threads[i]);
-     T.Free;
+     vThread := TStringThreadEx(vThreads[i]);
+     vThread.Free;
    end;
 
-   Threads.Clear;
-   FreeAndnil(Threads);
+   vThreads.Clear;
+   FreeAndnil(vThreads);
    // Done
    ExitTest;
 end;
@@ -239,73 +249,77 @@ end;
 
 procedure TManyThreadsTest.RunBenchmark;
 var
-  I: Integer;
-  E: THandle;
-  PrimeIdx: Integer;
-  ThreadList: TList;
+  i, vPrimeIdx: Integer;
+  vHandle: THandle;
+  vThreadList: TList;
 
   procedure AddThread(T: TStringThreadEx);
   begin
-    T.FPrime := VeryGoodPrimes[PrimeIdx];
-    T.FEventHandle := E;
-    Inc(PrimeIdx);
-    if PrimeIdx > High(VeryGoodPrimes) then
+    T.FPrime := VeryGoodPrimes[vPrimeIdx];
+    T.FEventHandle := vHandle;
+    Inc(vPrimeIdx);
+    if vPrimeIdx > High(VeryGoodPrimes) then
     begin
-      PrimeIdx := Low(VeryGoodPrimes);
+      vPrimeIdx := Low(VeryGoodPrimes);
     end;
-    ThreadList.Add(T);
+    vThreadList.Add(T);
   end;
 
 var
-  T: TStringThreadEx;
-  wr: Cardinal;
+  vThread: TStringThreadEx;
+  vResult: Cardinal;
 begin
    inherited;
    InitTest;
-   PrimeIdx := Low(VeryGoodPrimes);
-   ThreadList := TList.Create;
-   E := CreateEvent(nil, False, False, nil);
-   // Launch a lot of threads
-   for I := 1 to 30 do
-   begin
-     AddThread(TStringThreadEx.Create(1000, 10, 512, False));
-     AddThread(TStringThreadEx.Create(10, 2, 4096, False));
-     AddThread(TStringThreadEx.Create(10, 2, 1024*1024, False));
-   end;
-   // Launch a lot of threads keeping threadmax in account
-   for I := 1 to 30 do
-   begin
-     AddThread(TStringThreadEx.Create(100, 1, 512, False));
-     AddThread(TStringThreadEx.Create(100, 100, 512, False));
-     AddThread(TStringThreadEx.Create(100, 1, 512, False));
-   end;
-   for I := 0 to ThreadList.Count-1 do
-   begin
-     T := TStringThreadEx(ThreadList[i]);
-     T.Suspended := False;
-   end;
-   repeat
-     wr := WaitForSingleObject(E, INFINITE);
-     if wr = WAIT_OBJECT_0 then
+   vPrimeIdx := Low(VeryGoodPrimes);
+   vThreadList := TList.Create;
+   try
+     vHandle := CreateEvent(nil, False, False, nil);
+     // Launch a lot of threads
+     for i := 1 to 30 do
      begin
-       for I := ThreadList.Count-1 downto 0 do
-       begin
-         T := TStringThreadEx(ThreadList[i]);
-         if T.IsTerminated then
-         begin
-           T.WaitFor;
-           T.Free;
-           ThreadList[i] := nil;
-         end;
-       end;
-       ThreadList.Pack;
-     end else
-     begin
-       //raise Exception.Create('TManyThreadsTest.RunBenchmark -- failed');
+       AddThread(TStringThreadEx.Create(1000, 10, 512, False));
+       AddThread(TStringThreadEx.Create(10, 2, 4096, False));
+       AddThread(TStringThreadEx.Create(10, 2, 1024*1024, False));
      end;
-   until ThreadList.Count = 0;
-   CloseHandle(E);
-   {Update the peak address space usage}
+     // Launch a lot of threads keeping threadmax in account
+     for i := 1 to 30 do
+     begin
+       AddThread(TStringThreadEx.Create(100, 1, 512, False));
+       AddThread(TStringThreadEx.Create(100, 100, 512, False));
+       AddThread(TStringThreadEx.Create(100, 1, 512, False));
+     end;
+     for i := 0 to vThreadList.Count-1 do
+     begin
+       vThread := TStringThreadEx(vThreadList[i]);
+       vThread.Suspended := False;
+     end;
+     repeat
+       vResult := WaitForSingleObject(vHandle, INFINITE);
+       if vResult = WAIT_OBJECT_0 then
+       begin
+         for i := vThreadList.Count-1 downto 0 do
+         begin
+           vThread := TStringThreadEx(vThreadList[i]);
+           if vThread.IsTerminated then
+           begin
+             vThread.WaitFor;
+             vThread.Free;
+             vThreadList[i] := nil;
+           end;
+         end;
+         vThreadList.Pack;
+       end else
+       begin
+         //raise Exception.Create('TManyThreadsTest.RunBenchmark -- failed');
+       end;
+     until vThreadList.Count = 0;
+     CloseHandle(vHandle);
+
+   finally
+     FreeAndNil(vThreadList);
+   end;
+     {Update the peak address space usage}
    UpdateUsageStatistics;
    // Done
    ExitTest;

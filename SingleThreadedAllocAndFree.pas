@@ -47,36 +47,35 @@ type
   PPointers = ^TPointers;
   TPointers = array[0..PointerCount - 1] of Pointer;
 var
-  i, j: Integer;
-  kcalc: NativeUInt;
-  kloop: Cardinal;
-  CurValue: Int64;
-  LPointers: PPointers;
-  LMax, LSize, LSum: Integer;
+  i, j, vMax, vSize, vSum: Integer;
+  vCalc: NativeUInt;
+  vLoop: Cardinal;
+  vValue: Int64;
+  vPointers: PPointers;
 begin
   inherited;
   {We want predictable results}
-  CurValue := Prime;
-  New(LPointers);
+  vValue := Prime;
+  New(vPointers);
   {Allocate the initial pointers}
   for i := 0 to PointerCount - 1 do
   begin
     {Rough breakdown: 50% of pointers are <=64 bytes, 95% < 1K, 99% < 4K, rest < 256K}
     if i and 1 <> 0 then
-      LMax := 64
+      vMax := 64
     else
       if i and 15 <> 0 then
-        LMax := 1024
+        vMax := 1024
       else
         if i and 255 <> 0 then
-          LMax := 4 * 1024
+          vMax := 4 * 1024
         else
-          LMax := 256 * 1024;
+          vMax := 256 * 1024;
     {Get the size, minimum 1}
-    LSize := (CurValue mod LMax) + 1;
-    Inc(CurValue, Prime);
+    vSize := (vValue mod vMax) + 1;
+    Inc(vValue, Prime);
     {Get the pointer}
-    GetMem(LPointers^[i], LSize);
+    GetMem(vPointers^[i], vSize);
   end;
   {Free and allocate in a loop}
   for j := 1 to RepeatCount do
@@ -86,50 +85,51 @@ begin
     for i := 0 to PointerCount - 1 do
     begin
       {Free the pointer}
-      FreeMem(LPointers^[i]);
-      LPointers^[i] := nil;
+      FreeMem(vPointers^[i]);
+      vPointers^[i] := nil;
       {Rough breakdown: 50% of pointers are <=64 bytes, 95% < 1K, 99% < 4K, rest < 256K}
       if i and 1 <> 0 then
-        LMax := 64
+        vMax := 64
       else
         if i and 15 <> 0 then
-          LMax := 1024
+          vMax := 1024
         else
           if i and 255 <> 0 then
-            LMax := 4 * 1024
+            vMax := 4 * 1024
           else
-            LMax := 256 * 1024;
+            vMax := 256 * 1024;
       {Get the size, minimum 1}
-      LSize := (CurValue mod LMax) + 1;
-      Inc(CurValue, Prime);
+      vSize := (vValue mod vMax) + 1;
+      Inc(vValue, Prime);
       {Get the pointer}
-      GetMem(LPointers^[i], LSize);
+      GetMem(vPointers^[i], vSize);
       {Write the memory}
-      for kloop := 0 to (LSize - 1) div 32 do
+      for vLoop := 0 to (vSize - 1) div 32 do
       begin
-        kcalc := kloop;
-        PByte(NativeUInt(LPointers^[i]) + kcalc * 32)^ := byte(i);
+        vCalc := vLoop;
+        PByte(NativeUInt(vPointers^[i]) + vCalc * 32)^ := byte(i);
       end;
       {Read the memory}
-      LSum := 0;
-      if LSize > 15 then
+      vSum := 0;
+      if vSize > 15 then
       begin
-        for kloop := 0 to (LSize - 16) div 32 do
+        for vLoop := 0 to (vSize - 16) div 32 do
         begin
-          kcalc := kloop;
-          Inc(LSum, PShortInt(NativeUInt(LPointers^[i]) + kcalc * 32 + 15)^);
+          vCalc := vLoop;
+          Inc(vSum, PShortInt(NativeUInt(vPointers^[i]) + vCalc * 32 + 15)^);
         end;
       end;
       {"Use" the sum to suppress the compiler warning}
-      if LSum > 0 then;
+      if vSum > 0 then;
     end;
   end;
   {Free all the objects}
   for i := 0 to PointerCount - 1 do
   begin
-    FreeMem(LPointers^[i]);
-    LPointers^[i] := nil;
+    FreeMem(vPointers^[i]);
+    vPointers^[i] := nil;
   end;
+  Dispose(vPointers);
 end;
 
 end.

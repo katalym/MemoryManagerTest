@@ -71,7 +71,7 @@ type
     procedure InitResultsDisplay;
     procedure LoadResultsToDisplay;
     procedure ReadIniFile;
-    procedure RunBenchmark(ABenchmarkClass: TFastcodeMMBenchmarkClass);
+    procedure RunBenchmarks(ABenchmarkClass: TFastcodeMMBenchmarkClass);
     procedure SaveResults;
     procedure WriteIniFile;
   public
@@ -211,7 +211,7 @@ begin
       Application.ProcessMessages;
       Enabled := True;
       {Run the benchmark}
-      RunBenchmark(Benchmarks[i]);
+      RunBenchmarks(Benchmarks[i]);
       {Wait one second}
       Sleep(1000);
     end;
@@ -235,7 +235,7 @@ begin
   Application.ProcessMessages;
   Enabled := True;
 
-  RunBenchmark(Benchmarks[NativeInt(lvBenchmarkList.Selected.Data)]);
+  RunBenchmarks(Benchmarks[NativeInt(lvBenchmarkList.Selected.Data)]);
   if FRanBenchmarkCount > 0 then
     SaveResults;
 
@@ -454,27 +454,7 @@ begin
   end;
 end;
 
-procedure TBenchmarkFrm.RunBenchmark(ABenchmarkClass: TFastcodeMMBenchmarkClass);
-
-//  function _GetProcessMemory: longint;
-//  var
-//    pmc: PPROCESS_MEMORY_COUNTERS;
-//    i: Integer;
-//  begin
-//    // Get the used memory for the current process
-//    i := SizeOf(TProcessMemoryCounters);
-//    GetMem(pmc, i);
-//    try
-//
-//      pmc^.cb := i;
-//      if GetProcessMemoryInfo(GetCurrentProcess(), pmc, i) then
-//        Result:= Longint(pmc^.WorkingSetSize);
-//
-//    finally
-//      FreeMem(pmc);
-//    end;
-//  end;
-
+procedure TBenchmarkFrm.RunBenchmarks(ABenchmarkClass: TFastcodeMMBenchmarkClass);
 var
   LBenchmark: TFastcodeMMBenchmark;
   vStartCPUUsage, vCurrentCPUUsage: Int64;

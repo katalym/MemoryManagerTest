@@ -1,10 +1,16 @@
-Win64\MemoryManagerTest_DEFAULT_64.exe autorun
-Win64\MemoryManagerTest_FASTMM4_64.exe autorun
-Win64\MemoryManagerTest_FASTMM5_64.exe autorun
-Win64\MemoryManagerTest_SCALEMM2_64.exe autorun
-rem Win64\MemoryManagerTest_BIGBRAIN_64.exe autorun
-Win32\MemoryManagerTest_DEFAULT_32.exe autorun
-Win32\MemoryManagerTest_FASTMM4_32.exe autorun
-Win32\MemoryManagerTest_FASTMM5_32.exe autorun
-Win32\MemoryManagerTest_SCALEMM2_32.exe autorun
-rem Win32\MemoryManagerTest_BIGBRAIN_32.exe autorun
+rem 64 bit
+rem BigBrain\Win64\MemoryManagerTest_BIGBRAIN_64.exe autorun
+Default\Win64\MemoryManagerTest_DEFAULT_64.exe autorun
+FastMM4\Win64\MemoryManagerTest_FASTMM4_64.exe autorun
+FastMM4_FullDebug\Win64\MemoryManagerTest_FASTMM4_FullDebug_64.exe autorun
+FastMM5\Win64\MemoryManagerTest_FASTMM5_64.exe autorun
+FastMM5_FullDebug\Win64\MemoryManagerTest_FASTMM5_FullDebug_64.exe autorun
+ScaleMM2\Win64\MemoryManagerTest_SCALEMM2_64.exe autorun
+rem 32 bit
+rem BigBrain\Win32\MemoryManagerTest_BIGBRAIN_32.exe autorun
+Default\Win32\MemoryManagerTest_DEFAULT_32.exe autorun
+FastMM4\Win32\MemoryManagerTest_FASTMM4_32.exe autorun
+FastMM4_FullDebug\Win32\MemoryManagerTest_FASTMM4_FullDebug_32.exe autorun
+FastMM5\Win32\MemoryManagerTest_FASTMM5_32.exe autorun
+FastMM5_FullDebug\Win32\MemoryManagerTest_FASTMM5_FullDebug_32.exe autorun
+ScaleMM2\Win32\MemoryManagerTest_SCALEMM2_32.exe autorun
