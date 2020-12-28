@@ -1,15 +1,16 @@
-{A benchmark demonstrating that never downsizing memory blocks can lead to
- problems.}
+{A benchmark demonstrating that never downsizing memory blocks can lead to problems.}
 
 unit DownsizeTestUnit;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses BenchmarkClassUnit;
 
 type
 
-  TDownsizeTest = class(TFastcodeMMBenchmark)
+  TDownsizeTest = class(TMMBenchmark)
   protected
     FStrings: array of string;
   public

@@ -8,7 +8,7 @@ uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
-  TSingleThreadedTinyRelocBenchmark = class(TFastcodeMMBenchmark)
+  TSingleThreadedTinyRelocBenchmark = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;

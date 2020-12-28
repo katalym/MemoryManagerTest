@@ -71,7 +71,7 @@ type
     procedure InitResultsDisplay;
     procedure LoadResultsToDisplay;
     procedure ReadIniFile;
-    procedure RunBenchmarks(ABenchmarkClass: TFastcodeMMBenchmarkClass);
+    procedure RunBenchmarks(ABenchmarkClass: TMMBenchmarkClass);
     procedure SaveResults;
     procedure WriteIniFile;
   public
@@ -284,7 +284,7 @@ var
   i: integer;
   vItem: TListItem;
   vCustomExeName: string;
-  vBenchmark: TFastcodeMMBenchmarkClass;
+  vBenchmark: TMMBenchmarkClass;
 begin
   Caption := Format('%s %s %s for "%s" memory manager', [Caption, {$IFDEF WIN32}'32-bit'{$ELSE}'64-bit'{$ENDIF}, GetFormattedVersion, MemoryManager_Name]);
   Height := 900;
@@ -423,7 +423,7 @@ end;
 
 procedure TBenchmarkFrm.lvBenchmarkListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 var
-  LBenchmarkClass: TFastcodeMMBenchmarkClass;
+  LBenchmarkClass: TMMBenchmarkClass;
 
 begin
   //Set the benchmark description
@@ -454,9 +454,9 @@ begin
   end;
 end;
 
-procedure TBenchmarkFrm.RunBenchmarks(ABenchmarkClass: TFastcodeMMBenchmarkClass);
+procedure TBenchmarkFrm.RunBenchmarks(ABenchmarkClass: TMMBenchmarkClass);
 var
-  LBenchmark: TFastcodeMMBenchmark;
+  LBenchmark: TMMBenchmark;
   vStartCPUUsage, vCurrentCPUUsage: Int64;
   vStartTicks, vCurrentTicks: Cardinal;
   s: string;

@@ -5,13 +5,15 @@
 
 unit RawPerformanceSingleThread;
 
+{$I MemoryManagerTest.inc}
+
 interface
 
 uses
   Windows, BenchmarkClassUnit, Classes, Math;
 
 type
-  TRawPerformanceSingleThread = class(TFastcodeMMBenchmark)
+  TRawPerformanceSingleThread = class(TMMBenchmark)
   private
     procedure Execute;
   public
@@ -26,45 +28,57 @@ implementation
 uses
   SysUtils;
 
-const
-  IterationCount = 3;
-
 procedure TRawPerformanceSingleThread.Execute;
 const
-  POINTERS = 16361; // take prime just below 16384
   MAXCHUNK = 1024;  // take power of 2
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  IterationCount = 1;
+  CHUNCKS = 1024;
+  POINTERS = 151;  // take prime just below 2048  (scaled down 8x from single-thread)
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  IterationCount = 1;
+  CHUNCKS = 1024;
+  POINTERS = 151;  // take prime just below 2048  (scaled down 8x from single-thread)
+{$ELSE}
+  IterationCount = 3;
+  CHUNCKS = 8*1024*1024;
+  POINTERS = 16361;  // take prime just below 2048  (scaled down 8x from single-thread)
+{$ENDIF}
+{$ENDIF}
 var
-  i, n, k, Size, LIndex: Cardinal;
-  s: array [0..POINTERS - 1] of string;
+  i, n, k, vSize, vIndex: Cardinal;
+  vStrings: array [0..POINTERS - 1] of string;
 begin
   for k := 1 to IterationCount do
   begin
-    n := Low(s);
-    for i := 1 to 8 * 1024 * 1024 do
+    n := Low(vStrings);
+    for i := 1 to CHUNCKS do
     begin
       if i and $FF < $F0 then         // 240 times out of 256 ==> chunk < 1 kB
-        Size := (4 * i) and (MAXCHUNK-1) + 1
+        vSize := (4 * i) and (MAXCHUNK-1) + 1
       else if i and $FF <> $FF then   //  15 times out of 256 ==> chunk < 32 kB
-        Size := 2 * n + 1
+        vSize := 2 * n + 1
       else                            //   1 time  out of 256 ==> chunk < 256 kB
-        Size := 16 * n + 1;
-      s[n] := '';
-      SetLength(s[n], Size);
+        vSize := 16 * n + 1;
+      vStrings[n] := '';
+      SetLength(vStrings[n], vSize);
       //start and end of string are already assigned, access every 4K page in the middle
-      LIndex := 1;
-      while LIndex <= Size do
+      vIndex := 1;
+      while vIndex <= vSize do
       begin
-        s[n][LIndex] := #1;
-        Inc(LIndex, 4096);
+        vStrings[n][vIndex] := #1;
+        Inc(vIndex, 4096);
       end;
       Inc(n);
-      if n > High(s) then
-        n := Low(s);
-      if i and $FFFF = 0 then
-        UpdateUsageStatistics;
+      if n > High(vStrings) then
+        n := Low(vStrings);
     end;
-    for n := Low(s) to High(s) do
-      s[n] := '';
+    UpdateUsageStatistics;
+    for n := Low(vStrings) to High(vStrings) do
+      vStrings[n] := '';
   end;
   UpdateUsageStatistics;
 end;

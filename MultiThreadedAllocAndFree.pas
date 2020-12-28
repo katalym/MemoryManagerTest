@@ -9,7 +9,7 @@ uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
-  TMultiThreadAllocateAndFreeBenchmarkAbstract = class(TFastcodeMMBenchmark)
+  TMultiThreadAllocateAndFreeBenchmarkAbstract = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;

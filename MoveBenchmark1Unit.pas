@@ -6,7 +6,7 @@ uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
-  TMoveThreads1 = class(TFastcodeMMBenchmark)
+  TMoveThreads1 = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
@@ -35,7 +35,7 @@ end;
 type
 
   TMoveThread1 = class(TThread)
-   FBenchmark: TFastcodeMMBenchmark;
+   FBenchmark: TMMBenchmark;
    procedure Execute; override;
   end;
 

@@ -7,7 +7,7 @@ uses
 
 type
 
-  TStandardSortExtendedArrayThreads = class(TFastcodeMMBenchmark)
+  TStandardSortExtendedArrayThreads = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
@@ -23,7 +23,7 @@ uses
 type
 
   TStandardSortExtendedArrayThread = class(TThread)
-    FBenchmark: TFastcodeMMBenchmark;
+    FBenchmark: TMMBenchmark;
     Prime: Integer;
     procedure Execute; override;
   end;

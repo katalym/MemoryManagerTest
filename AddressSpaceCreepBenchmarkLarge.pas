@@ -13,7 +13,7 @@ const
 
 type
 
-  TAddressSpaceCreepBenchLarge = class(TFastcodeMMBenchmark)
+  TAddressSpaceCreepBenchLarge = class(TMMBenchmark)
   protected
     FPointers: array[0..NumPointers - 1] of PAnsiChar;
   public

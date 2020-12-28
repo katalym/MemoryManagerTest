@@ -6,7 +6,7 @@ uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
-  TSingleFPThreads = class(TFastcodeMMBenchmark)
+  TSingleFPThreads = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
@@ -24,7 +24,7 @@ const
 type
 
   TSingleFPThread = class(TThread)
-     FBenchmark: TFastcodeMMBenchmark;
+     FBenchmark: TMMBenchmark;
      procedure Execute; override;
   end;
 

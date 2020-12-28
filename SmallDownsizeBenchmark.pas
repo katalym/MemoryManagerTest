@@ -7,7 +7,7 @@ uses
 
 type
 
-  TSmallDownsizeBenchAbstract = class(TFastcodeMMBenchmark)
+  TSmallDownsizeBenchAbstract = class(TMMBenchmark)
   protected
     FPointers: array of PAnsiChar;
   public

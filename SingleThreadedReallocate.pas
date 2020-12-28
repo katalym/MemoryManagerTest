@@ -10,7 +10,7 @@ uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
-  TSingleThreadReallocateVariousBlocksBenchmark = class(TFastcodeMMBenchmark)
+  TSingleThreadReallocateVariousBlocksBenchmark = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;

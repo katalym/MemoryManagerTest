@@ -6,7 +6,7 @@ uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
-  TMemFreeThreads1 = class(TFastcodeMMBenchmark)
+  TMemFreeThreads1 = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
@@ -20,7 +20,7 @@ uses SysUtils;
 
 type
   TMemFreeThread1 = class(TThread)
-     FBenchmark: TFastcodeMMBenchmark;
+     FBenchmark: TMMBenchmark;
      procedure Execute; override;
   end;
 

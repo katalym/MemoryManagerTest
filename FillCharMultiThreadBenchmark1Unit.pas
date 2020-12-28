@@ -11,7 +11,7 @@ uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
-  TFillCharThreads = class(TFastcodeMMBenchmark)
+  TFillCharThreads = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
@@ -26,7 +26,7 @@ uses SysUtils;
 type
 
   TFillCharThread = class(TThread)
-     FBenchmark: TFastcodeMMBenchmark;
+     FBenchmark: TMMBenchmark;
      procedure Execute; override;
   end;
 

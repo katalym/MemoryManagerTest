@@ -20,7 +20,7 @@ type
   end;
 
   {The single-thread replay benchmark ancestor}
-  TReplayBenchmark = class(TFastcodeMMBenchmark)
+  TReplayBenchmark = class(TMMBenchmark)
   protected
     {The operations}
     FOperations: string;
@@ -134,12 +134,12 @@ type
   {The replay thread used in multi-threaded replay benchmarks}
   TReplayThread = class(TThread)
   private
-    FBenchmark: TFastcodeMMBenchmark;
+    FBenchmark: TMMBenchmark;
     FOperations: string;
     FRepeatCount: integer;
     procedure ExecuteReplay;
   public
-    constructor Create(ASuspended: Boolean; ABenchmark: TFastcodeMMBenchmark; RepeatCount: integer);
+    constructor Create(ASuspended: Boolean; ABenchmark: TMMBenchmark; RepeatCount: integer);
     procedure Execute; override;
     property Operations: string read FOperations write FOperations;
   end;
@@ -326,7 +326,7 @@ begin
       FreeMem(FPointers[LInd]);
 end;
 
-constructor TReplayThread.Create(ASuspended: Boolean; ABenchmark: TFastcodeMMBenchmark; RepeatCount: integer);
+constructor TReplayThread.Create(ASuspended: Boolean; ABenchmark: TMMBenchmark; RepeatCount: integer);
 begin
   inherited Create(ASuspended);
   FreeOnTerminate := False;

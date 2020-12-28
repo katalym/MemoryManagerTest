@@ -7,7 +7,7 @@ uses
 
 type
 
-  TMemFreeThreads2 = class(TFastcodeMMBenchmark)
+  TMemFreeThreads2 = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
@@ -22,7 +22,7 @@ uses SysUtils;
 
 type
   TMemFreeThread2 = class(TThread)
-     FBenchmark: TFastcodeMMBenchmark;
+     FBenchmark: TMMBenchmark;
      procedure Execute; override;
   end;
 

@@ -9,11 +9,13 @@ unit StringThreadTestUnit;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses BenchmarkClassUnit;
 
 type
 
-   TStringThreadTestAbstract = class(TFastcodeMMBenchmark)
+   TStringThreadTestAbstract = class(TMMBenchmark)
    public
      class function GetBenchmarkDescription: string; override;
      class function GetBenchmarkName: string; override;
@@ -51,7 +53,7 @@ type
      class function NumThreads: Integer; override;
    end;
 
-   TManyThreadsTest = class(TFastcodeMMBenchmark)
+   TManyThreadsTest = class(TMMBenchmark)
    public
      class function GetBenchmarkDescription: string; override;
      class function GetBenchmarkName: string; override;

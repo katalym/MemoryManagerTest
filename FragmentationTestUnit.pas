@@ -10,7 +10,7 @@ uses
 
 type
 
-  TFragmentationTest = class(TFastcodeMMBenchmark)
+  TFragmentationTest = class(TMMBenchmark)
   protected
     FStrings: array of string;
   public

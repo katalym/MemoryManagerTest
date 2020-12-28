@@ -2,6 +2,8 @@ unit BlockSizeSpreadBenchmark;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses
   BenchmarkClassUnit, Math;
 
@@ -13,7 +15,7 @@ const
 
 type
 
-  TBlockSizeSpreadBench = class(TFastcodeMMBenchmark)
+  TBlockSizeSpreadBench = class(TMMBenchmark)
   protected
     FPointers: array[0..NumPointers - 1] of PAnsiChar;
   public

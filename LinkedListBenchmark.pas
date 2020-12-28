@@ -10,7 +10,7 @@ const
 
 type
 
-  TLinkedListBench = class(TFastcodeMMBenchmark)
+  TLinkedListBench = class(TMMBenchmark)
   public
     constructor CreateBenchmark; override;
     destructor Destroy; override;

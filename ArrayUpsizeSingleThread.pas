@@ -6,7 +6,7 @@ uses
   BenchmarkClassUnit, Classes;
 
 type
-  TArrayUpsizeSingleThread = class(TFastcodeMMBenchmark)
+  TArrayUpsizeSingleThread = class(TMMBenchmark)
   private
     procedure Execute;
   public

@@ -14,7 +14,7 @@ type
   TReallocMemBenchmarkPointerArray          =  packed array[0..MaxInt div SizeOf(Pointer)-1] of Pointer;
   TReallocMemBenchmarkBlockSizesArray       =  packed array[0..MaxInt div SizeOf(Pointer)-1] of Integer;
 
-  TReallocBenchAbstract = class(TFastcodeMMBenchmark)
+  TReallocBenchAbstract = class(TMMBenchmark)
   protected
     BlockSizes: PReallocMemBenchmarkBlockSizesArray;
     Pointers: PReallocMemBenchmarkPointerArray;

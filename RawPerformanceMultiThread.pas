@@ -5,14 +5,15 @@
 
 unit RawPerformanceMultiThread;
 
+{$I MemoryManagerTest.inc}
+
 interface
 
 uses
   Windows, BenchmarkClassUnit, Classes, Math;
 
 type
-  TRawPerformanceMultiThreadAbstract = class(TFastcodeMMBenchmark)
-  private
+  TRawPerformanceMultiThreadAbstract = class(TMMBenchmark)
   public
     procedure RunBenchmark; override;
     class function GetBenchmarkName: string; override;
@@ -58,49 +59,62 @@ uses
 type
   TRawPerformanceThread = class(TThread)
   public
-    ThreadCount: Integer;
-    FBenchmark: TFastcodeMMBenchmark;
+    FThreadCount: Integer;
+    FBenchmark: TMMBenchmark;
     procedure Execute; override;
   end;
 
 procedure TRawPerformanceThread.Execute;
 const
-  POINTERS = 2039;  // take prime just below 2048  (scaled down 8x from single-thread)
   MAXCHUNK = 1024;  // take power of 2
-  REPEATCOUNT = 25;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  REPEATS = 3;
+  CHUNCKS = 1024;
+  POINTERS = 151;  // take prime just below 2048  (scaled down 8x from single-thread)
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  REPEATS = 3;
+  CHUNCKS = 1024;
+  POINTERS = 151;  // take prime just below 2048  (scaled down 8x from single-thread)
+{$ELSE}
+  REPEATS = 25;
+  CHUNCKS = 1024*1024;
+  POINTERS = 2039;  // take prime just below 2048  (scaled down 8x from single-thread)
+{$ENDIF}
+{$ENDIF}
 var
-  ToJ, i, j, n, Size, LIndex: Cardinal;
-  s: array [0..POINTERS - 1] of string;
+  vToJ, i, j, n, vSize, vIndex: Cardinal;
+  vStrings: array [0..POINTERS - 1] of string;
 begin
-  ToJ := (REPEATCOUNT div ThreadCount)+1;
-  for j := 1 to ToJ do
+  vToJ := (REPEATS div FThreadCount) + 1;
+  for j := 1 to vToJ do
   begin
-    n := Low(s);
-    for i := 1 to 1 * 1024 * 1024 do begin
+    n := Low(vStrings);
+    for i := 1 to CHUNCKS do begin
       if i and $FF < $F0 then         // 240 times out of 256 ==> chunk < 1 kB
-        Size := (4 * i) and (MAXCHUNK-1) + 1
+        vSize := (4 * i) and (MAXCHUNK - 1) + 1
       else if i and $FF <> $FF then   //  15 times out of 256 ==> chunk < 32 kB
-        Size := 16 * n + 1
+        vSize := 16 * n + 1
       else                            //   1 time  out of 256 ==> chunk < 256 kB
-        Size := 128 * n + 1;
-      s[n] := '';
-      SetLength(s[n], Size);
+        vSize := 128 * n + 1;
+      vStrings[n] := '';
+      SetLength(vStrings[n], vSize);
       //start and end of string are already assigned, access every 4K page in the middle
-      LIndex := 1;
-      while LIndex <= Size do
+      vIndex := 1;
+      while vIndex <= vSize do
       begin
-        s[n][LIndex] := #1;
-        Inc(LIndex, 4096);
+        vStrings[n][vIndex] := #1;
+        Inc(vIndex, 4096);
       end;
       Inc(n);
-      if n > High(s) then
-        n := Low(s);
-      if i and $FFFF = 0 then
-        FBenchmark.UpdateUsageStatistics;
+      if n > High(vStrings) then
+        n := Low(vStrings);
     end;
     FBenchmark.UpdateUsageStatistics;
-    for n := Low(s) to High(s) do
-      s[n] := '';
+    for n := Low(vStrings) to High(vStrings) do
+      vStrings[n] := '';
   end;
 end;
 
@@ -128,36 +142,36 @@ end;
 
 procedure TRawPerformanceMultiThreadAbstract.RunBenchmark;
 var
-  THREADCOUNT: Integer;
-  Threads: array of TRawPerformanceThread;
+  vThreadsCount: Integer;
+  vThreads: array of TRawPerformanceThread;
   i: integer;
 begin
   inherited;
-  THREADCOUNT := NumThreads;
-  SetLength(Threads, THREADCOUNT);
-  for i := 0 to THREADCOUNT - 1 do
+  vThreadsCount := NumThreads;
+  SetLength(vThreads, vThreadsCount);
+  for i := 0 to vThreadsCount - 1 do
   begin
-    Threads[i] := TRawPerformanceThread.Create(True);
-    Threads[i].FreeOnTerminate := False;
-    Threads[i].FBenchmark := Self;
-    Threads[i].ThreadCount := THREADCOUNT;
-    Threads[i].Priority := tpLower;
+    vThreads[i] := TRawPerformanceThread.Create(True);
+    vThreads[i].FreeOnTerminate := False;
+    vThreads[i].FBenchmark := Self;
+    vThreads[i].FThreadCount := vThreadsCount;
+    vThreads[i].Priority := tpLower;
   end;
-  for i := 0 to THREADCOUNT - 1 do
+  for i := 0 to vThreadsCount - 1 do
   begin
-    Threads[i].Suspended := False;
+    vThreads[i].Suspended := False;
   end;
-  for i := 0 to THREADCOUNT - 1 do
+  for i := 0 to vThreadsCount - 1 do
   begin
-    Threads[i].WaitFor;
+    vThreads[i].WaitFor;
   end;
-  for i := 0 to THREADCOUNT - 1 do
+  for i := 0 to vThreadsCount - 1 do
   begin
-    Threads[i].Free;
-    Threads[i] := nil;
+    vThreads[i].Free;
+    vThreads[i] := nil;
   end;
-  SetLength(Threads, 0);
-  Finalize(Threads);
+  SetLength(vThreads, 0);
+  Finalize(vThreads);
 end;
 
 class function TRawPerformanceMultiThread8.NumThreads: Integer;

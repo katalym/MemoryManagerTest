@@ -17,7 +17,7 @@ uses
 
 type
 
-  TNexusBenchmark = class(TFastcodeMMBenchmark)
+  TNexusBenchmark = class(TMMBenchmark)
   protected
     FSemaphore: THandle;
     FThreads: TList;

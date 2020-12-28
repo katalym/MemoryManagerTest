@@ -8,7 +8,7 @@ uses Windows, SysUtils, BenchmarkClassUnit, Classes, Math;
 
 type
 
-  TSingleThreadAllocMemBenchmark = class(TFastcodeMMBenchmark)
+  TSingleThreadAllocMemBenchmark = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;

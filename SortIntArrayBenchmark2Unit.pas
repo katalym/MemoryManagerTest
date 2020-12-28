@@ -6,7 +6,7 @@ uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
-  TQuickSortIntArrayThreads = class(TFastcodeMMBenchmark)
+  TQuickSortIntArrayThreads = class(TMMBenchmark)
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
@@ -21,7 +21,7 @@ uses SysUtils;
 type
 
   TSortIntArrayThread = class(TThread)
-    FBenchmark: TFastcodeMMBenchmark;
+    FBenchmark: TMMBenchmark;
     FPrime: Integer;
     procedure Execute; override;
   end;

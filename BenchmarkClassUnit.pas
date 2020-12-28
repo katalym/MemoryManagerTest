@@ -2,7 +2,10 @@ unit BenchmarkClassUnit;
 
 interface
 
-uses Windows, System.Generics.Collections;
+{$I MemoryManagerTest.inc}
+
+uses
+  Windows, System.Generics.Collections;
 
 type
 
@@ -14,12 +17,12 @@ type
   TBenchmarkCategorySet = set of TBenchmarkCategory;
 
 const
-  AllBenchmarkCategories: TBenchmarkCategorySet = [low(TBenchmarkCategory)..high(TBenchmarkCategory)];
+  AllCategories: TBenchmarkCategorySet = [Low(TBenchmarkCategory)..High(TBenchmarkCategory)];
 
 type
 
   {The benchmark class}
-  TFastcodeMMBenchmark = class(TObject)
+  TMMBenchmark = class(TObject)
   protected
     {Indicates whether the benchmark can be run - or if a problem was
      discovered, possibly during create}
@@ -54,7 +57,7 @@ type
      discovered, possibly during create}
     property CanRunBenchmark: Boolean read FCanRunBenchmark;
   end;
-  TFastcodeMMBenchmarkClass = class of TFastcodeMMBenchmark;
+  TMMBenchmarkClass = class of TMMBenchmark;
 
 const
   {Benchmark category names}
@@ -68,7 +71,7 @@ const
 
 var
   {All the benchmarks}
-  Benchmarks: TList<TFastcodeMMBenchmarkClass>;
+  Benchmarks: TList<TMMBenchmarkClass>;
 
 {Get the list of benchmarks}
 procedure DefineBenchmarks;
@@ -94,29 +97,29 @@ uses
   SortIntArrayBenchmark2Unit, SortExtendedArrayBenchmark2Unit,
   SingleThreadedAllocMem, SingleThreadedTinyReloc, System.Generics.Defaults, System.SysUtils;
 
-procedure TFastcodeMMBenchmark.RunBenchmark;
+procedure TMMBenchmark.RunBenchmark;
 begin
   {Reset the peak usage statistic}
   ResetUsageStatistics;
 end;
 
-class function TFastcodeMMBenchmark.GetBenchmarkName: string;
+class function TMMBenchmark.GetBenchmarkName: string;
 begin
   Result := '(Unnamed)';
 end;
 
-constructor TFastcodeMMBenchmark.CreateBenchmark;
+constructor TMMBenchmark.CreateBenchmark;
 begin
   inherited;
   FCanRunBenchmark := True;
 end;
 
-procedure TFastcodeMMBenchmark.ResetUsageStatistics;
+procedure TMMBenchmark.ResetUsageStatistics;
 begin
   FPeakAddressSpaceUsage := 0;
 end;
 
-procedure TFastcodeMMBenchmark.UpdateUsageStatistics;
+procedure TMMBenchmark.UpdateUsageStatistics;
 var
   LCurrentUsage, LBenchmarkOverhead: NativeUInt;
 begin
@@ -131,28 +134,28 @@ begin
     FPeakAddressSpaceUsage := LCurrentUsage;
 end;
 
-class function TFastcodeMMBenchmark.GetBenchmarkDescription: string;
+class function TMMBenchmark.GetBenchmarkDescription: string;
 begin
   Result := '';
 end;
 
-class function TFastcodeMMBenchmark.RunByDefault: boolean;
+class function TMMBenchmark.RunByDefault: boolean;
 begin
   Result := True;
 end;
 
-class function TFastcodeMMBenchmark.IsThreadedSpecial: Boolean;
+class function TMMBenchmark.IsThreadedSpecial: Boolean;
 begin
   Result := False;
 end;
 
-function TFastcodeMMBenchmark.GetBenchmarkOverhead: NativeUInt;
+function TMMBenchmark.GetBenchmarkOverhead: NativeUInt;
 begin
   {Return the address space usage on startup}
   Result := InitialAddressSpaceUsed;
 end;
 
-procedure AddBenchMark(ABenchmarkClass: TFastcodeMMBenchmarkClass);
+procedure AddBenchMark(ABenchmarkClass: TMMBenchmarkClass);
 begin
   if not Benchmarks.Contains(ABenchmarkClass) then
     Benchmarks.Add(ABenchmarkClass);
@@ -251,22 +254,22 @@ begin
   // now sort them by name
 
   Benchmarks.Sort(
-    TComparer<TFastcodeMMBenchmarkClass>.Construct(
-    function(const A, B: TFastcodeMMBenchmarkClass): Integer
+    TComparer<TMMBenchmarkClass>.Construct(
+    function(const A, B: TMMBenchmarkClass): Integer
     begin
       Result := System.SysUtils.CompareText(A.GetBenchmarkName, B.GetBenchmarkName);
     end));
 
 end;
 
-class function TFastcodeMMBenchmark.GetCategory: TBenchmarkCategory;
+class function TMMBenchmark.GetCategory: TBenchmarkCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
 initialization
 
-  Benchmarks := TList<TFastcodeMMBenchmarkClass>.Create;
+  Benchmarks := TList<TMMBenchmarkClass>.Create;
   {Get the list of benchmarks}
   DefineBenchmarks;
 
