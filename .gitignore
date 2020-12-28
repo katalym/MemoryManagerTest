@@ -16,7 +16,9 @@
 *.vlb
 *.~*
 *.exe
+*.rsm
 *.csv
+*.ini
 __history
 __recovery
 *.ico
