@@ -21,9 +21,9 @@ uses
   smmSmallMemory in 'ScaleMM2/smmSmallMemory.pas',
   smmStatistics in 'ScaleMM2/smmStatistics.pas',
   smmTypes in 'ScaleMM2/smmTypes.pas',
-{$IFDEF CPUX86}
-  Optimize.Move in 'ScaleMM2/Optimize.Move.pas',
-{$ENDIF}
+  {$IFDEF CPUX86}
+    Optimize.Move in 'ScaleMM2/Optimize.Move.pas',
+  {$ENDIF}
 {$ENDIF}
 {$IFDEF MM_FASTMM4}
   FastMM4 in 'FastMM4/FastMM4.pas',
@@ -98,7 +98,6 @@ uses
   BenchmarkForm in 'BenchmarkForm.pas' {BenchmarkFrm};
 
 {$IFDEF WIN32}
-
 const
   IMAGE_FILE_LARGE_ADDRESS_AWARE = $0020;
 {$SETPEFLAGS IMAGE_FILE_LARGE_ADDRESS_AWARE}
