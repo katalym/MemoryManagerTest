@@ -13,7 +13,7 @@ const
 const
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   IterationsCount = 5;
   NumPointers = 30000;
 {$ELSE}

@@ -23,7 +23,7 @@ uses
   SysUtils;
 
 const
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   ExtArraySize = 5000;
 {$ELSE}
   ExtArraySize = 500000;
@@ -52,7 +52,7 @@ var
  CurValue: Int64;
  Temp, Max : Extended;
 const
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   MAXRUNNO = 2;
 {$ELSE}
   MAXRUNNO = 100;

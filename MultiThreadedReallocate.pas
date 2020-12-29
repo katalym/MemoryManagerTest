@@ -66,7 +66,7 @@ type
 
 procedure TCreateAndFreeThread.Execute;
 const
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   PointerCount = 25;
 {$ELSE}
   PointerCount = 2500;

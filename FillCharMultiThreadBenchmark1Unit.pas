@@ -236,7 +236,7 @@ var
  P1, P2, P3, P4, P5 : Pointer; //Need some pointers to get proper alignment distribution
  RunNo, FillRunNo : Integer;
 const
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   RUNNOMAX = 200;
 {$ELSE}
   RUNNOMAX = 1000;

@@ -44,7 +44,7 @@ procedure TDownsizeTest.RunBenchmark;
 Const
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   TotalStrings = 5000;
   IterationCount = 5;
 {$ELSE}

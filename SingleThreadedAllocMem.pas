@@ -39,7 +39,7 @@ end;
 procedure TSingleThreadAllocMemBenchmark.RunBenchmark;
 const
   Prime = 17;
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   RepeatCount = 5;
 {$ELSE}
   RepeatCount = 100;

@@ -43,7 +43,7 @@ end;
 procedure TSingleThreadAllocateAndFreeBenchmark.RunBenchmark;
 const
   Prime = 13;
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   RepeatCount = 50;
   PointerCount = 6100;
 {$ELSE}

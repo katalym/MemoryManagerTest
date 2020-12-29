@@ -8,7 +8,7 @@ uses
   BenchmarkClassUnit;
 
 const
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   NumPointers = 8000;
   IterationsCount = 5;
 {$ELSE}

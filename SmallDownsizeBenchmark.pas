@@ -133,7 +133,7 @@ end;
 
 class function TTinyDownsizeBench.GetIterationsCount: Integer;
 begin
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   Result := 1;
 {$ELSE}
   Result := 3;
@@ -142,7 +142,7 @@ end;
 
 function TTinyDownsizeBench.GetNumPointers: Integer;
 begin
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   Result := 90000;
 {$ELSE}
   Result := 900000;

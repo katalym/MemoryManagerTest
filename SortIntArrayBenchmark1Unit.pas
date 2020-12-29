@@ -37,7 +37,7 @@ var
  Size, I1, I2, I3, IndexMax, Temp, Max : Integer;
 const
  MINSIZE = 5;
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   MAXSIZE = 300;
 {$ELSE}
   MAXSIZE = 3200;

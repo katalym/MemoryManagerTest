@@ -23,7 +23,7 @@ uses
   SysUtils;
 
 const
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   ExtArraySize = 5000;
 {$ELSE}
   ExtArraySize = 500000;
@@ -66,7 +66,7 @@ var
   CurValue: Int64;
   List: TList;
 const
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   MAXRUNNO = 2;
   RepeatCount = 25;
 {$ELSE}

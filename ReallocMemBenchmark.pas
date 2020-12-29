@@ -163,7 +163,7 @@ class function TReallocBenchMedium.GetIterationCount: Integer;
 begin
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   Result := 250000;
 {$ELSE}
   Result := 25000000;
@@ -174,7 +174,7 @@ class function TReallocBenchMedium.GetNumPointers: Integer;
 begin
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   Result := 5 {prime};
 {$ELSE}
   Result := 521 {prime};
@@ -196,7 +196,7 @@ class function TReallocBenchTiny.GetIterationCount: Integer;
 begin
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   Result := 300000;
 {$ELSE}
   Result := 30000000;
@@ -207,7 +207,7 @@ class function TReallocBenchTiny.GetNumPointers: Integer;
 begin
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   Result := 5 {prime}; // to fit in the cache better
 {$ELSE}
   Result := 521 {prime}; // to fit in the cache better
@@ -228,7 +228,7 @@ class function TReallocBenchLarge.GetIterationCount: Integer;
 begin
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   Result := 2650;
 {$ELSE}
   Result := 265000;
@@ -239,7 +239,7 @@ class function TReallocBenchLarge.GetNumPointers: Integer;
 begin
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   Result := 5 {prime};
 {$ELSE}
   Result := 2153 {prime};

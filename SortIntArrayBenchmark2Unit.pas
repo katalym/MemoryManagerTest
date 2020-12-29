@@ -41,7 +41,7 @@ var
   FCurValue: Int64;
 const
   MINSIZE = 500;
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   MAXSIZE = 600;
   RepeatCount = 4;
 {$ELSE}

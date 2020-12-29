@@ -43,7 +43,7 @@ end;
 procedure TSingleThreadReallocateVariousBlocksBenchmark.RunBenchmark;
 const
   Prime = 29;
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   IterationsCount = 25;
   PointerCount = 4000;
 {$ELSE}

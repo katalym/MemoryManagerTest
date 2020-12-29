@@ -69,7 +69,7 @@ const
   MAXCHUNK = 1024;  // take power of 2
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF FullDebug}
   REPEATS = 3;
   CHUNCKS = 32*1024;
   POINTERS = 151;  // take prime just below 2048  (scaled down 8x from single-thread)
