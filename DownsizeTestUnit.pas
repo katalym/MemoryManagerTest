@@ -22,9 +22,6 @@ type
 
 implementation
 
-const
-  IterationCount = 45;
-
 class function TDownsizeTest.GetBenchmarkDescription: string;
 begin
   Result := 'Allocates large blocks and immediately resizes them to a '
@@ -48,12 +45,15 @@ Const
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF MM_FASTMM4_FullDebug}
-  TotalStrings = 100000;
+  TotalStrings = 1000;
+  IterationCount = 5;
 {$ELSE}
 {$IFDEF MM_FASTMM5_FullDebug}
-  TotalStrings = 100000;
+  TotalStrings = 1000;
+  IterationCount = 5;
 {$ELSE}
   TotalStrings = 3000000;
+  IterationCount = 45;
 {$ENDIF}
 {$ENDIF}
 var

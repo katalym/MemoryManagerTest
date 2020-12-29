@@ -2,6 +2,8 @@ unit ArrayUpsizeSingleThread;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses
   BenchmarkClassUnit, Classes;
 
@@ -22,7 +24,17 @@ uses
   SysUtils;
 
 const
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  IterationCount = 2800000;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  IterationCount = 2800000;
+{$ELSE}
   IterationCount = 28000000;
+{$ENDIF}
+{$ENDIF}
 
 procedure TArrayUpsizeSingleThread.Execute;
 var

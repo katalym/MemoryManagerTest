@@ -104,7 +104,8 @@ Const
 implementation
 
 uses
-  BenchmarkUtilities, GeneralFunctions, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit, System.StrUtils;
+  BenchmarkUtilities, GeneralFunctions, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit, System.StrUtils,
+  Vcl.Dialogs;
 
 {$R *.dfm}
 
@@ -461,50 +462,58 @@ var
   vStartTicks, vCurrentTicks: Cardinal;
   s: string;
 begin
-  pcBenchmarkResults.ActivePage := TabSheetProgress;
-
-  s := Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' Running : ' + ABenchmarkClass.GetBenchmarkName + '...');
-  mResults.Lines.Add(s);
-  {Create the benchmark}
-  LBenchmark := ABenchmarkClass.CreateBenchmark;
   try
-    if LBenchmark.CanRunBenchmark then
-    begin
-      {Do the getmem test}
-      vStartCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total;
-      vStartTicks := GetTickCount;
-      LBenchmark.RunBenchmark;
-      vCurrentCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total - vStartCPUUsage;
-      vCurrentTicks := GetTickCount - vStartTicks;
-      {Add a line}
+    pcBenchmarkResults.ActivePage := TabSheetProgress;
 
-      mResults.Lines[mResults.Lines.Count - 1] := //Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' '
-        Format('%-45s | CPU Usage(ms) = %6d | Ticks(ms)=%6d | Peak Address Space Usage(Kb) = %7d',
-        [ABenchmarkClass.GetBenchmarkName.Trim, vCurrentCPUUsage, vCurrentTicks, LBenchmark.PeakAddressSpaceUsage]);
-      Enabled := False;
-      Application.ProcessMessages;
-      Enabled := True;
+    s := Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' Running : ' + ABenchmarkClass.GetBenchmarkName + '...');
+    mResults.Lines.Add(s);
+    {Create the benchmark}
+    LBenchmark := ABenchmarkClass.CreateBenchmark;
+    try
+      if LBenchmark.CanRunBenchmark then
+      begin
+        {Do the getmem test}
+        vStartCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total;
+        vStartTicks := GetTickCount;
+        LBenchmark.RunBenchmark;
+        vCurrentCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total - vStartCPUUsage;
+        vCurrentTicks := GetTickCount - vStartTicks;
+        {Add a line}
 
-      AddResultsToDisplay(ABenchmarkClass.GetBenchmarkName,
-                          MemoryManager_Name,
-                          vCurrentCPUUsage,
-                          vCurrentTicks,
-                          LBenchmark.PeakAddressSpaceUsage);
-      if not FBenchmarkHasBeenRun then
-      begin
-        FBenchmarkHasBeenRun := True;
-      end;
-    end
-    else
-      begin
-        mResults.Lines[mResults.Lines.Count - 1] := Trim(ABenchmarkClass.GetBenchmarkName) + ': Skipped';
+        mResults.Lines[mResults.Lines.Count - 1] := //Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' '
+          Format('%-45s | CPU Usage(ms) = %6d | Ticks(ms)=%6d | Peak Address Space Usage(Kb) = %7d',
+          [ABenchmarkClass.GetBenchmarkName.Trim, vCurrentCPUUsage, vCurrentTicks, LBenchmark.PeakAddressSpaceUsage]);
         Enabled := False;
         Application.ProcessMessages;
         Enabled := True;
-      end;
-  finally
-    {Free the benchmark}
-    LBenchmark.Free;
+
+        AddResultsToDisplay(ABenchmarkClass.GetBenchmarkName,
+                            MemoryManager_Name,
+                            vCurrentCPUUsage,
+                            vCurrentTicks,
+                            LBenchmark.PeakAddressSpaceUsage);
+        if not FBenchmarkHasBeenRun then
+        begin
+          FBenchmarkHasBeenRun := True;
+        end;
+      end
+      else
+        begin
+          mResults.Lines[mResults.Lines.Count - 1] := Trim(ABenchmarkClass.GetBenchmarkName) + ': Skipped';
+          Enabled := False;
+          Application.ProcessMessages;
+          Enabled := True;
+        end;
+    finally
+      {Free the benchmark}
+      FreeAndNil(LBenchmark);
+    end;
+
+  except
+    on E: Exception do begin
+      ShowMessage('Test for ' + ABenchmarkClass.GetBenchmarkName + ' failed with error:'#13 + E.Message);
+    end;
+    Abort;
   end;
 end;
 

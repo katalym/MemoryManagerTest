@@ -5,6 +5,8 @@ unit FragmentationTestUnit;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses
   BenchmarkClassUnit;
 
@@ -23,7 +25,17 @@ type
 implementation
 
 const
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  IterationCount = 5;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  IterationCount = 5;
+{$ELSE}
   IterationCount = 120;
+{$ENDIF}
+{$ENDIF}
 
 class function TFragmentationTest.GetBenchmarkDescription: string;
 begin

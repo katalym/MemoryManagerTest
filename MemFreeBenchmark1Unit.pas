@@ -2,6 +2,8 @@ unit MemFreeBenchmark1Unit;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type
@@ -30,8 +32,20 @@ var
   I, AllocSize, J: Integer;
   AllocSizeFP : Double;
 const
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
   RUNS = 2;
   NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}
   ALLOCGROWSTEPSIZE = 0.0000006;
   {$IFDEF WIN32}
   SLEEPTIMEAFTERFREE = 10;//Seconds to free

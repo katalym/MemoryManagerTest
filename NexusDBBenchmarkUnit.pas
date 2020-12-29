@@ -12,6 +12,8 @@ unit NexusDBBenchmarkUnit;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses
   Windows, SysUtils, Classes, BenchmarkClassUnit, Math;
 
@@ -339,7 +341,20 @@ end;
 
 class function TNexusBenchmark1Thread.IterationCount: integer;
 begin
-  Result := (10000 * 100) div NexusIterationDivider;
+  Result := (10000 * 100) div NexusIterationDivider;// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}
 end;
 
 class function TNexusBenchmark1Thread.NumThreads: integer;
@@ -350,7 +365,20 @@ end;
 class function TNexusBenchmark2Threads.IterationCount: integer;
 begin
   Result := (5000 * 100) div NexusIterationDivider;    // RH 50% of the original value
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark2Threads.NumThreads: integer;
 begin
@@ -360,7 +388,20 @@ end;
 class function TNexusBenchmark4Threads.IterationCount: integer;
 begin
   Result := (2500 * 100) div NexusIterationDivider;    // RH 50% of the original value
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark4Threads.NumThreads: integer;
 begin
@@ -370,7 +411,20 @@ end;
 class function TNexusBenchmark8Threads.IterationCount: integer;
 begin
   Result := (1250 * 100) div NexusIterationDivider;    // RH 25% of the original value
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark8Threads.NumThreads: integer;
 begin
@@ -380,7 +434,20 @@ end;
 class function TNexusBenchmark12Threads.IterationCount: integer;
 begin
   Result := (1100 * 100) div NexusIterationDivider;
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark12Threads.NumThreads: integer;
 begin
@@ -390,7 +457,20 @@ end;
 class function TNexusBenchmark16Threads.IterationCount: integer;
 begin
   Result := (600 * 100) div NexusIterationDivider;
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark16Threads.NumThreads: integer;
 begin
@@ -400,7 +480,20 @@ end;
 class function TNexusBenchmark31Threads.IterationCount: integer;
 begin
   Result := (300 * 100) div NexusIterationDivider;
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark31Threads.NumThreads: integer;
 begin
@@ -410,7 +503,20 @@ end;
 class function TNexusBenchmark64Threads.IterationCount: integer;
 begin
   Result := (200 * 100) div NexusIterationDivider;
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark64Threads.NumThreads: integer;
 begin
@@ -422,7 +528,20 @@ end;
 class function TNexusBenchmark128Threads.IterationCount: integer;
 begin
   Result := (70 * 100) div NexusIterationDivider;
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark128Threads.NumThreads: integer;
 begin
@@ -437,7 +556,20 @@ end;
 class function TNexusBenchmark256Threads.IterationCount: integer;
 begin
   Result := (60 * 100) div NexusIterationDivider;
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark256Threads.NumThreads: integer;
 begin
@@ -452,7 +584,20 @@ end;
 class function TNexusBenchmark512Threads.IterationCount: integer;
 begin
   Result := (30 * 100) div NexusIterationDivider;
-end;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}end;
 
 class function TNexusBenchmark512Threads.NumThreads: integer;
 begin

@@ -4,6 +4,8 @@ unit ReallocMemBenchmark;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses
   BenchmarkClassUnit;
 
@@ -165,6 +167,20 @@ end;
 class function TReallocBenchMedium.GetNumPointers: Integer;
 begin
   Result := 521 {prime};
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}
 end;
 
 class function TReallocBenchTiny.GetBenchmarkName: string;
@@ -186,6 +202,20 @@ end;
 class function TReallocBenchTiny.GetNumPointers: Integer;
 begin
   Result := 521 {prime}; // to fit in the cache better
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}
 end;
 
 class function TReallocBenchLarge.GetBenchmarkName: string;
@@ -206,6 +236,20 @@ end;
 class function TReallocBenchLarge.GetNumPointers: Integer;
 begin
   Result := 2153 {prime};
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  RUNS = 1;
+  NOOFPOINTERS = 1200;
+{$ELSE}
+  RUNS = 2;
+  NOOFPOINTERS = 12000000;
+{$ENDIF}
+{$ENDIF}
 end;
 
 end.

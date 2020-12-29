@@ -63,7 +63,7 @@ end;
 
 class function TMemFreeThreads2.RunByDefault: Boolean;
 begin
-  Result := True;
+  Result := False;
 end;
 
 end.

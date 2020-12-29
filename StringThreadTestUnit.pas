@@ -148,10 +148,10 @@ const
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF MM_FASTMM4_FullDebug}
-  CIterations = 1000;
+  CIterations = 500;
 {$ELSE}
 {$IFDEF MM_FASTMM5_FullDebug}
-  CIterations = 1000;
+  CIterations = 500;
 {$ELSE}
   CIterations = 5000;
 {$ENDIF}

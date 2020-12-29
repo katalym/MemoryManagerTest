@@ -8,10 +8,23 @@ uses
   BenchmarkClassUnit, Math;
 
 const
-  {The number of pointers}
-  NumPointers = 3000000;
   {The maximum block size}
   MaxBlockSize = 25;
+const
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug}
+  IterationsCount = 2;
+  NumPointers = 3000;
+{$ELSE}
+{$IFDEF MM_FASTMM5_FullDebug}
+  IterationsCount = 2;
+  NumPointers = 3000;
+{$ELSE}
+  IterationsCount = 20;
+  NumPointers = 3000000;
+{$ENDIF}
+{$ENDIF}
 
 type
 
@@ -28,19 +41,6 @@ type
   end;
 
 implementation
-
-const
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug}
-  IterationsCount = 5;
-{$ELSE}
-{$IFDEF MM_FASTMM5_FullDebug}
-  IterationsCount = 5;
-{$ELSE}
-  IterationsCount = 20;
-{$ENDIF}
-{$ENDIF}
 
 constructor TBlockSizeSpreadBench.CreateBenchmark;
 begin
