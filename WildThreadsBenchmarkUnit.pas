@@ -6,7 +6,6 @@ interface
 
 {$I MemoryManagerTest.inc}
 
-
 uses Windows, BenchmarkClassUnit, Classes, Math;
 
 type

@@ -1,44 +1,44 @@
 unit FastcodeCPUID;
 
 {***** BEGIN LICENSE BLOCK *****
- Version: MPL 1.1
+  Version: MPL 1.1
 
- The contents of this file are subject to the Mozilla Public License Version 1.1
- (the "License"); you may not use this file except in compliance with the
- License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+  The contents of this file are subject to the Mozilla Public License Version 1.1
+  (the "License"); you may not use this file except in compliance with the
+  License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
 
- Software distributed under the License is distributed on an "AS IS" basis,
- WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- the specific language governing rights and limitations under the License.
+  Software distributed under the License is distributed on an "AS IS" basis,
+  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+  the specific language governing rights and limitations under the License.
 
- The Original Code is the FastCode CPUID code.
+  The Original Code is the FastCode CPUID code.
 
- The Initial Developer of the Original Code is
- Roelof Engelbrecht <roelof@cox-internet.com>. Portions created by
- the Initial Developer are Copyright (C) 2004 by the Initial Developer.
- All Rights Reserved.
+  The Initial Developer of the Original Code is
+  Roelof Engelbrecht <roelof@cox-internet.com>. Portions created by
+  the Initial Developer are Copyright (C) 2004 by the Initial Developer.
+  All Rights Reserved.
 
- Contributor(s): Dennis Passmore <Dennis_Passmore@ ultimatesoftware.com>,
-                 Dennis Christensen <marianndkc@home3.gvdnet.dk>,
-                 Jouni Turunen <jouni.turunen@NOSPAM.xenex.fi>.
+  Contributor(s): Dennis Passmore <Dennis_Passmore@ ultimatesoftware.com>,
+  Dennis Christensen <marianndkc@home3.gvdnet.dk>,
+  Jouni Turunen <jouni.turunen@NOSPAM.xenex.fi>.
 
-***** END LICENSE BLOCK *****
+  ***** END LICENSE BLOCK *****
 
-Version  Changes
--------  ------
- 3.0.2   27 Apr 2006 : AMD X2 text changed from 'AMD_64_SSE3' to 'AMD_64X2'
- 3.0.1   18 Apr 2006 : Bug in Yohan fctPMY target fixed, was incorrectly set to fctPMD
- 3.0.0   27 Feb 2006 : Added new 2006 computed targets. Added Yonah and Presler
-                       Removed Prescott, Banias, AMD XP                    (JT)
+  Version  Changes
+  -------  ------
+  3.0.2   27 Apr 2006 : AMD X2 text changed from 'AMD_64_SSE3' to 'AMD_64X2'
+  3.0.1   18 Apr 2006 : Bug in Yohan fctPMY target fixed, was incorrectly set to fctPMD
+  3.0.0   27 Feb 2006 : Added new 2006 computed targets. Added Yonah and Presler
+  Removed Prescott, Banias, AMD XP                    (JT)
 
 }
 
 interface
 
-{$ifdef FPC}
-  {$mode delphi}
-  {$asmmode intel}
-{$endif}
+{$IFDEF FPC}
+{$MODE delphi}
+{$ASMMODE intel}
+{$ENDIF}
 
 type
   TVendor = (cvUnknown, cvAMD, cvCentaur, cvCyrix, cvIntel,
@@ -64,7 +64,7 @@ type
     is3DNow); {3DNow! - AMD only}
 
   {Note: when changing TInstruction, also change InstructionSupportStr below
-         * - instruction(s) not supported in Delphi 7 assembler}
+    * - instruction(s) not supported in Delphi 7 assembler}
   TInstructionSupport = set of TInstructions;
 
   TCPU = record
@@ -74,18 +74,18 @@ type
     EffModel: Byte; {(ExtendedModel shl 4) + Model}
     EffModelBasic: Byte; {Just Model (not ExtendedModel shl 4) + Model)}
     CodeL1CacheSize, {KB or micro-ops for Pentium 4}
-      DataL1CacheSize, {KB}
-      L2CacheSize, {KB}
-      L3CacheSize: Word; {KB}
+    DataL1CacheSize, {KB}
+    L2CacheSize, {KB}
+    L3CacheSize: Word; {KB}
     InstructionSupport: TInstructionSupport;
   end;
 
   TFastCodeTarget =
     (fctRTLReplacement, {not specific to any CPU}
-    fctBlendedIA32,     {not specific to any CPU, requires FPU and CMOV}
-    fctBlendedMMX,      {not specific to any CPU, requires FPU, MMX and CMOV  "Old fctBlended target"}
-    fctBlendedSSE,      {not specific to any CPU, requires FPU, MMX, CMOV and SSE}
-    fctBlendedSSE2,     {not specific to any CPU, requires FPU, MMX, CMOV, SSE, SSE2}
+    fctBlendedIA32, {not specific to any CPU, requires FPU and CMOV}
+    fctBlendedMMX, {not specific to any CPU, requires FPU, MMX and CMOV  "Old fctBlended target"}
+    fctBlendedSSE, {not specific to any CPU, requires FPU, MMX, CMOV and SSE}
+    fctBlendedSSE2, {not specific to any CPU, requires FPU, MMX, CMOV, SSE, SSE2}
     fctPMD, {Dothan}
     fctPMY, {Yonah}
     fctP4N, {Northwood}
@@ -93,22 +93,22 @@ type
     fctAmd64, {AMD 64}
     fctAmd64_SSE3); {X2/Opteron/Athlon FX/Athlon 64 with SSE3}
   {Note: when changing TFastCodeTarget, also change FastCodeTargetStr array
-         below}
+    below}
 
 const
-  VendorStr: array[Low(TVendor)..High(TVendor)] of String =
-  ('Unknown', 'AMD', 'Centaur (VIA)', 'Cyrix', 'Intel', 'Transmeta',
+  VendorStr: array [low(TVendor) .. high(TVendor)] of string =
+    ('Unknown', 'AMD', 'Centaur (VIA)', 'Cyrix', 'Intel', 'Transmeta',
     'NexGen', 'Rise', 'UMC', 'National Semiconductor', 'SiS');
 
   InstructionSupportStr:
-  array[Low(TInstructions)..High(TInstructions)] of String =
+    array [low(TInstructions) .. high(TInstructions)] of string =
     ('FPU', 'TSC', 'CX8', 'SEP', 'CMOV', 'MMX', 'FXSR', 'SSE', 'SSE2', 'SSE3',
     'MONITOR', 'CX16', 'X64', 'MMX+', '3DNow!+', '3DNow!');
 
   FastCodeTargetStr:
-  array[Low(TFastCodeTarget)..High(TFastCodeTarget)] of String =
+    array [low(TFastCodeTarget) .. high(TFastCodeTarget)] of string =
     ('RTLReplacement', 'Blended_IA32', 'Blended_MMX', 'Blended_SSE',
-     'Blended_SSE2', 'Dothan', 'Yonah', 'Northwood', 'Presler', 'AMD_64', 'AMD_64X2');
+    'Blended_SSE2', 'Dothan', 'Yonah', 'Northwood', 'Presler', 'AMD_64', 'AMD_64X2');
 
 var
   CPU: TCPU;
@@ -127,7 +127,7 @@ type
   TVendorStr = string[12];
 
   TCpuFeatures =
-    ({in EDX}
+    ( {in EDX}
     cfFPU, cfVME, cfDE, cfPSE, cfTSC, cfMSR, cfPAE, cfMCE,
     cfCX8, cfAPIC, cf_d10, cfSEP, cfMTRR, cfPGE, cfMCA, cfCMOV,
     cfPAT, cfPSE36, cfPSN, cfCLFSH, cf_d20, cfDS, cfACPI, cfMMX,
@@ -147,8 +147,8 @@ type
   TCpuExtendedFeatureSet = set of TCpuExtendedFeatures;
 
 const
-  VendorIDString: array[Low(TVendor)..High(TVendor)] of TVendorStr =
-  ('',
+  VendorIDString: array [low(TVendor) .. high(TVendor)] of TVendorStr =
+    ('',
     'AuthenticAMD', 'CentaurHauls', 'CyrixInstead', 'GenuineIntel',
     'GenuineTMx86', 'NexGenDriven', 'RiseRiseRise', 'UMC UMC UMC ',
     'Geode by NSC', 'SiS SiS SiS');
@@ -156,18 +156,20 @@ const
   {CPU signatures}
 
   IntelLowestSEPSupportSignature = $633;
-  K7DuronA0Signature = $630;
-  C3Samuel2EffModel = 7;
-  C3EzraEffModel = 8;
-  PMBaniasEffModel = 9;
-  PMDothanEffModel = $D;
-  PMYonahEffModel = $E;
-  P3LowestEffModel = 7;
+  K7DuronA0Signature             = $630;
+  C3Samuel2EffModel              = 7;
+  C3EzraEffModel                 = 8;
+  PMBaniasEffModel               = 9;
+  PMDothanEffModel               = $D;
+  PMYonahEffModel                = $E;
+  P3LowestEffModel               = 7;
 
 {$IFDEF WIN64}
+
 const
   IsCPUID_Available = True;
 {$ELSE}
+
 function IsCPUID_Available: Boolean; register;
 asm
   PUSHFD                 {save EFLAGS to stack}
@@ -188,20 +190,20 @@ end;
 function IsFPU_Available: Boolean;
 var
   _FCW, _FSW: Word;
-asm
-  MOV     EAX, False     {initialize return register}
-  MOV     _FSW, $5A5A    {store a non-zero value}
-  FNINIT                 {must use non-wait form}
-  FNSTSW  _FSW           {store the status}
-  CMP     _FSW, 0        {was the correct status read?}
-  JNE     @exit          {no, FPU not available}
-  FNSTCW  _FCW           {yes, now save control word}
-  MOV     DX, _FCW       {get the control word}
-  AND     DX, $103F      {mask the proper status bits}
-  CMP     DX, $3F        {is a numeric processor installed?}
-  JNE     @exit          {no, FPU not installed}
-  MOV     EAX, True      {yes, FPU is installed}
-@exit:
+  asm
+    MOV     EAX, False     {initialize return register}
+    MOV     _FSW, $5A5A    {store a non-zero value}
+    FNINIT                 {must use non-wait form}
+    FNSTSW  _FSW           {store the status}
+    CMP     _FSW, 0        {was the correct status read?}
+    JNE     @exit          {no, FPU not available}
+    FNSTCW  _FCW           {yes, now save control word}
+    MOV     DX, _FCW       {get the control word}
+    AND     DX, $103F      {mask the proper status bits}
+    CMP     DX, $3F        {is a numeric processor installed?}
+    JNE     @exit          {no, FPU not installed}
+    MOV     EAX, True      {yes, FPU is installed}
+  @exit:
 end;
 
 procedure GetCPUID(Param: Cardinal; var Registers: TRegisters);
@@ -255,15 +257,15 @@ begin
   Move(Registers.ECX, VendorStr[9], 4);
 
   {get CPU vendor from vendor string}
-  CPU.Vendor := High(TVendor);
+  CPU.Vendor := high(TVendor);
   while (VendorStr <> VendorIDString[CPU.Vendor]) and
-    (CPU.Vendor > Low(TVendor)) do
+    (CPU.Vendor > low(TVendor)) do
     Dec(CPU.Vendor);
 end;
 
 procedure GetCPUFeatures;
 {preconditions: 1. maximum CPUID must be at least $00000001
-                2. GetCPUVendor must have been called}
+  2. GetCPUVendor must have been called}
 type
   _Int64 = packed record
     Lo: Longword;
@@ -304,8 +306,8 @@ begin
   begin
     Include(CPU.InstructionSupport, isSEP);
     {for Intel CPUs, qualify the processor family and model to ensure that the
-     SYSENTER/SYSEXIT instructions are actually present - see Intel Application
-     Note AP-485}
+      SYSENTER/SYSEXIT instructions are actually present - see Intel Application
+      Note AP-485}
     if (CPU.Vendor = cvIntel) and
       (CPU.Signature and $0FFF3FFF < IntelLowestSEPSupportSignature) then
       Exclude(CPU.InstructionSupport, isSEP);
@@ -338,7 +340,7 @@ begin
   GetCPUID($80000001, Registers);
 
   {get CPU extended features}
-  CPUExFeatures := TCPUExtendedFeatureSet(Registers.EDX);
+  CpuExFeatures := TCpuExtendedFeatureSet(Registers.EDX);
 
   {get instruction support}
   if cefLM in CpuExFeatures then
@@ -353,9 +355,9 @@ end;
 
 procedure GetProcessorCacheInfo;
 {preconditions: 1. maximum CPUID must be at least $00000002
-                2. GetCPUVendor must have been called}
+  2. GetCPUVendor must have been called}
 type
-  TConfigDescriptor = packed array[0..15] of Byte;
+  TConfigDescriptor = packed array [0 .. 15] of Byte;
 var
   Registers: TRegisters;
   i, j: Integer;
@@ -370,54 +372,93 @@ begin
       with CPU do
         {decode configuration descriptor byte}
         case TConfigDescriptor(Registers)[j] of
-          $06: CodeL1CacheSize := 8;
-          $08: CodeL1CacheSize := 16;
-          $0A: DataL1CacheSize := 8;
-          $0C: DataL1CacheSize := 16;
-          $22: L3CacheSize := 512;
-          $23: L3CacheSize := 1024;
-          $25: L3CacheSize := 2048;
-          $29: L3CacheSize := 4096;
-          $2C: DataL1CacheSize := 32;
-          $30: CodeL1CacheSize := 32;
-          $39: L2CacheSize := 128;
-          $3B: L2CacheSize := 128;
-          $3C: L2CacheSize := 256;
+          $06:
+            CodeL1CacheSize := 8;
+          $08:
+            CodeL1CacheSize := 16;
+          $0A:
+            DataL1CacheSize := 8;
+          $0C:
+            DataL1CacheSize := 16;
+          $22:
+            L3CacheSize := 512;
+          $23:
+            L3CacheSize := 1024;
+          $25:
+            L3CacheSize := 2048;
+          $29:
+            L3CacheSize := 4096;
+          $2C:
+            DataL1CacheSize := 32;
+          $30:
+            CodeL1CacheSize := 32;
+          $39:
+            L2CacheSize := 128;
+          $3B:
+            L2CacheSize := 128;
+          $3C:
+            L2CacheSize := 256;
           $40: {no 2nd-level cache or, if processor contains a valid 2nd-level
-                cache, no 3rd-level cache}
+              cache, no 3rd-level cache}
             if L2CacheSize <> 0 then
               L3CacheSize := 0;
-          $41: L2CacheSize := 128;
-          $42: L2CacheSize := 256;
-          $43: L2CacheSize := 512;
-          $44: L2CacheSize := 1024;
-          $45: L2CacheSize := 2048;
-          $60: DataL1CacheSize := 16;
-          $66: DataL1CacheSize := 8;
-          $67: DataL1CacheSize := 16;
-          $68: DataL1CacheSize := 32;
-          $70: if not (CPU.Vendor in [cvCyrix, cvNSC]) then
+          $41:
+            L2CacheSize := 128;
+          $42:
+            L2CacheSize := 256;
+          $43:
+            L2CacheSize := 512;
+          $44:
+            L2CacheSize := 1024;
+          $45:
+            L2CacheSize := 2048;
+          $60:
+            DataL1CacheSize := 16;
+          $66:
+            DataL1CacheSize := 8;
+          $67:
+            DataL1CacheSize := 16;
+          $68:
+            DataL1CacheSize := 32;
+          $70:
+            if not (CPU.Vendor in [cvCyrix, cvNSC]) then
               CodeL1CacheSize := 12; {K micro-ops}
-          $71: CodeL1CacheSize := 16; {K micro-ops}
-          $72: CodeL1CacheSize := 32; {K micro-ops}
-          $78: L2CacheSize := 1024;
-          $79: L2CacheSize := 128;
-          $7A: L2CacheSize := 256;
-          $7B: L2CacheSize := 512;
-          $7C: L2CacheSize := 1024;
-          $7D: L2CacheSize := 2048;
-          $7F: L2CacheSize := 512;
-          $80: if CPU.Vendor in [cvCyrix, cvNSC] then
+          $71:
+            CodeL1CacheSize := 16; {K micro-ops}
+          $72:
+            CodeL1CacheSize := 32; {K micro-ops}
+          $78:
+            L2CacheSize := 1024;
+          $79:
+            L2CacheSize := 128;
+          $7A:
+            L2CacheSize := 256;
+          $7B:
+            L2CacheSize := 512;
+          $7C:
+            L2CacheSize := 1024;
+          $7D:
+            L2CacheSize := 2048;
+          $7F:
+            L2CacheSize := 512;
+          $80:
+            if CPU.Vendor in [cvCyrix, cvNSC] then
             begin {Cyrix and NSC only - 16 KB unified L1 cache}
               CodeL1CacheSize := 8;
               DataL1CacheSize := 8;
             end;
-          $82: L2CacheSize := 256;
-          $83: L2CacheSize := 512;
-          $84: L2CacheSize := 1024;
-          $85: L2CacheSize := 2048;
-          $86: L2CacheSize := 512;
-          $87: L2CacheSize := 1024;
+          $82:
+            L2CacheSize := 256;
+          $83:
+            L2CacheSize := 512;
+          $84:
+            L2CacheSize := 1024;
+          $85:
+            L2CacheSize := 2048;
+          $86:
+            L2CacheSize := 512;
+          $87:
+            L2CacheSize := 1024;
         end;
     if i < QueryCount then
       GetCPUID(2, Registers);
@@ -426,7 +467,7 @@ end;
 
 procedure GetExtendedProcessorCacheInfo;
 {preconditions: 1. maximum extended CPUID must be at least $80000006
-                2. GetCPUVendor and GetCPUFeatures must have been called}
+  2. GetCPUVendor and GetCPUFeatures must have been called}
 var
   Registers: TRegisters;
 begin
@@ -435,7 +476,7 @@ begin
 
   {get L1 cache size}
   {Note: Intel does not support function $80000005 for L1 cache size, so ignore.
-         Cyrix returns CPUID function 2 descriptors (already done), so ignore.}
+    Cyrix returns CPUID function 2 descriptors (already done), so ignore.}
   if not (CPU.Vendor in [cvIntel, cvCyrix]) then
   begin
     CPU.CodeL1CacheSize := Registers.EDX shr 24;
@@ -448,7 +489,7 @@ begin
   {get L2 cache size}
   if (CPU.Vendor = cvAMD) and (CPU.Signature and $FFF = K7DuronA0Signature) then
     {workaround for AMD Duron Rev A0 L2 cache size erratum - see AMD Technical
-     Note TN-13}
+      Note TN-13}
     CPU.L2CacheSize := 64
   else if (CPU.Vendor = cvCentaur) and (CPU.EffFamily = 6) and
     (CPU.EffModel in [C3Samuel2EffModel, C3EzraEffModel]) then
@@ -523,12 +564,12 @@ begin
 
       {get extended cache features if available}
       {Note: ignore processors that only report L1 cache info,
-             i.e. have a MaxExCPUID = $80000005}
+        i.e. have a MaxExCPUID = $80000005}
       if MaxExCPUID >= $80000006 then
         GetExtendedProcessorCacheInfo;
     end;
   except
-      {silent exception - should not occur, just ignore}
+    {silent exception - should not occur, just ignore}
   end;
 end;
 
@@ -538,42 +579,52 @@ begin
   FastCodeTarget := fctRTLReplacement;
 
   if (isSSE2 in CPU.InstructionSupport) then
-    FastCodeTarget := fctBlendedSSE2 else
-  if (isSSE in CPU.InstructionSupport) then
-    FastCodeTarget := fctBlendedSSE else
-  if (isSSE in CPU.InstructionSupport) then
-    FastCodeTarget := fctBlendedSSE else
-  if ([isFPU, isMMX, isCMOV] <= CPU.InstructionSupport) then
-    FastCodeTarget := fctBlendedMMX else
-  if ([isFPU, isCMOV] <= CPU.InstructionSupport) then
+    FastCodeTarget := fctBlendedSSE2
+  else
+    if (isSSE in CPU.InstructionSupport) then
+    FastCodeTarget := fctBlendedSSE
+  else
+    if (isSSE in CPU.InstructionSupport) then
+    FastCodeTarget := fctBlendedSSE
+  else
+    if ([isFPU, isMMX, isCMOV] <= CPU.InstructionSupport) then
+    FastCodeTarget := fctBlendedMMX
+  else
+    if ([isFPU, isCMOV] <= CPU.InstructionSupport) then
     FastCodeTarget := fctBlendedIA32;
 
   case CPU.Vendor of
     cvIntel:
       case CPU.EffFamily of
         6: {Intel P6, P2, P3, PM}
-           case CPU.EffModel of
-            PMDothanEffModel : FastCodeTarget := fctPMD; // Dothan
-            PMYonahEffModel  : FastCodeTarget := fctPMY; // Yonah
-           end;
+          case CPU.EffModel of
+            PMDothanEffModel:
+              FastCodeTarget := fctPMD; // Dothan
+            PMYonahEffModel:
+              FastCodeTarget := fctPMY; // Yonah
+          end;
         $F: {Intel P4}
-           case CPU.EffModel of
-            0,1,2 : FastCodeTarget := fctP4N; // Northwood
-            6     : FastCodeTarget := fctP4R; // Presler
-           end;
+          case CPU.EffModel of
+            0, 1, 2:
+              FastCodeTarget := fctP4N; // Northwood
+            6:
+              FastCodeTarget := fctP4R; // Presler
+          end;
       end;
     cvAMD:
       case CPU.EffFamily of
         $F: {AMD K8}
-           if ((CPU.EffModelBasic=$B) or (CPU.EffModelBasic=$3)) and (isSSE3 in CPU.InstructionSupport) then
-            FastCodeTarget := fctAmd64_SSE3 //AMD X2 dual core CPU
-           else
+          if ((CPU.EffModelBasic = $B) or (CPU.EffModelBasic = $3)) and (isSSE3 in CPU.InstructionSupport) then
+            FastCodeTarget := fctAmd64_SSE3 // AMD X2 dual core CPU
+          else
             FastCodeTarget := fctAmd64;
       end;
   end;
 end;
 
 initialization
-  GetCPUInfo;
-  GetFastCodeTarget;
+
+GetCPUInfo;
+GetFastCodeTarget;
+
 end.

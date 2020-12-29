@@ -41,14 +41,14 @@ begin
 end;
 
 procedure TDownsizeTest.RunBenchmark;
-Const
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+const
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
-  TotalStrings = 5000;
+  TotalStrings   = 5000;
   IterationCount = 5;
 {$ELSE}
-  TotalStrings = 3000000;
+  TotalStrings   = 3000000;
   IterationCount = 45;
 {$ENDIF}
 var
@@ -60,7 +60,7 @@ begin
   begin
     {Allocate a lot of strings}
     SetLength(FStrings, TotalStrings);
-    for i := Low(FStrings) to High(FStrings) do begin
+    for i := low(FStrings) to high(FStrings) do begin
       {Grab a 20K block}
       SetLength(FStrings[i], 20000);
       {Touch memory}

@@ -8,8 +8,8 @@ uses
   BenchmarkClassUnit, Math;
 
 const
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   NumPointers = 50;
 {$ELSE}
@@ -22,7 +22,7 @@ type
 
   TLargeBlockSpreadBench = class(TMMBenchmark)
   protected
-    FPointers: array[0..NumPointers - 1] of PAnsiChar;
+    FPointers: array [0 .. NumPointers - 1] of PAnsiChar;
   public
     constructor CreateBenchmark; override;
     destructor Destroy; override;

@@ -38,12 +38,12 @@ type
   end;
 
   TExtended = record
-   X : Extended;
-   Pad1, Pad2, Pad3, Pad4, Pad5, Pad6 : Byte;
+    X: Extended;
+    Pad1, Pad2, Pad3, Pad4, Pad5, Pad6: Byte;
   end;
 
- TExtendedArray = array[0..ExtArraySize] of TExtended;
- PExtendedArray = ^TExtendedArray;
+  TExtendedArray = array [0 .. ExtArraySize] of TExtended;
+  PExtendedArray = ^TExtendedArray;
 
 function SortCompareExtended(Item1, Item2: Pointer): Integer;
 var
@@ -51,26 +51,26 @@ var
 begin
   Diff := PExtended(Item1)^ - PExtended(Item2)^;
   if Diff < 0 then
-    Result := -1
+    Result := - 1
   else
     if Diff > 0 then
-      Result := 1
-    else
-      Result := 0;
+    Result := 1
+  else
+    Result := 0;
 end;
 
 procedure TQuickSortExtendedArrayThread.Execute;
 var
-  ExtArray:  PExtendedArray;
+  ExtArray: PExtendedArray;
   I, J, RunNo, Size: Integer;
   CurValue: Int64;
   List: TList;
 const
 {$IFDEF FullDebug}
-  MAXRUNNO = 2;
+  MAXRUNNO    = 2;
   RepeatCount = 25;
 {$ELSE}
-  MAXRUNNO = 8;
+  MAXRUNNO    = 8;
   RepeatCount = 600;
 {$ENDIF}
   MINSIZE = 100;
@@ -83,15 +83,15 @@ begin
     try
       for RunNo := 1 to MAXRUNNO do
       begin
-        Size := Min(High(ExtArray^), (CurValue mod (MAXSIZE-MINSIZE)) + MINSIZE);
+        Size := Min(high(ExtArray^), (CurValue mod (MAXSIZE - MINSIZE)) + MINSIZE);
         Inc(CurValue, Prime);
         ReallocMem(ExtArray, Size * SizeOf(TExtended));
         List := TList.Create;
         try
           List.Count := Size;
-          for I := 0 to Size-1 do
+          for I := 0 to Size - 1 do
           begin
-            ExtArray^[I].X := (CurValue mod MAXINT)*pi;
+            ExtArray^[I].X := (CurValue mod MAXINT) * pi;
             Inc(CurValue, Prime);
             List[I] := @(ExtArray^[I].X);
           end;
@@ -108,15 +108,15 @@ begin
 end;
 
 class function TQuickSortExtendedArrayThreads.GetBenchmarkDescription:
-string;
+  string;
 begin
   Result := 'A benchmark that measures read and write speed to an array of Extendeds. '
-          + 'The Extended type is padded to be 16 byte. '
-          + 'Bonus is given for 16 byte alignment of array '
-          + 'Will also reveil cache set associativity related issues. '
-          + 'Access pattern is created by X sorting array of arbitrary values using the QuickSort algorithm implemented in TList. '
-          + 'Measures memory usage after all blocks have been freed. '
-          + 'Benchmark submitted by Avatar Zondertau, based on a benchmark by Dennis Kjaer Christensen.';
+    + 'The Extended type is padded to be 16 byte. '
+    + 'Bonus is given for 16 byte alignment of array '
+    + 'Will also reveil cache set associativity related issues. '
+    + 'Access pattern is created by X sorting array of arbitrary values using the QuickSort algorithm implemented in TList. '
+    + 'Measures memory usage after all blocks have been freed. '
+    + 'Benchmark submitted by Avatar Zondertau, based on a benchmark by Dennis Kjaer Christensen.';
 end;
 
 class function TQuickSortExtendedArrayThreads.GetBenchmarkName: string;
@@ -125,7 +125,7 @@ begin
 end;
 
 class function TQuickSortExtendedArrayThreads.GetCategory:
-TBenchmarkCategory;
+  TBenchmarkCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
@@ -133,13 +133,13 @@ end;
 procedure TQuickSortExtendedArrayThreads.RunBenchmark;
 var
   SortExtendedArrayThread1,
-  SortExtendedArrayThread2,
-  SortExtendedArrayThread3,
-  SortExtendedArrayThread4,
-  SortExtendedArrayThread5,
-  SortExtendedArrayThread6,
-  SortExtendedArrayThread7,
-  SortExtendedArrayThread8: TQuickSortExtendedArrayThread;
+    SortExtendedArrayThread2,
+    SortExtendedArrayThread3,
+    SortExtendedArrayThread4,
+    SortExtendedArrayThread5,
+    SortExtendedArrayThread6,
+    SortExtendedArrayThread7,
+    SortExtendedArrayThread8: TQuickSortExtendedArrayThread;
 begin
   inherited;
   SortExtendedArrayThread1 := TQuickSortExtendedArrayThread.Create(True);

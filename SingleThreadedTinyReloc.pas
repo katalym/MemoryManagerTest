@@ -41,11 +41,11 @@ end;
 
 procedure TSingleThreadedTinyRelocBenchmark.RunBenchmark;
 const
-  Prime = 83;
+  Prime        = 83;
   PointerCount = 500; {small number to fit the cache}
 type
   PPointers = ^TPointers;
-  TPointers = array[0..PointerCount - 1] of Pointer;
+  TPointers = array [0 .. PointerCount - 1] of Pointer;
 var
   i, j: Integer;
   kcalc: NativeUint;
@@ -66,12 +66,12 @@ begin
       LMax := 67 {prime}
     else
       if i and 15 <> 0 then
-        LMax := 131 {prime}
-      else
-        if i and 255 <> 0 then
-          LMax := 257 {prime}
-        else
-          LMax := 521 {prime};
+      LMax := 131 {prime}
+    else
+      if i and 255 <> 0 then
+      LMax := 257 {prime}
+    else
+      LMax := 521 {prime};
     {Get the size, minimum 1}
     LSize := (CurValue mod LMax) + 1;
     Inc(CurValue, Prime);
@@ -90,12 +90,12 @@ begin
         LMax := 67 {prime}
       else
         if i and 15 <> 0 then
-          LMax := 131 {prime}
-        else
-          if i and 255 <> 0 then
-            LMax := 257 {prime}
-          else
-            LMax := 521 {prime};
+        LMax := 131 {prime}
+      else
+        if i and 255 <> 0 then
+        LMax := 257 {prime}
+      else
+        LMax := 521 {prime};
       {Get the size, minimum 1}
       LSize := (CurValue mod LMax) + 1;
       Inc(CurValue, Prime);
@@ -106,7 +106,7 @@ begin
       for kloop := 0 to (LSize - 1) div 32 do
       begin
         kcalc := kloop;
-        PByte(NativeUInt(LPointers^[i]) + kcalc * 32)^ := byte(i);
+        PByte(NativeUint(LPointers^[i]) + kcalc * 32)^ := byte(i);
       end;
       {Read the memory}
       LSum := 0;
@@ -115,7 +115,7 @@ begin
         for kloop := 0 to (LSize - 16) div 32 do
         begin
           kcalc := kloop;
-          Inc(LSum, PShortInt(NativeUInt(LPointers^[i]) + kcalc * 32 + 15)^);
+          Inc(LSum, PShortInt(NativeUint(LPointers^[i]) + kcalc * 32 + 15)^);
         end;
       end;
       {"Use" the sum to suppress the compiler warning}

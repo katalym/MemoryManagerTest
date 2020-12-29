@@ -31,7 +31,7 @@ uses
 {$IFNDEF fpc}
   System.AnsiStrings,
 {$ENDIF}
-  FastCodeCPUID, SysUtils, System.Win.ComObj, System.Variants, Winapi.ActiveX;
+  SysUtils, System.Win.ComObj, System.Variants, Winapi.ActiveX;
 
 function GetModuleVersionDFL(ModuleFileName: string; var Ver: TVersion; Product: Boolean = False): string; forward;
 
@@ -69,7 +69,7 @@ var
 begin
   if not FrequencyCPUKnown then
   begin
-    {$WARN SYMBOL_PLATFORM OFF}
+{$WARN SYMBOL_PLATFORM OFF}
     Win32Check(QueryPerformanceFrequency(PerfFreq));
     // First allow SpeedStep some time
     Win32Check(QueryPerformanceCounter(PerfStart));
@@ -86,8 +86,7 @@ begin
       Win32Check(QueryPerformanceCounter(PerfTemp));
     until PerfTemp >= PerfEnd;
     TscEnd := RdTsc;
-    {$WARN SYMBOL_PLATFORM ON}
-
+{$WARN SYMBOL_PLATFORM ON}
     FrequencyCPU := (TscEnd - TscStart) * PerfFreq / (PerfTemp - PerfStart);
     FrequencyCPUKnown := True;
   end;
@@ -107,13 +106,12 @@ var
 begin
   SetLength(ApicIds, CpuCount.Log);
   SetLength(Threads, CpuCount.Log);
-  {$WARN SYMBOL_PLATFORM OFF}
-
-  for I := Low(Threads) to High(Threads) do
+{$WARN SYMBOL_PLATFORM OFF}
+  for I := low(Threads) to high(Threads) do
     Threads[I] := 0;
   try
 
-    for I := Low(Threads) to High(Threads) do
+    for I := low(Threads) to high(Threads) do
     begin
       Threads[I] := CreateThread(nil, 0, @CheckHTEnabledThread, @ApicIds[I], CREATE_SUSPENDED, ThreadId);
       Win32Check(Threads[I] <> 0);
@@ -124,22 +122,21 @@ begin
     PP := @(Threads[0]);
     P := PP;
     D := WaitForMultipleObjects(Length(Threads), P, True, 1000) - WAIT_OBJECT_0;
-    LT := Low(Threads);
-    HT := High(Threads);
+    LT := low(Threads);
+    HT := high(Threads);
 {$WARN COMPARISON_TRUE OFF}
     B := (D >= LT) and (D <= HT);
 {$WARN COMPARISON_TRUE ON}
     Win32Check(B);
 
   finally
-    for I := Low(Threads) to High(Threads) do
+    for I := low(Threads) to high(Threads) do
       if Threads[I] <> 0 then
         CloseHandle(Threads[I]);
   end;
-  {$WARN SYMBOL_PLATFORM ON}
-
+{$WARN SYMBOL_PLATFORM ON}
   Result := False;
-  for I := Low(ApicIds) to High(ApicIds) do
+  for I := low(ApicIds) to high(ApicIds) do
     if ApicIds[I] and 1 <> 0 then
     begin
       Result := True;
@@ -262,76 +259,130 @@ asm
 end;
 {$ENDIF}
 
-function GetCPUName(const VendorString: AnsiString; CPUType, CPUFamily, CPUModel, CPUStepping: Integer; const CPUMHz: Double): AnsiString;
+function GetCPUName(const VendorString: AnsiString; CPUType, CPUFamily, CPUModel, CPUStepping: integer; const CPUMHz: Double): AnsiString;
 begin
   Result := '';
   if VendorString = 'GenuineIntel' then
     case CPUFamily of
-      4: case CPUModel of
-           0, 1: Result := 'Intel 486 DX';
-           2:    Result := 'Intel 486 SX';
-           3:    Result := 'Intel 486 DX/2';
-           4:    Result := 'Intel 486 SL';
-           5:    Result := 'Intel 486 SX/2';
-           7:    Result := 'Intel 486 DX/2-WB';
-           8:    Result := 'Intel 486 DX/4';
-           9:    Result := 'Intel 486 DX/4-WB';
-         end;
-      5: case CPUModel of
-           0..2: Result := 'Intel Pentium';
-           4:    Result := 'Intel Pentium MMX';
-           7:    Result := 'Intel Mobile Pentium';
-           8:    Result := 'Intel Mobile Pentium MMX';
-         end;
-      6: case CPUModel of
-           1:  Result := 'Intel Pentium Pro';
-           3:  Result := 'Intel Pentium II [Klamath]';
-           5:  Result := 'Intel Pentium II [Deschutes]';
-           6:  Result := 'Intel Celeron [Mendocino]';
-           7:  Result := 'Intel Pentium III [Katmai]';
-           8:  Result := 'Intel Pentium III [Coppermine]';
-           9:  Result := 'Intel Pentium M [Banias]';
-           10: Result := 'Intel Pentium III Xeon';
-           11: Result := 'Intel Pentium III';
-           13: Result := 'Intel Pentium M [Dothan]';
-         end;
-      15: case CPUModel of
-            0, 1: Result := 'Pentium 4 [Willamette]';
-            2:    Result := 'Pentium 4 [Northwood]';
-            3, 4: Result := 'Pentium 4 [Prescott]';
-          end;
+      4:
+        case CPUModel of
+          0, 1:
+            Result := 'Intel 486 DX';
+          2:
+            Result := 'Intel 486 SX';
+          3:
+            Result := 'Intel 486 DX/2';
+          4:
+            Result := 'Intel 486 SL';
+          5:
+            Result := 'Intel 486 SX/2';
+          7:
+            Result := 'Intel 486 DX/2-WB';
+          8:
+            Result := 'Intel 486 DX/4';
+          9:
+            Result := 'Intel 486 DX/4-WB';
+        end;
+      5:
+        case CPUModel of
+          0 .. 2:
+            Result := 'Intel Pentium';
+          4:
+            Result := 'Intel Pentium MMX';
+          7:
+            Result := 'Intel Mobile Pentium';
+          8:
+            Result := 'Intel Mobile Pentium MMX';
+        end;
+      6:
+        case CPUModel of
+          1:
+            Result := 'Intel Pentium Pro';
+          3:
+            Result := 'Intel Pentium II [Klamath]';
+          5:
+            Result := 'Intel Pentium II [Deschutes]';
+          6:
+            Result := 'Intel Celeron [Mendocino]';
+          7:
+            Result := 'Intel Pentium III [Katmai]';
+          8:
+            Result := 'Intel Pentium III [Coppermine]';
+          9:
+            Result := 'Intel Pentium M [Banias]';
+          10:
+            Result := 'Intel Pentium III Xeon';
+          11:
+            Result := 'Intel Pentium III';
+          13:
+            Result := 'Intel Pentium M [Dothan]';
+        end;
+      15:
+        case CPUModel of
+          0, 1:
+            Result := 'Pentium 4 [Willamette]';
+          2:
+            Result := 'Pentium 4 [Northwood]';
+          3, 4:
+            Result := 'Pentium 4 [Prescott]';
+        end;
     end
   else if VendorString = 'AuthenticAMD' then
     case CPUFamily of
-      4: case CPUModel of
-           3:  Result := 'AMD 486 DX/2';
-           7:  Result := 'AMD 486 DX/2-WB';
-           8:  Result := 'AMD 486 DX/4';
-           9:  Result := 'AMD 486 DX/4-WB';
-           14: Result := 'AMD Am5x86-WT';
-           15: Result := 'AMD Am5x86-WB';
-         end;
-      5: case CPUModel of
-           0:    Result := 'AMD K5/SSA5';
-           1..3: Result := 'AMD K5';
-           6, 7: Result := 'AMD K6';
-           8:    Result := 'AMD K6-2';
-           9:    Result := 'AMD K6-3';
-           13:   Result := 'AMD K6-2+ / K6-III+';
-         end;
-      6: case CPUModel of
-           0..2: Result := 'AMD Athlon';
-           3:    Result := 'AMD Duron';
-           4:    Result := 'AMD Athlon [Thunderbird]';
-           6:    Result := 'AMD Athlon [Palamino]';
-           7:    Result := 'AMD Duron [Morgan]';
-           8:    Result := 'AMD Athlon [Thoroughbred]';
-           10:   Result := 'AMD Athlon [Barton]';
-         end;
-      15: case CPUModel of
-            4: Result := 'AMD Athlon 64';
-            5: Result := 'AMD Athlon 64 FX / Opteron';
-          end;
+      4:
+        case CPUModel of
+          3:
+            Result := 'AMD 486 DX/2';
+          7:
+            Result := 'AMD 486 DX/2-WB';
+          8:
+            Result := 'AMD 486 DX/4';
+          9:
+            Result := 'AMD 486 DX/4-WB';
+          14:
+            Result := 'AMD Am5x86-WT';
+          15:
+            Result := 'AMD Am5x86-WB';
+        end;
+      5:
+        case CPUModel of
+          0:
+            Result := 'AMD K5/SSA5';
+          1 .. 3:
+            Result := 'AMD K5';
+          6, 7:
+            Result := 'AMD K6';
+          8:
+            Result := 'AMD K6-2';
+          9:
+            Result := 'AMD K6-3';
+          13:
+            Result := 'AMD K6-2+ / K6-III+';
+        end;
+      6:
+        case CPUModel of
+          0 .. 2:
+            Result := 'AMD Athlon';
+          3:
+            Result := 'AMD Duron';
+          4:
+            Result := 'AMD Athlon [Thunderbird]';
+          6:
+            Result := 'AMD Athlon [Palamino]';
+          7:
+            Result := 'AMD Duron [Morgan]';
+          8:
+            Result := 'AMD Athlon [Thoroughbred]';
+          10:
+            Result := 'AMD Athlon [Barton]';
+        end;
+      15:
+        case CPUModel of
+          4:
+            Result := 'AMD Athlon 64';
+          5:
+            Result := 'AMD Athlon 64 FX / Opteron';
+        end;
     end;
 end;
 
@@ -496,9 +547,9 @@ end;
 
 function SystemInfoWindows: string;
 const
-  WbemUser = '';
-  WbemPassword = '';
-  WbemComputer = 'localhost';
+  WbemUser            = '';
+  WbemPassword        = '';
+  WbemComputer        = 'localhost';
   wbemFlagForwardOnly = $00000020;
 var
   FSWbemLocator: OLEVariant;
@@ -520,7 +571,7 @@ begin;
       oEnum := IUnknown(FWbemObjectSet._NewEnum) as IEnumvariant;
       while oEnum.Next(1, FWbemObject, iValue) = 0 do
       begin
-        Result := Format('%s, version: %s', [String(FWbemObject.Caption), String(FWbemObject.Version)]);
+        Result := Format('%s, version: %s', [string(FWbemObject.Caption), string(FWbemObject.Version)]);
         FWbemObject := Unassigned;
       end;
     except

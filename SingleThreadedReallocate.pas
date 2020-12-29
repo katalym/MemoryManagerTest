@@ -45,14 +45,14 @@ const
   Prime = 29;
 {$IFDEF FullDebug}
   IterationsCount = 25;
-  PointerCount = 4000;
+  PointerCount    = 4000;
 {$ELSE}
   IterationsCount = 45;
-  PointerCount = 450000;
+  PointerCount    = 450000;
 {$ENDIF}
 type
   PPointers = ^TPointers;
-  TPointers = array[0..PointerCount - 1] of Pointer;
+  TPointers = array [0 .. PointerCount - 1] of Pointer;
 var
   i, j: Integer;
   kcalc: NativeUint;
@@ -73,12 +73,12 @@ begin
       LMax := 64
     else
       if i and 15 <> 0 then
-        LMax := 1024
-      else
-        if i and 255 <> 0 then
-          LMax := 4 * 1024
-        else
-          LMax := 256 * 1024;
+      LMax := 1024
+    else
+      if i and 255 <> 0 then
+      LMax := 4 * 1024
+    else
+      LMax := 256 * 1024;
     {Get the size, minimum 1}
     LSize := (CurValue mod LMax) + 1;
     Inc(CurValue, Prime);
@@ -97,12 +97,12 @@ begin
         LMax := 64
       else
         if i and 15 <> 0 then
-          LMax := 1024
-        else
-          if i and 255 <> 0 then
-            LMax := 4 * 1024
-          else
-            LMax := 256 * 1024;
+        LMax := 1024
+      else
+        if i and 255 <> 0 then
+        LMax := 4 * 1024
+      else
+        LMax := 256 * 1024;
       {Get the size, minimum 1}
       LSize := (CurValue mod LMax) + 1;
       Inc(CurValue, Prime);
@@ -113,7 +113,7 @@ begin
       for kloop := 0 to (LSize - 1) div 32 do
       begin
         kcalc := kloop;
-        PByte(NativeUInt(LPointers^[i]) + kcalc * 32)^ := byte(i);
+        PByte(NativeUint(LPointers^[i]) + kcalc * 32)^ := byte(i);
       end;
       {Read the memory}
       LSum := 0;
@@ -122,7 +122,7 @@ begin
         for kloop := 0 to (LSize - 16) div 32 do
         begin
           kcalc := kloop;
-          Inc(LSum, PShortInt(NativeUInt(LPointers^[i]) + kcalc * 32 + 15)^);
+          Inc(LSum, PShortInt(NativeUint(LPointers^[i]) + kcalc * 32 + 15)^);
         end;
       end;
       {"Use" the sum to suppress the compiler warning}

@@ -8,8 +8,8 @@ uses
   BenchmarkClassUnit;
 
 const
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   NumPointers = 15000;
 {$ELSE}
@@ -22,7 +22,7 @@ type
 
   TAddressSpaceCreepBench = class(TMMBenchmark)
   protected
-    FPointers: array[0..NumPointers - 1] of PAnsiChar;
+    FPointers: array [0 .. NumPointers - 1] of PAnsiChar;
   public
     constructor CreateBenchmark; override;
     destructor Destroy; override;
@@ -73,12 +73,12 @@ var
 begin
   {Call the inherited handler}
   inherited;
- {Allocate the pointers}
+  {Allocate the pointers}
   NextValue := Prime;
   for i := 0 to high(FPointers) do
   begin
     {Get an initial size}
-    LSize := 1 + (MaxBlockSize+NextValue) mod MaxBlockSize;
+    LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
     Inc(NextValue, Prime);
     {Allocate the pointer}
     GetMem(FPointers[i], LSize);
@@ -98,7 +98,7 @@ begin
       FreeMem(FPointers[i]);
       FPointers[i] := nil;
       {Get the new size}
-      LSize := 1 + (MaxBlockSize+NextValue) mod MaxBlockSize;
+      LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
       Inc(NextValue, Prime);
       {Allocate the pointer}
       GetMem(FPointers[i], LSize);

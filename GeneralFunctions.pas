@@ -1,145 +1,147 @@
 unit GeneralFunctions;
 
-//Minor modifications:
+// Minor modifications:
 // Added DetectCPUType from original MainUnit in FastCodeBenchmarkTool091
 // Added GetCPUFrequence from original MainUnit in FastCodeBenchmarkTool091
 
 interface
 
-{$ifdef FPC}
-  {$mode delphi}
-  {$asmmode intel}
-{$endif}
+{$IFDEF FPC}
+{$MODE delphi}
+{$ASMMODE intel}
+{$ENDIF}
 
 uses
- Windows, SysUtils, Classes;
+  Windows, SysUtils, Classes;
 
 type
 
- TVersion = record
-  Major: integer;
-  Minor: integer;
-  Release: integer;
-  Build: integer;
- end;
+  TVersion = record
+    Major: integer;
+    Minor: integer;
+    Release: integer;
+    Build: integer;
+  end;
 
- PVS_FIXEDFILEINFO = ^VS_FIXEDFILEINFO;
- TCPUIDResult = packed record
-  EAX: Cardinal;
-  EBX: Cardinal;
-  ECX: Cardinal;
-  EDX: Cardinal;
- end;
+  PVS_FIXEDFILEINFO = ^VS_FIXEDFILEINFO;
 
- TCPUFeatures = class(TPersistent)
+  TCPUIDResult = packed record
+    EAX: Cardinal;
+    EBX: Cardinal;
+    ECX: Cardinal;
+    EDX: Cardinal;
+  end;
+
+  TCPUFeatures = class(TPersistent)
   private
-   FSEP: Boolean;
-   FMTRR: Boolean;
-   FMSR: Boolean;
-   FPSE: Boolean;
-   FTSC: Boolean;
-   FMCE: Boolean;
-   FMMX: Boolean;
-   FPAT: Boolean;
-   FPAE: Boolean;
-   FXSR: Boolean;
-   FVME: Boolean;
-   FPGE: Boolean;
-   FCMOV: Boolean;
-   FFPU: Boolean;
-   FCX8: Boolean;
-   FSIMD: Boolean;
-   FMCA: Boolean;
-   FAPIC: Boolean;
-   FDE: Boolean;
-   FPSE36: Boolean;
-   FSERIAL: Boolean;
-   F3DNOW: Boolean;
-   FEX3DNOW: Boolean;
-   FEXMMX: Boolean;
- published
-   property _3DNOW: Boolean read F3DNOW write F3DNOW stored False;
-   property EX_3DNOW: Boolean read FEX3DNOW write FEX3DNOW stored False;
-   property EX_MMX: Boolean read FEXMMX write FEXMMX stored False;
-   property SIMD: Boolean read FSIMD write FSIMD stored False;
-   property SERIAL: Boolean read FSERIAL write FSERIAL stored False;
-   property XSR: Boolean read FXSR write FXSR stored False;
-   property MMX: Boolean read FMMX write FMMX stored False;
-   property PSE36: Boolean read FPSE36 write FPSE36 stored False;
-   property PAT: Boolean read FPAT write FPAT stored False;
-   property CMOV: Boolean read FCMOV write FCMOV stored False;
-   property MCA: Boolean read FMCA write FMCA stored False;
-   property PGE: Boolean read FPGE write FPGE stored False;
-   property MTRR: Boolean read FMTRR write FMTRR stored False;
-   property SEP: Boolean read FSEP write FSEP stored False;
-   property APIC: Boolean read FAPIC write FAPIC stored False;
-   property CX8: Boolean read FCX8 write FCX8 stored False;
-   property MCE: Boolean read FMCE write FMCE stored False;
-   property PAE: Boolean read FPAE write FPAE stored False;
-   property MSR: Boolean read FMSR write FMSR stored False;
-   property TSC: Boolean read FTSC write FTSC stored False;
-   property PSE: Boolean read FPSE write FPSE stored False;
-   property DE: Boolean read FDE write FDE stored False;
-   property VME: Boolean read FVME write FVME stored False;
-   property FPU: Boolean read FFPU write FFPU stored False;
- end;
+    FSEP: Boolean;
+    FMTRR: Boolean;
+    FMSR: Boolean;
+    FPSE: Boolean;
+    FTSC: Boolean;
+    FMCE: Boolean;
+    FMMX: Boolean;
+    FPAT: Boolean;
+    FPAE: Boolean;
+    FXSR: Boolean;
+    FVME: Boolean;
+    FPGE: Boolean;
+    FCMOV: Boolean;
+    FFPU: Boolean;
+    FCX8: Boolean;
+    FSIMD: Boolean;
+    FMCA: Boolean;
+    FAPIC: Boolean;
+    FDE: Boolean;
+    FPSE36: Boolean;
+    FSERIAL: Boolean;
+    F3DNOW: Boolean;
+    FEX3DNOW: Boolean;
+    FEXMMX: Boolean;
+  published
+    property _3DNOW: Boolean read F3DNOW write F3DNOW stored False;
+    property EX_3DNOW: Boolean read FEX3DNOW write FEX3DNOW stored False;
+    property EX_MMX: Boolean read FEXMMX write FEXMMX stored False;
+    property SIMD: Boolean read FSIMD write FSIMD stored False;
+    property SERIAL: Boolean read FSERIAL write FSERIAL stored False;
+    property XSR: Boolean read FXSR write FXSR stored False;
+    property MMX: Boolean read FMMX write FMMX stored False;
+    property PSE36: Boolean read FPSE36 write FPSE36 stored False;
+    property PAT: Boolean read FPAT write FPAT stored False;
+    property CMOV: Boolean read FCMOV write FCMOV stored False;
+    property MCA: Boolean read FMCA write FMCA stored False;
+    property PGE: Boolean read FPGE write FPGE stored False;
+    property MTRR: Boolean read FMTRR write FMTRR stored False;
+    property SEP: Boolean read FSEP write FSEP stored False;
+    property APIC: Boolean read FAPIC write FAPIC stored False;
+    property CX8: Boolean read FCX8 write FCX8 stored False;
+    property MCE: Boolean read FMCE write FMCE stored False;
+    property PAE: Boolean read FPAE write FPAE stored False;
+    property MSR: Boolean read FMSR write FMSR stored False;
+    property TSC: Boolean read FTSC write FTSC stored False;
+    property PSE: Boolean read FPSE write FPSE stored False;
+    property DE: Boolean read FDE write FDE stored False;
+    property VME: Boolean read FVME write FVME stored False;
+    property FPU: Boolean read FFPU write FFPU stored False;
+  end;
 
- TCPUID  = array[1..4] of Longint;
- TVendor = array [0..11] of char;
+  TCPUID = array [1 .. 4] of Longint;
+  TVendor = array [0 .. 11] of char;
 
 {$IFDEF WIN32}
- function GetCPUID : TCPUID; assembler; register;
- function IsCPUID_Available : Boolean; register;
- function GetCPUVendor : TVendor; assembler; register;
- function ExecuteCPUID : TCPUIDResult; assembler;
+function GetCPUID: TCPUID; assembler; register;
+function IsCPUID_Available: Boolean; register;
+function GetCPUVendor: TVendor; assembler; register;
+function ExecuteCPUID: TCPUIDResult; assembler;
 {$ENDIF}
- function GetCPUFeaturesInfo(FeatureSetIndex : Integer) : Boolean;
- function DetectCPUType(Family, Model: Integer): String;
- function GetCPUFrequencyMHz : Cardinal;
+function GetCPUFeaturesInfo(FeatureSetIndex: integer): Boolean;
+function DetectCPUType(Family, Model: integer): string;
+function GetCPUFrequencyMHz: Cardinal;
 
 implementation
 
-//uses MainUnit;
+// uses MainUnit;
 
 resourcestring
   TEXT_NO_VERSIONINFO = 'No version info';
 
 var
- {$IFDEF WIN32}CPUID_Level : DWORD;{$ENDIF}
- CPUID : TCPUIDResult;
+{$IFDEF WIN32}CPUID_Level: DWORD; {$ENDIF}
+  CPUID: TCPUIDResult;
 
 const
- ID_BIT  =  $200000;
- CPUID_CPUFEATURESET : DWORD = $1;
- CPUID_CPUSIGNATUREEX: DWORD = $80000001;
- SFS_FPU = 0;
- SFS_VME = 1;
- SFS_DE = 2;
- SFS_PSE = 3;
- SFS_TSC = 4;
- SFS_MSR = 5;
- SFS_PAE = 6;
- SFS_MCE = 7;
- SFS_CX8 = 8;
- SFS_APIC = 9;
- SFS_SEP = 11;
- SFS_MTRR = 12;
- SFS_PGE = 13;
- SFS_MCA = 14;
- SFS_CMOV = 15;
- SFS_PAT = 16;
- SFS_PSE36 = 17;
- SFS_SERIAL = 18;
- SFS_MMX = 23;
- SFS_XSR = 24;
- SFS_SIMD = 25;
- EFS_EXMMXA = 22; { AMD Specific }
- EFS_EXMMXC = 24; { Cyrix Specific }
- EFS_3DNOW = 31;
- EFS_EX3DNOW = 30;
+  ID_BIT                      = $200000;
+  CPUID_CPUFEATURESET: DWORD  = $1;
+  CPUID_CPUSIGNATUREEX: DWORD = $80000001;
+  SFS_FPU                     = 0;
+  SFS_VME                     = 1;
+  SFS_DE                      = 2;
+  SFS_PSE                     = 3;
+  SFS_TSC                     = 4;
+  SFS_MSR                     = 5;
+  SFS_PAE                     = 6;
+  SFS_MCE                     = 7;
+  SFS_CX8                     = 8;
+  SFS_APIC                    = 9;
+  SFS_SEP                     = 11;
+  SFS_MTRR                    = 12;
+  SFS_PGE                     = 13;
+  SFS_MCA                     = 14;
+  SFS_CMOV                    = 15;
+  SFS_PAT                     = 16;
+  SFS_PSE36                   = 17;
+  SFS_SERIAL                  = 18;
+  SFS_MMX                     = 23;
+  SFS_XSR                     = 24;
+  SFS_SIMD                    = 25;
+  EFS_EXMMXA                  = 22; {AMD Specific}
+  EFS_EXMMXC                  = 24; {Cyrix Specific}
+  EFS_3DNOW                   = 31;
+  EFS_EX3DNOW                 = 30;
 
 {$IFDEF WIN32}
-function GetCPUID : TCPUID; assembler; register;
+
+function GetCPUID: TCPUID; assembler; register;
 asm
   push    ebx         {Save affected register}
   push    edi
@@ -157,7 +159,7 @@ asm
   pop     ebx
 end;
 
-function IsCPUID_Available : Boolean; register;
+function IsCPUID_Available: Boolean; register;
 asm
   pushfd              {direct access to flags no possible, only via stack}
   pop     eax         {flags to EAX}
@@ -173,7 +175,7 @@ asm
 @exit:
 end;
 
-function GetCPUVendor : TVendor; assembler; register;
+function GetCPUVendor: TVendor; assembler; register;
 asm
   push    ebx          {Save affected register}
   push    edi
@@ -205,98 +207,149 @@ end;
 {$ENDIF}
 
 {$IFDEF WIN32}
-function GetCPUFeaturesInfo(FeatureSetIndex : Integer) : Boolean;
+
+function GetCPUFeaturesInfo(FeatureSetIndex: integer): Boolean;
 begin
- if (FeatureSetIndex >= 0) and (FeatureSetIndex <21) then
+  if (FeatureSetIndex >= 0) and (FeatureSetIndex < 21) then
   begin
-   CPUID_Level := CPUID_CPUFEATURESET;
-   CPUID := ExecuteCPUID;
+    CPUID_Level := CPUID_CPUFEATURESET;
+    CPUID := ExecuteCPUID;
   end;
- if (FeatureSetIndex >= 21) and (FeatureSetIndex <= 23) then
+  if (FeatureSetIndex >= 21) and (FeatureSetIndex <= 23) then
   begin
-   CPUID_Level := CPUID_CPUSIGNATUREEX;
-   CPUID := ExecuteCPUID;
+    CPUID_Level := CPUID_CPUSIGNATUREEX;
+    CPUID := ExecuteCPUID;
   end;
- case FeatureSetIndex of
-   0 : Result := ((CPUID.EDX and (1 shl SFS_SIMD)) <> 0); // SIMD
-   1 : Result := ((CPUID.EDX and (1 shl SFS_XSR)) <> 0); // XSR
-   2 : Result := ((CPUID.EDX and (1 shl SFS_MMX)) <> 0); // MMX
-   3 : Result := ((CPUID.EDX and (1 shl SFS_SERIAL)) <> 0); // SERIAL
-   4 : Result := ((CPUID.EDX and (1 shl SFS_PSE36)) <> 0); // PSE36
-   5 : Result := ((CPUID.EDX and (1 shl SFS_PAT)) <> 0); // PAT
-   6 : Result := ((CPUID.EDX and (1 shl SFS_CMOV)) <> 0); // CMOV
-   7 : Result := ((CPUID.EDX and (1 shl SFS_MCA)) <> 0); // MCA
-   8 : Result := ((CPUID.EDX and (1 shl SFS_PGE)) <> 0); // PGE
-   9 : Result := ((CPUID.EDX and (1 shl SFS_MTRR)) <> 0); // MTRR
-  10 : Result := ((CPUID.EDX and (1 shl SFS_SEP)) <> 0); // SEP
-  11 : Result := ((CPUID.EDX and (1 shl SFS_APIC)) <> 0); // APIC
-  12 : Result := ((CPUID.EDX and (1 shl SFS_CX8)) <> 0); // CX8
-  13 : Result := ((CPUID.EDX and (1 shl SFS_MCE)) <> 0); // MCE
-  14 : Result := ((CPUID.EDX and (1 shl SFS_PAE)) <> 0); // PAE
-  15 : Result := ((CPUID.EDX and (1 shl SFS_MSR)) <> 0); // MSR
-  16 : Result := ((CPUID.EDX and (1 shl SFS_TSC)) <> 0); // TSC
-  17 : Result := ((CPUID.EDX and (1 shl SFS_PSE)) <> 0); // PSE
-  18 : Result := ((CPUID.EDX and (1 shl SFS_DE)) <> 0); // DE
-  19 : Result := ((CPUID.EDX and (1 shl SFS_VME)) <> 0);// VME
-  20 : Result := ((CPUID.EDX and (1 shl SFS_FPU)) <> 0); // FPU
-  21 : Result := ((CPUID.EDX and (1 shl EFS_EXMMXA)) <> 0) or ((CPUID.EDX and (1 shl EFS_EXMMXC)) <> 0); // EX_MMX
-  22 : Result := ((CPUID.EDX and (1 shl EFS_EX3DNOW)) <> 0); // EX_3DNOW
-  23 : Result := ((CPUID.EDX and (1 shl EFS_3DNOW)) <> 0); // _3DNOW
- else
-  begin
-   Result := False;
-//   MessageBox(MainForm.Handle,'Index out of bounds',nil,MB_OK)
+  case FeatureSetIndex of
+    0:
+      Result := ((CPUID.EDX and (1 shl SFS_SIMD)) <> 0); // SIMD
+    1:
+      Result := ((CPUID.EDX and (1 shl SFS_XSR)) <> 0); // XSR
+    2:
+      Result := ((CPUID.EDX and (1 shl SFS_MMX)) <> 0); // MMX
+    3:
+      Result := ((CPUID.EDX and (1 shl SFS_SERIAL)) <> 0); // SERIAL
+    4:
+      Result := ((CPUID.EDX and (1 shl SFS_PSE36)) <> 0); // PSE36
+    5:
+      Result := ((CPUID.EDX and (1 shl SFS_PAT)) <> 0); // PAT
+    6:
+      Result := ((CPUID.EDX and (1 shl SFS_CMOV)) <> 0); // CMOV
+    7:
+      Result := ((CPUID.EDX and (1 shl SFS_MCA)) <> 0); // MCA
+    8:
+      Result := ((CPUID.EDX and (1 shl SFS_PGE)) <> 0); // PGE
+    9:
+      Result := ((CPUID.EDX and (1 shl SFS_MTRR)) <> 0); // MTRR
+    10:
+      Result := ((CPUID.EDX and (1 shl SFS_SEP)) <> 0); // SEP
+    11:
+      Result := ((CPUID.EDX and (1 shl SFS_APIC)) <> 0); // APIC
+    12:
+      Result := ((CPUID.EDX and (1 shl SFS_CX8)) <> 0); // CX8
+    13:
+      Result := ((CPUID.EDX and (1 shl SFS_MCE)) <> 0); // MCE
+    14:
+      Result := ((CPUID.EDX and (1 shl SFS_PAE)) <> 0); // PAE
+    15:
+      Result := ((CPUID.EDX and (1 shl SFS_MSR)) <> 0); // MSR
+    16:
+      Result := ((CPUID.EDX and (1 shl SFS_TSC)) <> 0); // TSC
+    17:
+      Result := ((CPUID.EDX and (1 shl SFS_PSE)) <> 0); // PSE
+    18:
+      Result := ((CPUID.EDX and (1 shl SFS_DE)) <> 0); // DE
+    19:
+      Result := ((CPUID.EDX and (1 shl SFS_VME)) <> 0); // VME
+    20:
+      Result := ((CPUID.EDX and (1 shl SFS_FPU)) <> 0); // FPU
+    21:
+      Result := ((CPUID.EDX and (1 shl EFS_EXMMXA)) <> 0) or ((CPUID.EDX and (1 shl EFS_EXMMXC)) <> 0); // EX_MMX
+    22:
+      Result := ((CPUID.EDX and (1 shl EFS_EX3DNOW)) <> 0); // EX_3DNOW
+    23:
+      Result := ((CPUID.EDX and (1 shl EFS_3DNOW)) <> 0); // _3DNOW
+  else
+    begin
+      Result := False;
+      // MessageBox(MainForm.Handle,'Index out of bounds',nil,MB_OK)
+    end;
   end;
- end;
 end;
 {$ELSE}
-function GetCPUFeaturesInfo(FeatureSetIndex : Integer) : Boolean;
+
+function GetCPUFeaturesInfo(FeatureSetIndex: integer): Boolean;
 var
   EDX: Cardinal;
 begin
-{$IFnDEF FPC}
- {$WARN SYMBOL_PLATFORM OFF}
- EDX := CPUIDTable[1].EDX;
- {$WARN SYMBOL_PLATFORM ON}
+{$IFNDEF FPC}
+{$WARN SYMBOL_PLATFORM OFF}
+  EDX := CPUIDTable[1].EDX;
+{$WARN SYMBOL_PLATFORM ON}
 {$ELSE}
- EDX := 0;
+  EDX := 0;
 {$ENDIF}
- case FeatureSetIndex of
-   0 : Result := ((EDX and (1 shl SFS_SIMD)) <> 0); // SIMD
-   1 : Result := ((EDX and (1 shl SFS_XSR)) <> 0); // XSR
-   2 : Result := ((EDX and (1 shl SFS_MMX)) <> 0); // MMX
-   3 : Result := ((EDX and (1 shl SFS_SERIAL)) <> 0); // SERIAL
-   4 : Result := ((EDX and (1 shl SFS_PSE36)) <> 0); // PSE36
-   5 : Result := ((EDX and (1 shl SFS_PAT)) <> 0); // PAT
-   6 : Result := ((EDX and (1 shl SFS_CMOV)) <> 0); // CMOV
-   7 : Result := ((EDX and (1 shl SFS_MCA)) <> 0); // MCA
-   8 : Result := ((EDX and (1 shl SFS_PGE)) <> 0); // PGE
-   9 : Result := ((EDX and (1 shl SFS_MTRR)) <> 0); // MTRR
-  10 : Result := ((EDX and (1 shl SFS_SEP)) <> 0); // SEP
-  11 : Result := ((EDX and (1 shl SFS_APIC)) <> 0); // APIC
-  12 : Result := ((EDX and (1 shl SFS_CX8)) <> 0); // CX8
-  13 : Result := ((EDX and (1 shl SFS_MCE)) <> 0); // MCE
-  14 : Result := ((EDX and (1 shl SFS_PAE)) <> 0); // PAE
-  15 : Result := ((EDX and (1 shl SFS_MSR)) <> 0); // MSR
-  16 : Result := ((EDX and (1 shl SFS_TSC)) <> 0); // TSC
-  17 : Result := ((EDX and (1 shl SFS_PSE)) <> 0); // PSE
-  18 : Result := ((EDX and (1 shl SFS_DE)) <> 0); // DE
-  19 : Result := ((EDX and (1 shl SFS_VME)) <> 0);// VME
-  20 : Result := ((EDX and (1 shl SFS_FPU)) <> 0); // FPU
-  21 : Result := ((EDX and (1 shl EFS_EXMMXA)) <> 0) or ((CPUID.EDX and (1 shl EFS_EXMMXC)) <> 0); // EX_MMX
-  22 : Result := ((EDX and (1 shl EFS_EX3DNOW)) <> 0); // EX_3DNOW
-  23 : Result := ((EDX and (1 shl EFS_3DNOW)) <> 0); // _3DNOW
- else
-  begin
-   Result := False;
-//   MessageBox(MainForm.Handle,'Index out of bounds',nil,MB_OK)
+  case FeatureSetIndex of
+    0:
+      Result := ((EDX and (1 shl SFS_SIMD)) <> 0); // SIMD
+    1:
+      Result := ((EDX and (1 shl SFS_XSR)) <> 0); // XSR
+    2:
+      Result := ((EDX and (1 shl SFS_MMX)) <> 0); // MMX
+    3:
+      Result := ((EDX and (1 shl SFS_SERIAL)) <> 0); // SERIAL
+    4:
+      Result := ((EDX and (1 shl SFS_PSE36)) <> 0); // PSE36
+    5:
+      Result := ((EDX and (1 shl SFS_PAT)) <> 0); // PAT
+    6:
+      Result := ((EDX and (1 shl SFS_CMOV)) <> 0); // CMOV
+    7:
+      Result := ((EDX and (1 shl SFS_MCA)) <> 0); // MCA
+    8:
+      Result := ((EDX and (1 shl SFS_PGE)) <> 0); // PGE
+    9:
+      Result := ((EDX and (1 shl SFS_MTRR)) <> 0); // MTRR
+    10:
+      Result := ((EDX and (1 shl SFS_SEP)) <> 0); // SEP
+    11:
+      Result := ((EDX and (1 shl SFS_APIC)) <> 0); // APIC
+    12:
+      Result := ((EDX and (1 shl SFS_CX8)) <> 0); // CX8
+    13:
+      Result := ((EDX and (1 shl SFS_MCE)) <> 0); // MCE
+    14:
+      Result := ((EDX and (1 shl SFS_PAE)) <> 0); // PAE
+    15:
+      Result := ((EDX and (1 shl SFS_MSR)) <> 0); // MSR
+    16:
+      Result := ((EDX and (1 shl SFS_TSC)) <> 0); // TSC
+    17:
+      Result := ((EDX and (1 shl SFS_PSE)) <> 0); // PSE
+    18:
+      Result := ((EDX and (1 shl SFS_DE)) <> 0); // DE
+    19:
+      Result := ((EDX and (1 shl SFS_VME)) <> 0); // VME
+    20:
+      Result := ((EDX and (1 shl SFS_FPU)) <> 0); // FPU
+    21:
+      Result := ((EDX and (1 shl EFS_EXMMXA)) <> 0) or ((CPUID.EDX and (1 shl EFS_EXMMXC)) <> 0); // EX_MMX
+    22:
+      Result := ((EDX and (1 shl EFS_EX3DNOW)) <> 0); // EX_3DNOW
+    23:
+      Result := ((EDX and (1 shl EFS_3DNOW)) <> 0); // _3DNOW
+  else
+    begin
+      Result := False;
+      // MessageBox(MainForm.Handle,'Index out of bounds',nil,MB_OK)
+    end;
   end;
- end;
 end;
 {$ENDIF}
 
 {$IFDEF WIN32}
-function ExecuteCPUID : TCPUIDResult; assembler;
+
+function ExecuteCPUID: TCPUIDResult; assembler;
 asm
   push    ebx
   push    edi
@@ -315,213 +368,213 @@ asm
 end;
 {$ENDIF}
 
-function DetectCPUType(Family, Model: Integer): String;
+function DetectCPUType(Family, Model: integer): string;
 var
-  P2Array : array[0..5] of Integer; // Family : 6
-  P3Array : array[0..5] of Integer; // Family : 6
-  P4Array : array[0..5] of Integer; // Family : 15
-  XPArray : array[0..5] of Integer; // Family : 6
-  PrescottArray : array[0..5] of Integer; // Family : 15
-  OpteronArray : array[0..5] of Integer; // Family : 15
-  AthlonArray : array[0..5] of Integer; // Family : 6
-  Athlon64Array : array[0..5] of Integer; // Family : 15
-  {$IFDEF WIN32}
-  CPUDetected : Boolean;
-  PentiumMArray : array[0..5] of Integer; // Family : 6
-  Vendor: String;
-  I : Integer;
-  {$ENDIF}
-begin
- P2Array[0] := 5; //0101
- P3Array[0] := 7; // 0111
- P3Array[1] := 8; // 1000
- P3Array[2] := 10; // 1010
- P3Array[3] := 11; // 1011
- P4Array[0] := 0; // 0000
- P4Array[1] := 1; // 0001
- P4Array[2] := 2; // 0010
- XPArray[0] := 6; // 0110
- XPArray[1] := 8; // 1000
- XPArray[2] := 10; // 1010
- PrescottArray[0] := 3; // 0011
- OpteronArray[0] := 5; // 0101
- AthlonArray[0] := 4; // 0100
- Athlon64Array[0] := 4; // 0100
+  P2Array: array [0 .. 5] of integer; // Family : 6
+  P3Array: array [0 .. 5] of integer; // Family : 6
+  P4Array: array [0 .. 5] of integer; // Family : 15
+  XPArray: array [0 .. 5] of integer; // Family : 6
+  PrescottArray: array [0 .. 5] of integer; // Family : 15
+  OpteronArray: array [0 .. 5] of integer; // Family : 15
+  AthlonArray: array [0 .. 5] of integer; // Family : 6
+  Athlon64Array: array [0 .. 5] of integer; // Family : 15
 {$IFDEF WIN32}
- CPUDetected := False;
- Vendor := GetCPUVendor;
- begin
-  if Vendor = 'GenuineIntel' then
-   begin
-    // Intel processors detection
-    if Family = 6 then
-    begin
-     for I := 0 to 5 do
-     begin
-      if Model = P3Array[I] then
-       begin
-        Result := 'Pentium 3';
-        Exit;
-       end;
-     end;
-    end;
-    if Family = 6 then
-    begin
-     for I := 0 to 5 do
-     begin
-      if Model = P2Array[I] then
-       begin
-        Result := 'Pentium 2';
-        Exit;
-       end;
-     end;
-    end;
-    if Family = 6 then
-    begin
-     for I := 0 to 5 do
-     begin
-      if Model = PentiumMArray[I] then
-       begin
-        Result := 'Pentium M';
-        Exit;
-       end;
-     end;
-    end;
-    if Family = 15 then
-    begin
-     for I := 0 to 5 do
-     begin
-      if Model = P4Array[I] then
-       begin
-        Result := 'P4 Northwood';
-        Exit;
-       end;
-     end;
-    end;
-    if Family = 15 then
-    begin
-     for I := 0 to 5 do
-     begin
-      if Model = PrescottArray[I] then
-       begin
-        Result := 'P4 Prescott';
-        Exit;
-       end;
-     end;
-    end;
-   end;
-  if Vendor = 'AuthenticAMD' then
-   begin
-    // AMD processor detection
-    if Family = 6 then
-    begin
-     for I := 0 to 5 do
-     begin
-      if Model = XPArray[I] then
-       begin
-        Result := 'Athlon XP';
-        Exit;
-       end;
-     end;
-    end;
-    if Family = 6 then
-    begin
-     for I := 0 to 5 do
-     begin
-      if Model = AthlonArray[I] then
-       begin
-        Result := 'Athlon';
-        Exit;
-       end;
-     end;
-    end;
-    if Family = 15 then
-    begin
-     for I := 0 to 5 do
-     begin
-      if Model = Athlon64Array[I] then
-       begin
-        Result := 'Athlon 64';
-        Exit;
-       end;
-     end;
-    end;
-    if Family = 15 then
-    begin
-     for I := 0 to 5 do
-     begin
-      if Model = OpteronArray[I] then
-       begin
-        Result := 'Opteron';
-        Exit;
-       end;
-     end;
-    end;
-   end;
- end;
- if CPUDetected = False then
+  CPUDetected: Boolean;
+  PentiumMArray: array [0 .. 5] of integer; // Family : 6
+  Vendor: string;
+  I: integer;
+{$ENDIF}
+begin
+  P2Array[0] := 5; // 0101
+  P3Array[0] := 7; // 0111
+  P3Array[1] := 8; // 1000
+  P3Array[2] := 10; // 1010
+  P3Array[3] := 11; // 1011
+  P4Array[0] := 0; // 0000
+  P4Array[1] := 1; // 0001
+  P4Array[2] := 2; // 0010
+  XPArray[0] := 6; // 0110
+  XPArray[1] := 8; // 1000
+  XPArray[2] := 10; // 1010
+  PrescottArray[0] := 3; // 0011
+  OpteronArray[0] := 5; // 0101
+  AthlonArray[0] := 4; // 0100
+  Athlon64Array[0] := 4; // 0100
+{$IFDEF WIN32}
+  CPUDetected := False;
+  Vendor := GetCPUVendor;
   begin
-   Result := 'Not detected';
-   Exit;
+    if Vendor = 'GenuineIntel' then
+    begin
+      // Intel processors detection
+      if Family = 6 then
+      begin
+        for I := 0 to 5 do
+        begin
+          if Model = P3Array[I] then
+          begin
+            Result := 'Pentium 3';
+            exit;
+          end;
+        end;
+      end;
+      if Family = 6 then
+      begin
+        for I := 0 to 5 do
+        begin
+          if Model = P2Array[I] then
+          begin
+            Result := 'Pentium 2';
+            exit;
+          end;
+        end;
+      end;
+      if Family = 6 then
+      begin
+        for I := 0 to 5 do
+        begin
+          if Model = PentiumMArray[I] then
+          begin
+            Result := 'Pentium M';
+            exit;
+          end;
+        end;
+      end;
+      if Family = 15 then
+      begin
+        for I := 0 to 5 do
+        begin
+          if Model = P4Array[I] then
+          begin
+            Result := 'P4 Northwood';
+            exit;
+          end;
+        end;
+      end;
+      if Family = 15 then
+      begin
+        for I := 0 to 5 do
+        begin
+          if Model = PrescottArray[I] then
+          begin
+            Result := 'P4 Prescott';
+            exit;
+          end;
+        end;
+      end;
+    end;
+    if Vendor = 'AuthenticAMD' then
+    begin
+      // AMD processor detection
+      if Family = 6 then
+      begin
+        for I := 0 to 5 do
+        begin
+          if Model = XPArray[I] then
+          begin
+            Result := 'Athlon XP';
+            exit;
+          end;
+        end;
+      end;
+      if Family = 6 then
+      begin
+        for I := 0 to 5 do
+        begin
+          if Model = AthlonArray[I] then
+          begin
+            Result := 'Athlon';
+            exit;
+          end;
+        end;
+      end;
+      if Family = 15 then
+      begin
+        for I := 0 to 5 do
+        begin
+          if Model = Athlon64Array[I] then
+          begin
+            Result := 'Athlon 64';
+            exit;
+          end;
+        end;
+      end;
+      if Family = 15 then
+      begin
+        for I := 0 to 5 do
+        begin
+          if Model = OpteronArray[I] then
+          begin
+            Result := 'Opteron';
+            exit;
+          end;
+        end;
+      end;
+    end;
+  end;
+  if CPUDetected = False then
+  begin
+    Result := 'Not detected';
+    exit;
   end;
 {$ENDIF}
 end;
 
-function GetCPUFrequencyMHz : Cardinal;
+function GetCPUFrequencyMHz: Cardinal;
 
-  function RDTSC : Int64; assembler;
+  function RDTSC: Int64; assembler;
   asm
-     rdtsc
-   {$IFDEF WIN64}
-     shl   rdx, 32
-     or    rax, rdx
-     xor   rdx, rdx
-   {$ENDIF}
+    rdtsc
+    {$IFDEF WIN64}
+    shl   rdx, 32
+    or    rax, rdx
+    xor   rdx, rdx
+    {$ENDIF}
   end;
 
 var
- RDTSCCountStart, RDTSCCountEnd, RDTSCTicks, lpFrequency, lpPerformanceCount,
- StartCount, EndCount, NoOfTicks : Int64;
- I1, I2 : Cardinal;
- J : Int64;
- Succes : Boolean;
- RunTimeSec : Double;
+  RDTSCCountStart, RDTSCCountEnd, RDTSCTicks, lpFrequency, lpPerformanceCount,
+    StartCount, EndCount, NoOfTicks: Int64;
+  I1, I2: Cardinal;
+  J: Int64;
+  Succes: Boolean;
+  RunTimeSec: Double;
 const
- NOOFRUNS : Cardinal = 1000;
+  NOOFRUNS: Cardinal = 1000;
 
 begin
- Succes := QueryPerformanceFrequency(lpFrequency);
- if not Succes then
-  raise Exception.Create('QueryPerformanceFrequency failed');
- Succes := QueryPerformanceCounter(lpPerformanceCount);
- if Succes then
-  StartCount := lpPerformanceCount
- else
-  raise Exception.Create('QueryPerformanceCounter failed');
- RDTSCCountStart := RDTSC;
- //Do something for a while
- J := 0;
- for I1 := 0 to NOOFRUNS do
+  Succes := QueryPerformanceFrequency(lpFrequency);
+  if not Succes then
+    raise Exception.Create('QueryPerformanceFrequency failed');
+  Succes := QueryPerformanceCounter(lpPerformanceCount);
+  if Succes then
+    StartCount := lpPerformanceCount
+  else
+    raise Exception.Create('QueryPerformanceCounter failed');
+  RDTSCCountStart := RDTSC;
+  // Do something for a while
+  J := 0;
+  for I1 := 0 to NOOFRUNS do
   begin
-   for I2 := 0 to NOOFRUNS do
+    for I2 := 0 to NOOFRUNS do
     begin
-     J := J + 1;
+      J := J + 1;
     end;
   end;
- RDTSCCountEnd := RDTSC;
- Succes := QueryPerformanceCounter(lpPerformanceCount);
- if Succes then
-  EndCount := lpPerformanceCount
- else
-  raise Exception.Create('QueryPerformanceCounter failed');
- NoOfTicks := EndCount - StartCount;
- if NoOfTicks < 0 then
-  raise Exception.Create('Performance counter wrapped around');
- RunTimeSec := NoOfTicks / lpFrequency;
- RDTSCTicks := RDTSCCountEnd - RDTSCCountStart;
- if RDTSCTicks < 0 then
-  raise Exception.Create('Time stamp counter counter wrapped around');
- Result := Round(RDTSCTicks / RunTimeSec / 1000000);
+  RDTSCCountEnd := RDTSC;
+  Succes := QueryPerformanceCounter(lpPerformanceCount);
+  if Succes then
+    EndCount := lpPerformanceCount
+  else
+    raise Exception.Create('QueryPerformanceCounter failed');
+  NoOfTicks := EndCount - StartCount;
+  if NoOfTicks < 0 then
+    raise Exception.Create('Performance counter wrapped around');
+  RunTimeSec := NoOfTicks / lpFrequency;
+  RDTSCTicks := RDTSCCountEnd - RDTSCCountStart;
+  if RDTSCTicks < 0 then
+    raise Exception.Create('Time stamp counter counter wrapped around');
+  Result := Round(RDTSCTicks / RunTimeSec / 1000000);
 end;
 
 end.

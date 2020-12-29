@@ -38,77 +38,77 @@ type
   end;
 
   TExtended = record
-   X : Extended;
-   Pad1, Pad2, Pad3, Pad4, Pad5, Pad6 : Byte;
+    X: Extended;
+    Pad1, Pad2, Pad3, Pad4, Pad5, Pad6: Byte;
   end;
 
- TExtendedArray = array[0..ExtArraySize] of TExtended;
- PExtendedArray = ^TExtendedArray;
+  TExtendedArray = array [0 .. ExtArraySize] of TExtended;
+  PExtendedArray = ^TExtendedArray;
 
 procedure TStandardSortExtendedArrayThread.Execute;
 var
- ExtArray :  PExtendedArray;
- Size, I1, I2, I3, IndexMax, RunNo, LowIndex, HighIndex: Integer;
- CurValue: Int64;
- Temp, Max : Extended;
+  ExtArray: PExtendedArray;
+  Size, I1, I2, I3, IndexMax, RunNo, LowIndex, HighIndex: Integer;
+  CurValue: Int64;
+  Temp, Max: Extended;
 const
 {$IFDEF FullDebug}
   MAXRUNNO = 2;
 {$ELSE}
   MAXRUNNO = 100;
 {$ENDIF}
- MINSIZE = 100;
- MAXSIZE = 10000;
+  MINSIZE = 100;
+  MAXSIZE = 10000;
 begin
   CurValue := Prime;
   GetMem(ExtArray, MINSIZE * SizeOf(TExtended));
   for RunNo := 1 to MAXRUNNO do
   begin
-    Size := Min(High(ExtArray^), (CurValue mod (MAXSIZE-MINSIZE)) + MINSIZE);
+    Size := Min(high(ExtArray^), (CurValue mod (MAXSIZE - MINSIZE)) + MINSIZE);
     Inc(CurValue, Prime);
-    //SetLength(ExtArray, Size);
+    // SetLength(ExtArray, Size);
     ReallocMem(ExtArray, Size * SizeOf(TExtended));
-    //Fill array with arbitary values
-    for I1 := 0 to Size-1 do
+    // Fill array with arbitary values
+    for I1 := 0 to Size - 1 do
     begin
-      ExtArray^[I1].X := (CurValue mod MAXINT)*pi;
+      ExtArray^[I1].X := (CurValue mod MAXINT) * pi;
       Inc(CurValue, Prime);
     end;
-    //Sort array just to create an acces pattern
-    //Using some weird DKC sort algorithm
+    // Sort array just to create an acces pattern
+    // Using some weird DKC sort algorithm
     LowIndex := 0;
-    HighIndex := Size-1;
+    HighIndex := Size - 1;
     repeat
-    if ExtArray^[LowIndex].X > ExtArray^[HighIndex].X then
-     begin
-      //Swap
-      Temp := ExtArray^[LowIndex].X;
-      ExtArray^[LowIndex].X := ExtArray^[HighIndex].X;
-      ExtArray^[HighIndex].X := Temp;
-     end;
-    Inc(LowIndex);
-    Dec(HighIndex);
-    until(LowIndex >= HighIndex);
-    for I2 := Size-1 downto 1 do
-    begin
-     //Find biggest element in unsorted part of array
-     Max := ExtArray^[I2].X;
-     IndexMax := I2;
-     for I3 := I2-1 downto 0 do
+      if ExtArray^[LowIndex].X > ExtArray^[HighIndex].X then
       begin
-       if ExtArray^[I3].X > Max then
+        // Swap
+        Temp := ExtArray^[LowIndex].X;
+        ExtArray^[LowIndex].X := ExtArray^[HighIndex].X;
+        ExtArray^[HighIndex].X := Temp;
+      end;
+      Inc(LowIndex);
+      Dec(HighIndex);
+    until (LowIndex >= HighIndex);
+    for I2 := Size - 1 downto 1 do
+    begin
+      // Find biggest element in unsorted part of array
+      Max := ExtArray^[I2].X;
+      IndexMax := I2;
+      for I3 := I2 - 1 downto 0 do
+      begin
+        if ExtArray^[I3].X > Max then
         begin
-         Max := ExtArray^[I3].X;
-         IndexMax := I3;
+          Max := ExtArray^[I3].X;
+          IndexMax := I3;
         end;
       end;
-     //Swap current element with biggest remaining element
-     Temp := ExtArray^[I2].X;
-     ExtArray^[I2].X := ExtArray^[IndexMax].X;
-     ExtArray^[IndexMax].X := Temp;
+      // Swap current element with biggest remaining element
+      Temp := ExtArray^[I2].X;
+      ExtArray^[I2].X := ExtArray^[IndexMax].X;
+      ExtArray^[IndexMax].X := Temp;
     end;
   end;
-  //Free array
+  // Free array
   FreeMem(ExtArray);
   FBenchmark.UpdateUsageStatistics;
 end;
@@ -116,12 +116,12 @@ end;
 class function TStandardSortExtendedArrayThreads.GetBenchmarkDescription: string;
 begin
   Result := 'A benchmark that measures read and write speed to an array of Extendeds. '
-          + 'The Extended type is padded to be 16 byte. '
-          + 'Bonus is given for 16 byte alignment of array '
-          + 'Will also reveil cache set associativity related issues. '
-          + 'Access pattern is created by X sorting array of arbitrary values. '
-          + 'Measures memory usage after all blocks have been freed. '
-          + 'Benchmark submitted by Dennis Kjaer Christensen.';
+    + 'The Extended type is padded to be 16 byte. '
+    + 'Bonus is given for 16 byte alignment of array '
+    + 'Will also reveil cache set associativity related issues. '
+    + 'Access pattern is created by X sorting array of arbitrary values. '
+    + 'Measures memory usage after all blocks have been freed. '
+    + 'Benchmark submitted by Dennis Kjaer Christensen.';
 end;
 
 class function TStandardSortExtendedArrayThreads.GetBenchmarkName: string;
@@ -137,13 +137,13 @@ end;
 procedure TStandardSortExtendedArrayThreads.RunBenchmark;
 var
   SortExtendedArrayThread1,
-  SortExtendedArrayThread2,
-  SortExtendedArrayThread3,
-  SortExtendedArrayThread4,
-  SortExtendedArrayThread5,
-  SortExtendedArrayThread6,
-  SortExtendedArrayThread7,
-  SortExtendedArrayThread8: TStandardSortExtendedArrayThread;
+    SortExtendedArrayThread2,
+    SortExtendedArrayThread3,
+    SortExtendedArrayThread4,
+    SortExtendedArrayThread5,
+    SortExtendedArrayThread6,
+    SortExtendedArrayThread7,
+    SortExtendedArrayThread8: TStandardSortExtendedArrayThread;
 begin
   inherited;
   SortExtendedArrayThread1 := TStandardSortExtendedArrayThread.Create(True);

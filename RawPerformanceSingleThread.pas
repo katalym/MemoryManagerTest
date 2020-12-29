@@ -30,36 +30,36 @@ uses
 
 procedure TRawPerformanceSingleThread.Execute;
 const
-  MAXCHUNK = 1024;  // take power of 2
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  MAXCHUNK = 1024; // take power of 2
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   IterationCount = 1;
-  CHUNCKS = 32*1024;
-  POINTERS = 151;  // take prime just below 2048  (scaled down 8x from single-thread)
+  CHUNCKS        = 32 * 1024;
+  POINTERS       = 151; // take prime just below 2048  (scaled down 8x from single-thread)
 {$ELSE}
   IterationCount = 3;
-  CHUNCKS = 8*1024*1024;
-  POINTERS = 16361;  // take prime just below 2048  (scaled down 8x from single-thread)
+  CHUNCKS        = 8 * 1024 * 1024;
+  POINTERS       = 16361; // take prime just below 2048  (scaled down 8x from single-thread)
 {$ENDIF}
 var
   i, n, k, vSize, vIndex: Cardinal;
-  vStrings: array [0..POINTERS - 1] of string;
+  vStrings: array [0 .. POINTERS - 1] of string;
 begin
   for k := 1 to IterationCount do
   begin
-    n := Low(vStrings);
+    n := low(vStrings);
     for i := 1 to CHUNCKS do
     begin
-      if i and $FF < $F0 then         // 240 times out of 256 ==> chunk < 1 kB
-        vSize := (4 * i) and (MAXCHUNK-1) + 1
-      else if i and $FF <> $FF then   //  15 times out of 256 ==> chunk < 32 kB
+      if i and $FF < $F0 then // 240 times out of 256 ==> chunk < 1 kB
+        vSize := (4 * i) and (MAXCHUNK - 1) + 1
+      else if i and $FF <> $FF then // 15 times out of 256 ==> chunk < 32 kB
         vSize := 2 * n + 1
-      else                            //   1 time  out of 256 ==> chunk < 256 kB
+      else // 1 time  out of 256 ==> chunk < 256 kB
         vSize := 16 * n + 1;
       vStrings[n] := '';
       SetLength(vStrings[n], vSize);
-      //start and end of string are already assigned, access every 4K page in the middle
+      // start and end of string are already assigned, access every 4K page in the middle
       vIndex := 1;
       while vIndex <= vSize do
       begin
@@ -67,11 +67,11 @@ begin
         Inc(vIndex, 4096);
       end;
       Inc(n);
-      if n > High(vStrings) then
-        n := Low(vStrings);
+      if n > high(vStrings) then
+        n := low(vStrings);
     end;
     UpdateUsageStatistics;
-    for n := Low(vStrings) to High(vStrings) do
+    for n := low(vStrings) to high(vStrings) do
       vStrings[n] := '';
   end;
   UpdateUsageStatistics;

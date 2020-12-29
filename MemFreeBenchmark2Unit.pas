@@ -22,14 +22,14 @@ uses SysUtils;
 
 type
   TMemFreeThread2 = class(TThread)
-     FBenchmark: TMMBenchmark;
-     procedure Execute; override;
+    FBenchmark: TMMBenchmark;
+    procedure Execute; override;
   end;
 
 procedure TMemFreeThread2.Execute;
 begin
- Sleep(100); //Do not run in zero ticks !!!!!
- FBenchmark.UpdateUsageStatistics;
+  Sleep(100); // Do not run in zero ticks !!!!!
+  FBenchmark.UpdateUsageStatistics;
 end;
 
 class function TMemFreeThreads2.GetBenchmarkDescription: string;
@@ -50,7 +50,7 @@ end;
 
 procedure TMemFreeThreads2.RunBenchmark;
 var
-  MemFreeThread2 : TMemFreeThread2;
+  MemFreeThread2: TMemFreeThread2;
 begin
   inherited;
   MemFreeThread2 := TMemFreeThread2.Create(True);

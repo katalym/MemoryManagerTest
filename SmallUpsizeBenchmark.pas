@@ -9,10 +9,10 @@ uses
 
 const
 {$IFDEF FullDebug}
-  NumPointers = 8000;
+  NumPointers     = 8000;
   IterationsCount = 5;
 {$ELSE}
-  NumPointers = 2000000;
+  NumPointers     = 2000000;
   IterationsCount = 15;
 {$ENDIF}
   {The maximum block size}
@@ -22,7 +22,7 @@ type
 
   TSmallUpsizeBench = class(TMMBenchmark)
   protected
-    FPointers: array[0..NumPointers - 1] of PAnsiChar;
+    FPointers: array [0 .. NumPointers - 1] of PAnsiChar;
   public
     constructor CreateBenchmark; override;
     destructor Destroy; override;

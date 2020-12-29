@@ -47,12 +47,12 @@ const
   PointerCount = 300;
   MaxBlockSize = 300000;
 type
-  TByteArray = array[0..MaxBlockSize - 1] of Byte;
+  TByteArray = array [0 .. MaxBlockSize - 1] of Byte;
   PByteArray = ^TByteArray;
 var
   i, j, k: Integer;
   CurValue: Int64;
-  LPointers: array[0..PointerCount - 1] of Pointer;
+  LPointers: array [0 .. PointerCount - 1] of Pointer;
   LSize: Integer;
   LCheck: Byte;
 begin
@@ -81,7 +81,7 @@ begin
         {Check the memory}
         LCheck := LCheck or PByteArray(LPointers[i])^[k];
         {Modify it}
-        PByteArray(LPointers[i])^[k] := byte(k);
+        PByteArray(LPointers[i])^[k] := Byte(k);
       end;
       {Is the check valid?}
       if LCheck <> 0 then

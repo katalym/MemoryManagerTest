@@ -8,8 +8,8 @@ uses
   BenchmarkClassUnit, Math;
 
 const
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   NumPointers = 200;
 {$ELSE}
@@ -22,7 +22,7 @@ type
 
   TAddressSpaceCreepBenchLarge = class(TMMBenchmark)
   protected
-    FPointers: array[0..NumPointers - 1] of PAnsiChar;
+    FPointers: array [0 .. NumPointers - 1] of PAnsiChar;
   public
     constructor CreateBenchmark; override;
     destructor Destroy; override;
@@ -66,46 +66,46 @@ const
   Prime = 43;
 var
   i, j, LSize, LOffset: integer;
-  NextValue{, vTotal}: Int64;
+  NextValue {, vTotal} : Int64;
 begin
   {Call the inherited handler}
   inherited;
   NextValue := Prime;
-//  vTotal := 0;
- {Allocate the pointers}
-  for i := Low(FPointers) to High(FPointers) do begin
+  // vTotal := 0;
+  {Allocate the pointers}
+  for i := low(FPointers) to high(FPointers) do begin
     {Get an initial size}
-    LSize := 1 + (MaxBlockSize+NextValue) mod MaxBlockSize;
+    LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
     Inc(NextValue, Prime); // a prime number
-//    if vTotal + LSize > 1600000000 then
-//      begin
-//        vTotal := vTotal;
-//        Break;
-//      end;
+    // if vTotal + LSize > 1600000000 then
+    // begin
+    // vTotal := vTotal;
+    // Break;
+    // end;
     {Allocate the pointer}
     GetMem(FPointers[i], LSize);
-//    Inc(vTotal, LSize);
+    // Inc(vTotal, LSize);
     {Touch the memory}
     FPointers[i][0] := AnsiChar(byte(i mod 255));
     FPointers[i][LSize - 1] := AnsiChar(byte(i mod 255));
   end;
   {Free and get new pointers in a loop}
   for j := 1 to 400 do begin
-//    vTotal := 0;
-    for i := Low(FPointers) to High(FPointers) do begin
+    // vTotal := 0;
+    for i := low(FPointers) to high(FPointers) do begin
       {Free the pointer}
       FreeMem(FPointers[i]);
       {Get the new size}
-      LSize := 1 + (MaxBlockSize+NextValue) mod MaxBlockSize;
+      LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
       Inc(NextValue, Prime); // a prime number
-//      if vTotal + LSize > 1600000000 then
-//      begin
-//        vTotal := vTotal;
-//        Break;
-//      end;
+      // if vTotal + LSize > 1600000000 then
+      // begin
+      // vTotal := vTotal;
+      // Break;
+      // end;
       {Allocate the pointer}
       GetMem(FPointers[i], LSize);
-//      Inc(vTotal, LSize);
+      // Inc(vTotal, LSize);
       {Touch every page of the allocated memory}
       LOffset := 0;
       while LOffset < LSize do

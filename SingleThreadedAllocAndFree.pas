@@ -44,15 +44,15 @@ procedure TSingleThreadAllocateAndFreeBenchmark.RunBenchmark;
 const
   Prime = 13;
 {$IFDEF FullDebug}
-  RepeatCount = 50;
+  RepeatCount  = 50;
   PointerCount = 6100;
 {$ELSE}
-  RepeatCount = 100;
+  RepeatCount  = 100;
   PointerCount = 610000;
 {$ENDIF}
 type
   PPointers = ^TPointers;
-  TPointers = array[0..PointerCount - 1] of Pointer;
+  TPointers = array [0 .. PointerCount - 1] of Pointer;
 var
   i, j, vMax, vSize, vSum: Integer;
   vCalc: NativeUInt;
@@ -72,12 +72,12 @@ begin
       vMax := 64
     else
       if i and 15 <> 0 then
-        vMax := 1024
-      else
-        if i and 255 <> 0 then
-          vMax := 4 * 1024
-        else
-          vMax := 256 * 1024;
+      vMax := 1024
+    else
+      if i and 255 <> 0 then
+      vMax := 4 * 1024
+    else
+      vMax := 256 * 1024;
     {Get the size, minimum 1}
     vSize := (vValue mod vMax) + 1;
     Inc(vValue, Prime);
@@ -99,12 +99,12 @@ begin
         vMax := 64
       else
         if i and 15 <> 0 then
-          vMax := 1024
-        else
-          if i and 255 <> 0 then
-            vMax := 4 * 1024
-          else
-            vMax := 256 * 1024;
+        vMax := 1024
+      else
+        if i and 255 <> 0 then
+        vMax := 4 * 1024
+      else
+        vMax := 256 * 1024;
       {Get the size, minimum 1}
       vSize := (vValue mod vMax) + 1;
       Inc(vValue, Prime);

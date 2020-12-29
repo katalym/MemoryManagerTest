@@ -42,10 +42,10 @@ var
 const
   MINSIZE = 500;
 {$IFDEF FullDebug}
-  MAXSIZE = 600;
+  MAXSIZE     = 600;
   RepeatCount = 4;
 {$ELSE}
-  MAXSIZE = 1500;
+  MAXSIZE     = 1500;
   RepeatCount = 20;
 {$ENDIF}
   CMaxValue = 101 {prime};
@@ -58,7 +58,7 @@ begin
       List := TList.Create;
       try
         List.Count := Size;
-        for I := 0 to Size-1 do
+        for I := 0 to Size - 1 do
         begin
           IntVal := FCurValue mod CMaxValue;
           Inc(FCurValue, FPrime);
@@ -74,12 +74,12 @@ begin
 end;
 
 class function TQuickSortIntArrayThreads.GetBenchmarkDescription:
-string;
+  string;
 begin
   Result := 'A benchmark that measures read and write speed to an array of Integer. '
-          + 'Access pattern is created by  selection sorting array of arbitrary values using the QuickSort algorithm implemented in TList.. '
-          + 'Measures memory usage after all blocks have been freed. '
-          + 'Benchmark submitted by Avatar Zondertau, based on a benchmark by Dennis Kjaer Christensen.';
+    + 'Access pattern is created by  selection sorting array of arbitrary values using the QuickSort algorithm implemented in TList.. '
+    + 'Measures memory usage after all blocks have been freed. '
+    + 'Benchmark submitted by Avatar Zondertau, based on a benchmark by Dennis Kjaer Christensen.';
 end;
 
 class function TQuickSortIntArrayThreads.GetBenchmarkName: string;
@@ -94,7 +94,7 @@ end;
 
 procedure TQuickSortIntArrayThreads.RunBenchmark;
 var
-  SortIntArrayThread : TSortIntArrayThread;
+  SortIntArrayThread: TSortIntArrayThread;
 begin
   inherited;
   SortIntArrayThread := TSortIntArrayThread.Create(True);

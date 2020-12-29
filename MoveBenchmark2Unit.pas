@@ -26,92 +26,93 @@ const
   IterationsCount = 9;
 
 {$IFNDEF WIN32}
-procedure MoveJOH_SSE_9(const Source; var Dest; Count : Integer); inline;
+
+procedure MoveJOH_SSE_9(const Source; var Dest; Count: Integer); inline;
 begin
   Move(Source, Dest, Count);
 end;
-{$endif}
+{$ENDIF}
 
 type
 
   TMoveThread2 = class(TThread)
-   FBenchmark: TMMBenchmark;
-   procedure Execute; override;
+    FBenchmark: TMMBenchmark;
+    procedure Execute; override;
   end;
 
 procedure TMoveThread2.Execute;
 var
- I1, I2, I3, I4, I5 : Integer;
- //Need many arrays because a 4 byte aligned array can be 16 byte aligned by pure chance
- //Reallocs migth change alignment
- SrcArray1 : array of Byte;
- DestArray1 : array of Byte;
- SrcArray2 : array of Byte;
- DestArray2 : array of Byte;
- SrcArray3 : array of Byte;
- DestArray3 : array of Byte;
- SrcArray4 : array of Byte;
- DestArray4 : array of Byte;
- SrcArray5 : array of Byte;
- DestArray5 : array of Byte;
- SrcArray6 : array of Byte;
- DestArray6 : array of Byte;
- SrcArray7 : array of Byte;
- DestArray7 : array of Byte;
- SrcArray8 : array of Byte;
- DestArray8 : array of Byte;
- BenchArraySize : Integer;
+  I1, I2, I3, I4, I5: Integer;
+  // Need many arrays because a 4 byte aligned array can be 16 byte aligned by pure chance
+  // Reallocs migth change alignment
+  SrcArray1: array of Byte;
+  DestArray1: array of Byte;
+  SrcArray2: array of Byte;
+  DestArray2: array of Byte;
+  SrcArray3: array of Byte;
+  DestArray3: array of Byte;
+  SrcArray4: array of Byte;
+  DestArray4: array of Byte;
+  SrcArray5: array of Byte;
+  DestArray5: array of Byte;
+  SrcArray6: array of Byte;
+  DestArray6: array of Byte;
+  SrcArray7: array of Byte;
+  DestArray7: array of Byte;
+  SrcArray8: array of Byte;
+  DestArray8: array of Byte;
+  BenchArraySize: Integer;
 const
- NOOFRUNS = IterationsCount;
- MINBENCHARRAYSIZE = 2000;
- MAXBENCHARRAYSIZE = 2000000;
- STEPSIZE = 2;
- NOOFMOVESPERRUN = 250;
+  NOOFRUNS          = IterationsCount;
+  MINBENCHARRAYSIZE = 2000;
+  MAXBENCHARRAYSIZE = 2000000;
+  STEPSIZE          = 2;
+  NOOFMOVESPERRUN   = 250;
 
 begin
- for I1 := 1 to NOOFRUNS do
+  for I1 := 1 to NOOFRUNS do
   begin
-   BenchArraySize := MINBENCHARRAYSIZE;
-   while BenchArraySize <= MAXBENCHARRAYSIZE do
+    BenchArraySize := MINBENCHARRAYSIZE;
+    while BenchArraySize <= MAXBENCHARRAYSIZE do
     begin
-     SetLength(SrcArray1, BenchArraySize+8);
-     SetLength(DestArray1, BenchArraySize+8);
-     SetLength(SrcArray2, BenchArraySize+8);
-     SetLength(DestArray2, BenchArraySize+8);
-     SetLength(SrcArray3, BenchArraySize+8);
-     SetLength(DestArray3, BenchArraySize+8);
-     SetLength(SrcArray4, BenchArraySize+8);
-     SetLength(DestArray4, BenchArraySize+8);
-     SetLength(SrcArray5, BenchArraySize+8);
-     SetLength(DestArray5, BenchArraySize+8);
-     SetLength(SrcArray6, BenchArraySize+8);
-     SetLength(DestArray6, BenchArraySize+8);
-     SetLength(SrcArray7, BenchArraySize+8);
-     SetLength(DestArray7, BenchArraySize+8);
-     SetLength(SrcArray8, BenchArraySize+8);
-     SetLength(DestArray8, BenchArraySize+8);
-     for I2 := 1 to NOOFMOVESPERRUN do
+      SetLength(SrcArray1, BenchArraySize + 8);
+      SetLength(DestArray1, BenchArraySize + 8);
+      SetLength(SrcArray2, BenchArraySize + 8);
+      SetLength(DestArray2, BenchArraySize + 8);
+      SetLength(SrcArray3, BenchArraySize + 8);
+      SetLength(DestArray3, BenchArraySize + 8);
+      SetLength(SrcArray4, BenchArraySize + 8);
+      SetLength(DestArray4, BenchArraySize + 8);
+      SetLength(SrcArray5, BenchArraySize + 8);
+      SetLength(DestArray5, BenchArraySize + 8);
+      SetLength(SrcArray6, BenchArraySize + 8);
+      SetLength(DestArray6, BenchArraySize + 8);
+      SetLength(SrcArray7, BenchArraySize + 8);
+      SetLength(DestArray7, BenchArraySize + 8);
+      SetLength(SrcArray8, BenchArraySize + 8);
+      SetLength(DestArray8, BenchArraySize + 8);
+      for I2 := 1 to NOOFMOVESPERRUN do
       begin
-       MoveJOH_SSE_9(SrcArray1[8], DestArray1[8], BenchArraySize);
-       MoveJOH_SSE_9(DestArray2[8], SrcArray2[8], BenchArraySize);
+        MoveJOH_SSE_9(SrcArray1[8], DestArray1[8], BenchArraySize);
+        MoveJOH_SSE_9(DestArray2[8], SrcArray2[8], BenchArraySize);
       end;
-     for I3 := 1 to NOOFMOVESPERRUN do
+      for I3 := 1 to NOOFMOVESPERRUN do
       begin
-       MoveJOH_SSE_9(SrcArray3[8], DestArray3[8], BenchArraySize);
-       MoveJOH_SSE_9(DestArray4[8], SrcArray4[8], BenchArraySize);
+        MoveJOH_SSE_9(SrcArray3[8], DestArray3[8], BenchArraySize);
+        MoveJOH_SSE_9(DestArray4[8], SrcArray4[8], BenchArraySize);
       end;
-     for I4 := 1 to NOOFMOVESPERRUN do
+      for I4 := 1 to NOOFMOVESPERRUN do
       begin
-       MoveJOH_SSE_9(SrcArray5[8], DestArray5[8], BenchArraySize);
-       MoveJOH_SSE_9(DestArray6[8], SrcArray6[8], BenchArraySize);
+        MoveJOH_SSE_9(SrcArray5[8], DestArray5[8], BenchArraySize);
+        MoveJOH_SSE_9(DestArray6[8], SrcArray6[8], BenchArraySize);
       end;
-     for I5 := 1 to NOOFMOVESPERRUN do
+      for I5 := 1 to NOOFMOVESPERRUN do
       begin
-       MoveJOH_SSE_9(SrcArray7[8], DestArray7[8], BenchArraySize);
-       MoveJOH_SSE_9(DestArray8[8], SrcArray8[8], BenchArraySize);
+        MoveJOH_SSE_9(SrcArray7[8], DestArray7[8], BenchArraySize);
+        MoveJOH_SSE_9(DestArray8[8], SrcArray8[8], BenchArraySize);
       end;
-     BenchArraySize := BenchArraySize * STEPSIZE;
-     FBenchmark.UpdateUsageStatistics;
+      BenchArraySize := BenchArraySize * STEPSIZE;
+      FBenchmark.UpdateUsageStatistics;
     end;
   end;
 end;
@@ -135,15 +136,15 @@ end;
 
 procedure TMoveThreads2.RunBenchmark;
 var
-  MoveThread2 : TMoveThread2;
+  MoveThread2: TMoveThread2;
 begin
   inherited;
   MoveThread2 := TMoveThread2.Create(True);
   MoveThread2.FreeOnTerminate := False;
   MoveThread2.FBenchmark := Self;
-  {$WARN SYMBOL_DEPRECATED OFF}
+{$WARN SYMBOL_DEPRECATED OFF}
   MoveThread2.Resume;
-  {$WARN SYMBOL_DEPRECATED ON}
+{$WARN SYMBOL_DEPRECATED ON}
   MoveThread2.WaitFor;
   FreeAndNil(MoveThread2);
 end;

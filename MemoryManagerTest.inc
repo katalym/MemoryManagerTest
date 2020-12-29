@@ -10,6 +10,9 @@
 {.$DEFINE MM_SCALEMM2}
 {.$DEFINE MM_TCMALLOC}
 
-{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+{$IFDEF MM_FASTMM4_FullDebug}
+  {$DEFINE FullDebug}
+{$ENDIF}
+{$IFDEF MM_FASTMM5_FullDebug}
   {$DEFINE FullDebug}
 {$ENDIF}

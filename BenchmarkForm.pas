@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, VCL.Controls, VCL.Forms,
   VCL.StdCtrls, BenchmarkClassUnit, Math, VCL.Buttons,
   VCL.ExtCtrls, VCL.ComCtrls, VCL.Clipbrd, VCL.Menus, System.Actions,
-  Vcl.ActnList, System.ImageList, Vcl.ImgList, Vcl.ToolWin;
+  VCL.ActnList, System.ImageList, VCL.ImgList, VCL.ToolWin;
 
 type
   TBenchmarkFrm = class(TForm)
@@ -63,7 +63,7 @@ type
     FTestResultsFileName: string;
     FApplicationIniFileName: string;
     procedure AddResultsToDisplay(
-      const aBenchName, aMMName: String;
+      const aBenchName, aMMName: string;
       const aCpuUsage: Int64;
       const aTicks, aPeak: Cardinal;
       const CurrentSession: string = 'T';
@@ -74,38 +74,37 @@ type
     procedure RunBenchmarks(ABenchmarkClass: TMMBenchmarkClass);
     procedure SaveResults;
     procedure WriteIniFile;
-  public
   end;
 
 var
   BenchmarkFrm: TBenchmarkFrm;
 
-Const
-  //Column indices for the ListView
-  LVCOL_BENCH     = 0;
-  LVCOL_MM        = 1;
-  LVCOL_CPUUSAGE  = 2;
-  LVCOL_TICKS     = 3;
-  LVCOL_MEM       = 4;
+const
+  // Column indices for the ListView
+  LVCOL_BENCH    = 0;
+  LVCOL_MM       = 1;
+  LVCOL_CPUUSAGE = 2;
+  LVCOL_TICKS    = 3;
+  LVCOL_MEM      = 4;
 
-  //ListView Subitem Indices
-  LVSI_MM        = 0;
-  LVSI_CPUUSAGE  = 1;
-  LVSI_TICKS     = 2;
-  LVSI_MEM       = 3;
+  // ListView Subitem Indices
+  LVSI_MM       = 0;
+  LVSI_CPUUSAGE = 1;
+  LVSI_TICKS    = 2;
+  LVSI_MEM      = 3;
 
-  //Order of columns in the Results File
-  RESULTS_BENCH   = 0;
-  RESULTS_MM      = 1;
+  // Order of columns in the Results File
+  RESULTS_BENCH    = 0;
+  RESULTS_MM       = 1;
   RESULTS_CPUUSAGE = 2;
-  RESULTS_TICKS   = 3;
-  RESULTS_MEM     = 4;
+  RESULTS_TICKS    = 3;
+  RESULTS_MEM      = 4;
 
 implementation
 
 uses
-  BenchmarkUtilities, GeneralFunctions, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit, System.StrUtils,
-  Vcl.Dialogs;
+  BenchmarkUtilities, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit, System.StrUtils,
+  VCL.Dialogs;
 
 {$R *.dfm}
 
@@ -117,18 +116,18 @@ var
   s: string;
   Item: TListItem;
 begin
-  //The tab-delimited data dropped to the clipboard can be pasted into
+  // The tab-delimited data dropped to the clipboard can be pasted into
   // Excel and will generally auto-separate itself into columns.
   StringList := TStringList.Create;
   try
-    //Header
+    // Header
     s := '';
     for iCol := 0 to ListViewResults.Columns.Count - 1 do
       s := s + #9 + ListViewResults.Column[iCol].Caption;
     Delete(s, 1, 1); // delete initial #9 character
     StringList.Add(s);
 
-    //Body
+    // Body
     for iRow := 0 to ListViewResults.Items.Count - 1 do begin
       Item := ListViewResults.Items[iRow];
       s := Item.Caption;
@@ -191,7 +190,7 @@ end;
 
 procedure TBenchmarkFrm.actRunAllCheckedBenchmarksExecute(Sender: TObject);
 var
-  i: integer;
+  i: Integer;
 begin
   Screen.Cursor := crHourglass;
   actRunAllCheckedBenchmarks.Caption := 'Running';
@@ -205,7 +204,7 @@ begin
     begin
       {Show progress in checkboxlist}
       lvBenchmarkList.Items[i].Selected := True;
-      lvBenchmarkList.Items[i].Focused  := True;
+      lvBenchmarkList.Items[i].Focused := True;
       lvBenchmarkList.Selected.MakeVisible(False);
       lvBenchmarkListSelectItem(nil, lvBenchmarkList.Selected, lvBenchmarkList.Selected <> nil);
       Enabled := False;
@@ -249,7 +248,7 @@ begin
 end;
 
 procedure TBenchmarkFrm.AddResultsToDisplay(
-  const aBenchName, aMMName: String;
+  const aBenchName, aMMName: string;
   const aCpuUsage: Int64;
   const aTicks, aPeak: Cardinal;
   const CurrentSession: string = 'T';
@@ -267,8 +266,8 @@ begin
   Item.SubItems.Add(aPeak.ToString);
   Item.SubItems.Add(CurrentSession);
 
-//  if not InitialLoad then
-//    ListViewResults.AlphaSort;
+  // if not InitialLoad then
+  // ListViewResults.AlphaSort;
 end;
 
 procedure TBenchmarkFrm.FormClose(Sender: TObject; var AAction: TCloseAction);
@@ -282,7 +281,7 @@ end;
 
 procedure TBenchmarkFrm.FormCreate(Sender: TObject);
 var
-  i: integer;
+  i: Integer;
   vItem: TListItem;
   vCustomExeName: string;
   vBenchmark: TMMBenchmarkClass;
@@ -297,18 +296,19 @@ begin
   MemoEnvironment.Lines.Add(SystemInfoWindows);
 
   // make a copy of the application's Exe for later use
-  //Skip copy if this is the MM specific exe.
+  // Skip copy if this is the MM specific exe.
   if not ContainsText(ExtractFileName(Application.ExeName), '_' + MemoryManager_Name + '_') then
   begin
     vCustomExeName := Format('%0:s%2:s\Win%3:s\%1:s_%2:s_%3:s.exe',
-      [ExtractFilePath(Application.ExeName), ChangeFileExt(ExtractFileName(Application.ExeName),''),
-       MemoryManager_Name, {$IFDEF WIN32}'32'{$ELSE}'64'{$ENDIF}]);
+      [ExtractFilePath(Application.ExeName), ChangeFileExt(ExtractFileName(Application.ExeName), ''),
+      MemoryManager_Name, {$IFDEF WIN32}'32'{$ELSE}'64'{$ENDIF}]);
     CopyFile(PChar(GetModuleName(HInstance)), PChar(vCustomExeName), False);
-  end else
+  end
+  else
     vCustomExeName := Application.ExeName;
 
   FApplicationIniFileName :=
-    ReplaceText(ExtractFilePath(vCustomExeName), '\' +MemoryManager_Name + '\Win' + {$IFDEF WIN32}'32'{$ELSE}'64'{$ENDIF}, '') +
+    ReplaceText(ExtractFilePath(vCustomExeName), '\' + MemoryManager_Name + '\Win' + {$IFDEF WIN32}'32'{$ELSE}'64'{$ENDIF}, '') +
     'MemoryManagerTest.ini';
 
   FTestResultsFileName := Format('%s.csv', [ChangeFileExt(vCustomExeName, '.Results')]);
@@ -331,10 +331,10 @@ begin
 
   if lvBenchmarkList.Items.Count > 0 then
   begin
-    //Select the first benchmark
+    // Select the first benchmark
     lvBenchmarkList.Items[0].Selected := True;
-    lvBenchmarkList.Items[0].Focused  := True;
-    //Set the benchmark description.
+    lvBenchmarkList.Items[0].Focused := True;
+    // Set the benchmark description.
     lvBenchmarkListSelectItem(nil, lvBenchmarkList.Selected, lvBenchmarkList.Selected <> nil);
   end;
 
@@ -361,10 +361,10 @@ begin
   LoadResultsToDisplay;
 
   ListViewResults.Column[LVCOL_BENCH].Width := 240;
-  ListViewResults.Column[LVCOL_MM].Width    := 100;
+  ListViewResults.Column[LVCOL_MM].Width := 100;
   ListViewResults.Column[LVCOL_CPUUSAGE].Width := 90;
   ListViewResults.Column[LVCOL_TICKS].Width := 90;
-  ListViewResults.Column[LVCOL_MEM].Width   := 120;
+  ListViewResults.Column[LVCOL_MEM].Width := 120;
 
 end;
 
@@ -390,7 +390,7 @@ begin
     try
       for l := 0 to CSV.Count - 1 do
       begin
-        Bench.DelimitedText   := CSV[l];
+        Bench.DelimitedText := CSV[l];
         if Bench.Count < 4 then
           Continue;
 
@@ -398,10 +398,10 @@ begin
         if Trim(BenchName) = '' then
           Continue;
 
-        MMName    := Bench[RESULTS_MM];
+        MMName := Bench[RESULTS_MM];
         vCPUUsage := Max(StrToIntDef(Bench[RESULTS_CPUUSAGE], 0), 0);
-        vTicks    := Max(StrToIntDef(Bench[RESULTS_TICKS], 0), 0);
-        vPeak     := Max(StrToIntDef(Bench[RESULTS_MEM], 0), 0);
+        vTicks := Max(StrToIntDef(Bench[RESULTS_TICKS], 0), 0);
+        vPeak := Max(StrToIntDef(Bench[RESULTS_MEM], 0), 0);
 
         AddResultsToDisplay(BenchName, MMName, vCPUUsage, vTicks, vPeak, 'F');
       end;
@@ -414,7 +414,7 @@ begin
     if ListViewResults.Items.Count > 0 then
     begin
       ListViewResults.Items[0].Selected := True;
-      ListViewResults.Items[0].Focused  := True;
+      ListViewResults.Items[0].Focused := True;
     end;
   finally
     Bench.Free;
@@ -427,7 +427,7 @@ var
   LBenchmarkClass: TMMBenchmarkClass;
 
 begin
-  //Set the benchmark description
+  // Set the benchmark description
   if (Item <> nil) and Selected then
   begin
     LBenchmarkClass := Benchmarks[NativeInt(Item.Data)];
@@ -480,7 +480,7 @@ begin
         vCurrentTicks := GetTickCount - vStartTicks;
         {Add a line}
 
-        mResults.Lines[mResults.Lines.Count - 1] := //Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' '
+        mResults.Lines[mResults.Lines.Count - 1] := // Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' '
           Format('%-45s | CPU Usage(ms) = %6d | Ticks(ms)=%6d | Peak Address Space Usage(Kb) = %7d',
           [ABenchmarkClass.GetBenchmarkName.Trim, vCurrentCPUUsage, vCurrentTicks, LBenchmark.PeakAddressSpaceUsage]);
         Enabled := False;
@@ -488,22 +488,22 @@ begin
         Enabled := True;
 
         AddResultsToDisplay(ABenchmarkClass.GetBenchmarkName,
-                            MemoryManager_Name,
-                            vCurrentCPUUsage,
-                            vCurrentTicks,
-                            LBenchmark.PeakAddressSpaceUsage);
+          MemoryManager_Name,
+          vCurrentCPUUsage,
+          vCurrentTicks,
+          LBenchmark.PeakAddressSpaceUsage);
         if not FBenchmarkHasBeenRun then
         begin
           FBenchmarkHasBeenRun := True;
         end;
       end
       else
-        begin
-          mResults.Lines[mResults.Lines.Count - 1] := Trim(ABenchmarkClass.GetBenchmarkName) + ': Skipped';
-          Enabled := False;
-          Application.ProcessMessages;
-          Enabled := True;
-        end;
+      begin
+        mResults.Lines[mResults.Lines.Count - 1] := Trim(ABenchmarkClass.GetBenchmarkName) + ': Skipped';
+        Enabled := False;
+        Application.ProcessMessages;
+        Enabled := True;
+      end;
     finally
       {Free the benchmark}
       FreeAndNil(LBenchmark);
@@ -520,7 +520,7 @@ end;
 procedure TBenchmarkFrm.SaveResults;
 var
   CSV, Bench: TStringList;
-  i:          Integer;
+  i: Integer;
 begin
   CSV := TStringList.Create;
 
@@ -529,17 +529,17 @@ begin
     Bench.Delimiter := ';';
 
     for i := 0 to ListViewResults.Items.Count - 1 do
-      begin
-        Bench.Clear;
+    begin
+      Bench.Clear;
 
-        Bench.Add(ListViewResults.Items[i].Caption);
-        Bench.Add(ListViewResults.Items[i].SubItems[LVSI_MM]);
-        Bench.Add(ListViewResults.Items[i].SubItems[LVSI_CPUUSAGE]);
-        Bench.Add(ListViewResults.Items[i].SubItems[LVSI_TICKS]);
-        Bench.Add(ListViewResults.Items[i].SubItems[LVSI_MEM]);
+      Bench.Add(ListViewResults.Items[i].Caption);
+      Bench.Add(ListViewResults.Items[i].SubItems[LVSI_MM]);
+      Bench.Add(ListViewResults.Items[i].SubItems[LVSI_CPUUSAGE]);
+      Bench.Add(ListViewResults.Items[i].SubItems[LVSI_TICKS]);
+      Bench.Add(ListViewResults.Items[i].SubItems[LVSI_MEM]);
 
-        CSV.Add(Bench.DelimitedText);
-      end;
+      CSV.Add(Bench.DelimitedText);
+    end;
 
     CSV.SaveToFile(FTestResultsFileName);
   finally

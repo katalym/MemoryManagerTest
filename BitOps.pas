@@ -1,23 +1,23 @@
 (***********************************************************************************************)
-(*                                                                                             *)
-(*     Bit Operations (BitOps) Copyright 1998-2017 Ritlabs, SRL. All Rights Reserved.          *)
-(*     Written by Maxim Masiutin                                                               *)
-(*                                                                                             *)
-(*     BitOps is released under the Mozilla Public License 2.0 (MPL 2.1, available from        *)
-(*     https://www.mozilla.org/en-US/MPL/2.0/                    *)
-(*                                                                                             *)
+(**)
+(*Bit Operations (BitOps) Copyright 1998-2017 Ritlabs, SRL. All Rights Reserved.*)
+(*Written by Maxim Masiutin*)
+(**)
+(*BitOps is released under the Mozilla Public License 2.0 (MPL 2.1, available from*)
+(*https://www.mozilla.org/en-US/MPL/2.0/ *)
+(**)
 (***********************************************************************************************)
 
-{$ifdef FPC}
-  {$mode delphi}
-  {$asmmode intel}
-{$endif}
+{$IFDEF FPC}
+{$MODE delphi}
+{$ASMMODE intel}
+{$ENDIF}
 
 unit BitOps;
 
 interface
 
-(* *
+(**
   returns zero if X=0, otherwise
   returns the number of highest set bit in X, plus one.
 *)
@@ -53,6 +53,7 @@ asm
   add rax, rcx
 end;
 {$ELSE}
+
 var
   lh: record L, H: Cardinal end absolute Arg;
 begin
@@ -103,24 +104,24 @@ begin
   Result := True;
   i6 := $1000000000;
   if (NumBits(0) <> 0) or
-     (NumBits(1) <> 1) or
-     (NumBits(2) <> 2) or
-     (NumBits(3) <> 2) or
-     (NumBits(4) <> 3) or
-     (NumBits(5) <> 3) or
-     (NumBits(6) <> 3) or
-     (NumBits(7) <> 3) or
-     (NumBits(8) <> 4) or
-     (NumBits64(0) <> 0) or
-     (NumBits64(1) <> 1) or
-     (NumBits64(2) <> 2) or
-     (NumBits64(3) <> 2) or
-     (NumBits64(4) <> 3) or
-     (NumBits64(5) <> 3) or
-     (NumBits64(6) <> 3) or
-     (NumBits64(7) <> 3) or
-     (NumBits64(8) <> 4) or
-     (NumBits64(i6) <> 37) then
+    (NumBits(1) <> 1) or
+    (NumBits(2) <> 2) or
+    (NumBits(3) <> 2) or
+    (NumBits(4) <> 3) or
+    (NumBits(5) <> 3) or
+    (NumBits(6) <> 3) or
+    (NumBits(7) <> 3) or
+    (NumBits(8) <> 4) or
+    (NumBits64(0) <> 0) or
+    (NumBits64(1) <> 1) or
+    (NumBits64(2) <> 2) or
+    (NumBits64(3) <> 2) or
+    (NumBits64(4) <> 3) or
+    (NumBits64(5) <> 3) or
+    (NumBits64(6) <> 3) or
+    (NumBits64(7) <> 3) or
+    (NumBits64(8) <> 4) or
+    (NumBits64(i6) <> 37) then
   begin
     Result := False;
   end;

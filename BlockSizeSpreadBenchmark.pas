@@ -10,22 +10,23 @@ uses
 const
   {The maximum block size}
   MaxBlockSize = 25;
+
 const
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   IterationsCount = 5;
-  NumPointers = 30000;
+  NumPointers     = 30000;
 {$ELSE}
   IterationsCount = 20;
-  NumPointers = 3000000;
+  NumPointers     = 3000000;
 {$ENDIF}
 
 type
 
   TBlockSizeSpreadBench = class(TMMBenchmark)
   protected
-    FPointers: array[0..NumPointers - 1] of PAnsiChar;
+    FPointers: array [0 .. NumPointers - 1] of PAnsiChar;
   public
     constructor CreateBenchmark; override;
     destructor Destroy; override;
@@ -74,13 +75,13 @@ begin
   {Call the inherited handler}
   inherited;
   NextValue := Prime;
-  for n := 1 to IterationsCount do     // loop added to have more than 1000 MTicks for this benchmark
+  for n := 1 to IterationsCount do // loop added to have more than 1000 MTicks for this benchmark
   begin
     {Do the benchmark}
     for i := 0 to high(FPointers) do
     begin
       {Get the initial block size, assume object sizes are 4-byte aligned}
-      LSize := (1 + (MaxBlockSize+NextValue) mod NextValue) * 4;
+      LSize := (1 + (MaxBlockSize + NextValue) mod NextValue) * 4;
       Inc(NextValue, Prime);
       GetMem(FPointers[i], LSize);
       FPointers[i][0] := #13;

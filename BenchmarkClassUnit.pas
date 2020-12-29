@@ -17,7 +17,7 @@ type
   TBenchmarkCategorySet = set of TBenchmarkCategory;
 
 const
-  AllCategories: TBenchmarkCategorySet = [Low(TBenchmarkCategory)..High(TBenchmarkCategory)];
+  AllCategories: TBenchmarkCategorySet = [low(TBenchmarkCategory) .. high(TBenchmarkCategory)];
 
 type
 
@@ -25,7 +25,7 @@ type
   TMMBenchmark = class(TObject)
   protected
     {Indicates whether the benchmark can be run - or if a problem was
-     discovered, possibly during create}
+      discovered, possibly during create}
     FCanRunBenchmark: Boolean;
     {The peak address space usage measured}
     FPeakAddressSpaceUsage: Int64;
@@ -38,14 +38,14 @@ type
     {Resets the peak usage measurement}
     procedure ResetUsageStatistics;
     {Measures the address space usage and updates the peak value if the current
-     usage is greater}
+      usage is greater}
     procedure UpdateUsageStatistics;
     {The name of the benchmark}
     class function GetBenchmarkName: string; virtual;
     {A description for the benchmark}
     class function GetBenchmarkDescription: string; virtual;
     {Should this benchmark be run by default?}
-    class function RunByDefault: boolean; virtual;
+    class function RunByDefault: Boolean; virtual;
     {Benchmark Category}
     class function GetCategory: TBenchmarkCategory; virtual;
 
@@ -54,14 +54,15 @@ type
     {The peak usage measured since the last reset}
     property PeakAddressSpaceUsage: Int64 read FPeakAddressSpaceUsage;
     {Indicates whether the benchmark can be run - or if a problem was
-     discovered, possibly during create}
+      discovered, possibly during create}
     property CanRunBenchmark: Boolean read FCanRunBenchmark;
   end;
+
   TMMBenchmarkClass = class of TMMBenchmark;
 
 const
   {Benchmark category names}
-  BenchmarkCategoryNames: array[TBenchmarkCategory] of string = (
+  BenchmarkCategoryNames: array [TBenchmarkCategory] of string = (
     'Single Thread ReallocMem', 'Multi-threaded ReallocMem',
     'Single Thread GetMem and FreeMem',
     'Multi-threaded GetMem and FreeMem',
@@ -73,7 +74,7 @@ var
   {All the benchmarks}
   Benchmarks: TList<TMMBenchmarkClass>;
 
-{Get the list of benchmarks}
+  {Get the list of benchmarks}
 procedure DefineBenchmarks;
 
 implementation
@@ -124,11 +125,14 @@ var
   LCurrentUsage, LBenchmarkOverhead: NativeUInt;
 begin
   {Get the usage less the usage at program startup (before the MM was started).
-   The assumption here is that any static lookup tables used by the MM will be
-   small.}
+    The assumption here is that any static lookup tables used by the MM will be
+    small.}
   LCurrentUsage := GetAddressSpaceUsed;
   LBenchmarkOverhead := GetBenchmarkOverhead;
-  if LBenchmarkOverhead >= LCurrentUsage then LCurrentUsage := 0 else LCurrentUsage := LCurrentUsage - LBenchmarkOverhead;
+  if LBenchmarkOverhead >= LCurrentUsage then
+    LCurrentUsage := 0
+  else
+    LCurrentUsage := LCurrentUsage - LBenchmarkOverhead;
   {Update the peak usage}
   if LCurrentUsage > FPeakAddressSpaceUsage then
     FPeakAddressSpaceUsage := LCurrentUsage;
@@ -139,7 +143,7 @@ begin
   Result := '';
 end;
 
-class function TMMBenchmark.RunByDefault: boolean;
+class function TMMBenchmark.RunByDefault: Boolean;
 begin
   Result := True;
 end;
@@ -249,7 +253,7 @@ begin
   AddBenchMark(TBeyondCompareBenchmark);
   AddBenchMark(TSingleThreadAllocMemBenchmark);
   {End of benchmark list}
-  AddBenchMark(TReplayBenchmark);     // not active by default, added so you can run your own replays
+  AddBenchMark(TReplayBenchmark); // not active by default, added so you can run your own replays
 
   // now sort them by name
 
@@ -269,11 +273,12 @@ end;
 
 initialization
 
-  Benchmarks := TList<TMMBenchmarkClass>.Create;
-  {Get the list of benchmarks}
-  DefineBenchmarks;
+Benchmarks := TList<TMMBenchmarkClass>.Create;
+{Get the list of benchmarks}
+DefineBenchmarks;
 
 finalization
-  FreeAndNil(Benchmarks);
+
+FreeAndNil(Benchmarks);
 
 end.

@@ -26,13 +26,13 @@ var
 
 function _CreateUsageCounter: Boolean;
 var
-  vHandle, vPID: Cardinal;
+  vHandle, vPID: cardinal;
 begin
   vPID := GetCurrentProcessID;
 
   Result := False;
   // We need a handle with PROCESS_QUERY_INFORMATION privileges
-  vHandle := OpenProcess(PROCESS_QUERY_INFORMATION, false, vPID);
+  vHandle := OpenProcess(PROCESS_QUERY_INFORMATION, False, vPID);
   if vHandle = 0 then
     exit;
   New(InternalCPUUsageData);
@@ -85,14 +85,12 @@ begin
   GetCurrentCpuUsage(Result, vUser);
 end;
 
-
-
 initialization
 
-  _CreateUsageCounter;
+_CreateUsageCounter;
 
-Finalization
+finalization
 
-  _DestroyUsageCounter;
+_DestroyUsageCounter;
 
 end.

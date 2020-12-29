@@ -21,7 +21,7 @@ type
     class function GetCategory: TBenchmarkCategory; override;
     class function IsThreadedSpecial: Boolean; override;
     class function NumThreads: Integer; virtual; abstract;
- end;
+  end;
 
   TRawPerformanceMultiThread2 = class(TRawPerformanceMultiThreadAbstract)
     class function NumThreads: Integer; override;
@@ -66,36 +66,36 @@ type
 
 procedure TRawPerformanceThread.Execute;
 const
-  MAXCHUNK = 1024;  // take power of 2
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  MAXCHUNK = 1024; // take power of 2
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
-  REPEATS = 3;
-  CHUNCKS = 32*1024;
-  POINTERS = 151;  // take prime just below 2048  (scaled down 8x from single-thread)
+  REPEATS  = 3;
+  CHUNCKS  = 32 * 1024;
+  POINTERS = 151; // take prime just below 2048  (scaled down 8x from single-thread)
 {$ELSE}
-  REPEATS = 25;
-  CHUNCKS = 1024*1024;
-  POINTERS = 2039;  // take prime just below 2048  (scaled down 8x from single-thread)
+  REPEATS  = 25;
+  CHUNCKS  = 1024 * 1024;
+  POINTERS = 2039; // take prime just below 2048  (scaled down 8x from single-thread)
 {$ENDIF}
 var
   vToJ, i, j, n, vSize, vIndex: Cardinal;
-  vStrings: array [0..POINTERS - 1] of string;
+  vStrings: array [0 .. POINTERS - 1] of string;
 begin
   vToJ := (REPEATS div FThreadCount) + 1;
   for j := 1 to vToJ do
   begin
-    n := Low(vStrings);
+    n := low(vStrings);
     for i := 1 to CHUNCKS do begin
-      if i and $FF < $F0 then         // 240 times out of 256 ==> chunk < 1 kB
+      if i and $FF < $F0 then // 240 times out of 256 ==> chunk < 1 kB
         vSize := (4 * i) and (MAXCHUNK - 1) + 1
-      else if i and $FF <> $FF then   //  15 times out of 256 ==> chunk < 32 kB
+      else if i and $FF <> $FF then // 15 times out of 256 ==> chunk < 32 kB
         vSize := 16 * n + 1
-      else                            //   1 time  out of 256 ==> chunk < 256 kB
+      else // 1 time  out of 256 ==> chunk < 256 kB
         vSize := 128 * n + 1;
       vStrings[n] := '';
       SetLength(vStrings[n], vSize);
-      //start and end of string are already assigned, access every 4K page in the middle
+      // start and end of string are already assigned, access every 4K page in the middle
       vIndex := 1;
       while vIndex <= vSize do
       begin
@@ -103,11 +103,11 @@ begin
         Inc(vIndex, 4096);
       end;
       Inc(n);
-      if n > High(vStrings) then
-        n := Low(vStrings);
+      if n > high(vStrings) then
+        n := low(vStrings);
     end;
     FBenchmark.UpdateUsageStatistics;
-    for n := Low(vStrings) to High(vStrings) do
+    for n := low(vStrings) to high(vStrings) do
       vStrings[n] := '';
   end;
 end;
@@ -116,7 +116,7 @@ class function TRawPerformanceMultiThreadAbstract.GetBenchmarkDescription: strin
 begin
   Result := 'A benchmark to measure raw performance and fragmentation resistance. ' +
     'Allocates large number of small strings (< 1 kB) and small number of larger ' +
-    '(< 32 kB) to very large (< 256 kB) strings. '+IntToStr(NumThreads)+'-thread version.';
+    '(< 32 kB) to very large (< 256 kB) strings. ' + IntToStr(NumThreads) + '-thread version.';
 end;
 
 class function TRawPerformanceMultiThreadAbstract.GetBenchmarkName: string;
@@ -138,7 +138,7 @@ procedure TRawPerformanceMultiThreadAbstract.RunBenchmark;
 var
   vThreadsCount: Integer;
   vThreads: array of TRawPerformanceThread;
-  i: integer;
+  i: Integer;
 begin
   inherited;
   vThreadsCount := NumThreads;

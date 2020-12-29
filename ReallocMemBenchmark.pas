@@ -11,10 +11,10 @@ uses
 
 type
   PReallocMemBenchmarkBlockSizesArray = ^TReallocMemBenchmarkBlockSizesArray;
-  PReallocMemBenchmarkPointerArray    = ^TReallocMemBenchmarkPointerArray;
+  PReallocMemBenchmarkPointerArray = ^TReallocMemBenchmarkPointerArray;
 
-  TReallocMemBenchmarkPointerArray          =  packed array[0..MaxInt div SizeOf(Pointer)-1] of Pointer;
-  TReallocMemBenchmarkBlockSizesArray       =  packed array[0..MaxInt div SizeOf(Pointer)-1] of Integer;
+  TReallocMemBenchmarkPointerArray = packed array [0 .. MaxInt div SizeOf(Pointer) - 1] of Pointer;
+  TReallocMemBenchmarkBlockSizesArray = packed array [0 .. MaxInt div SizeOf(Pointer) - 1] of Integer;
 
   TReallocBenchAbstract = class(TMMBenchmark)
   protected
@@ -62,18 +62,18 @@ begin
 
   np := GetNumPointers;
 
-  GetMem(Pointers, np*SizeOf(Pointer));
+  GetMem(Pointers, np * SizeOf(Pointer));
   {Clear all the pointers}
-  FillChar(Pointers^, np*SizeOf(Pointer), 0);
+  FillChar(Pointers^, np * SizeOf(Pointer), 0);
 
-  GetMem(BlockSizes, np*SizeOf(Integer));
+  GetMem(BlockSizes, np * SizeOf(Integer));
   {Clear all the block sizes}
-  FillChar(BlockSizes^, np*SizeOf(Integer), 0);
+  FillChar(BlockSizes^, np * SizeOf(Integer), 0);
 end;
 
 destructor TReallocBenchAbstract.Destroy;
 var
-  np, i: integer;
+  np, i: Integer;
 begin
   np := GetNumPointers;
 
@@ -83,8 +83,10 @@ begin
     System.ReallocMem(Pointers^[i], 0);
   end;
 
-  FreeMem(Pointers, np*SizeOf(Pointer)); Pointers := nil;
-  FreeMem(BlockSizes, np*SizeOf(Integer)); BlockSizes := nil;
+  FreeMem(Pointers, np * SizeOf(Pointer));
+  Pointers := nil;
+  FreeMem(BlockSizes, np * SizeOf(Integer));
+  BlockSizes := nil;
 
   inherited;
 end;
@@ -124,7 +126,7 @@ begin
     LPointerNumber := CurValue mod NumPointers;
     Inc(CurValue, Prime);
     {Adjust the current block size up or down by up to BlockSizeDelta}
-    BlockSizes^[LPointerNumber] := abs(BlockSizes^[LPointerNumber] + (CurValue mod BlockSizeDelta) - (BlockSizeDelta shr 1) - ((i and 7)mod BlockSizeDelta));
+    BlockSizes^[LPointerNumber] := abs(BlockSizes^[LPointerNumber] + (CurValue mod BlockSizeDelta) - (BlockSizeDelta shr 1) - ((i and 7) mod BlockSizeDelta));
     Inc(CurValue, Prime);
     {Reallocate the pointer}
     if MaxBlockSize < BlockSizes^[LPointerNumber] then
@@ -140,7 +142,7 @@ begin
       P[0] := #1;
       if sz > 1 then
       begin
-        P[sz-1] := #2;
+        P[sz - 1] := #2;
       end;
     end;
   end;
@@ -161,8 +163,8 @@ end;
 
 class function TReallocBenchMedium.GetIterationCount: Integer;
 begin
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   Result := 250000;
 {$ELSE}
@@ -172,8 +174,8 @@ end;
 
 class function TReallocBenchMedium.GetNumPointers: Integer;
 begin
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   Result := 5 {prime};
 {$ELSE}
@@ -194,8 +196,8 @@ end;
 
 class function TReallocBenchTiny.GetIterationCount: Integer;
 begin
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   Result := 300000;
 {$ELSE}
@@ -205,8 +207,8 @@ end;
 
 class function TReallocBenchTiny.GetNumPointers: Integer;
 begin
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   Result := 5 {prime}; // to fit in the cache better
 {$ELSE}
@@ -226,8 +228,8 @@ end;
 
 class function TReallocBenchLarge.GetIterationCount: Integer;
 begin
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   Result := 2650;
 {$ELSE}
@@ -237,8 +239,8 @@ end;
 
 class function TReallocBenchLarge.GetNumPointers: Integer;
 begin
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   Result := 5 {prime};
 {$ELSE}

@@ -67,7 +67,7 @@ const
   Prime = 41;
 var
   i, j, LSize, IterationsCount, MaxBlockSize: Integer;
-  CurValue{, vTotal}: Int64;
+  CurValue {, vTotal} : Int64;
   k: Integer;
 begin
   {Call the inherited handler}
@@ -76,23 +76,24 @@ begin
   {Do the benchmark}
   IterationsCount := GetIterationsCount;
   MaxBlockSize := GetBlockSizeBytes;
-//  vTotal := 0;
+  // vTotal := 0;
   for k := 1 to IterationsCount do
   begin
     for i := low(FPointers) to high(FPointers) do
     begin
       {Get the initial block size}
       LSize := MaxBlockSize + (CurValue mod (3 * MaxBlockSize));
-//      if vTotal + LSize > 1600000000 then
-//      begin
-//        vTotal := vTotal;
-//        Break;
-//      end;
+      // if vTotal + LSize > 1600000000 then
+      // begin
+      // vTotal := vTotal;
+      // Break;
+      // end;
       Inc(CurValue, Prime);
       GetMem(FPointers[i], LSize);
-//      Inc(vTotal, LSize);
+      // Inc(vTotal, LSize);
       FPointers[i][0] := #13;
-      if LSize > 5 then FPointers[i][LSize - 1] := #13;
+      if LSize > 5 then
+        FPointers[i][LSize - 1] := #13;
       {Reallocate it a few times}
       for j := 1 to 5 do
       begin
@@ -100,7 +101,8 @@ begin
         Inc(CurValue, Prime);
         ReallocMem(FPointers[i], LSize);
         FPointers[i][0] := #13;
-        if LSize > 5 then FPointers[i][LSize - 1] := #13;
+        if LSize > 5 then
+          FPointers[i][LSize - 1] := #13;
       end;
     end;
     for i := low(FPointers) to high(FPointers) do

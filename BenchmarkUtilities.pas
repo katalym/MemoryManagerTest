@@ -22,7 +22,7 @@ function GetCPUTicks: Int64;
 {Gets the current state of the virtual memory pool}
 function GetVMState: TVMState;
 {Gets the number of bytes of virtual memory either reserved or committed by this
- process}
+  process}
 function GetAddressSpaceUsed: NativeUInt;
 
 var
@@ -30,7 +30,7 @@ var
   InitialAddressSpaceUsed: NativeUInt;
 
 const
-// MemoryManager_Name is used as subfolder name - do not use special characters
+  // MemoryManager_Name is used as subfolder name - do not use special characters
 {$IFDEF MM_DEFAULT}
   {Default}
   MemoryManager_Name = 'Default';
@@ -72,18 +72,18 @@ begin
   Result := 'Delphi 10.4';
 end;
 
-{$ifdef FPC}
-  {$asmmode intel}
-{$endif}
+{$IFDEF FPC}
+{$ASMMODE intel}
+{$ENDIF}
 
 function GetCPUTicks: Int64; assembler;
 asm
-   rdtsc
- {$IFDEF WIN64}
-   shl   rdx, 32
-   or    rax, rdx
-   xor   rdx, rdx
- {$ENDIF}
+  rdtsc
+  {$IFDEF WIN64}
+  shl   rdx, 32
+  or    rax, rdx
+  xor   rdx, rdx
+  {$ENDIF}
 end;
 
 function GetVMState: TVMState;
@@ -125,7 +125,7 @@ begin
 end;
 
 {Gets the number of bytes of virtual memory either reserved or committed by this
- process in K}
+  process in K}
 function GetAddressSpaceUsed: NativeUInt;
 var
   LMemoryStatus: TMemoryStatus;
@@ -139,7 +139,8 @@ begin
 end;
 
 initialization
-  {Get the initial VM Usage}
-  InitialAddressSpaceUsed := GetAddressSpaceUsed;
+
+{Get the initial VM Usage}
+InitialAddressSpaceUsed := GetAddressSpaceUsed;
 
 end.

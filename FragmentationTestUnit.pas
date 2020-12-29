@@ -1,5 +1,5 @@
 {A benchmark demonstrating how the RTL Delphi MM fragments the virtual address
- space}
+  space}
 
 unit FragmentationTestUnit;
 
@@ -25,8 +25,8 @@ type
 implementation
 
 const
-// full debug mode is used to detect memory leaks - not for actual performance test
-// value is decreased to avoid Out of Memory in fuul debug mode
+  // full debug mode is used to detect memory leaks - not for actual performance test
+  // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
   IterationCount = 3;
 {$ELSE}
@@ -58,14 +58,14 @@ var
 begin
   inherited;
 
-  for n := 1 to IterationCount do     // loop added to have more than 1000 MTicks for this benchmark
+  for n := 1 to IterationCount do // loop added to have more than 1000 MTicks for this benchmark
   begin
     SetLength(FStrings, 0);
     for i := 1 to 90 do
     begin
-      //add 100000 elements
+      // add 100000 elements
       SetLength(FStrings, length(FStrings) + 100000);
-      //allocate a 1 length string
+      // allocate a 1 length string
       SetLength(FStrings[high(FStrings)], 1);
     end;
     {Update the peak address space usage}

@@ -75,7 +75,7 @@ var
   i, j: Integer;
   kcalc: NativeUint;
   kloop: Cardinal;
-  LPointers: array[0..PointerCount - 1] of Pointer;
+  LPointers: array [0 .. PointerCount - 1] of Pointer;
   LMax, LSize, LSum: Integer;
 begin
   {Allocate the initial pointers}
@@ -86,12 +86,12 @@ begin
       LMax := 64
     else
       if i and 15 <> 0 then
-        LMax := 1024
-      else
-        if i and 255 <> 0 then
-          LMax := 4 * 1024
-        else
-          LMax := 256 * 1024;
+      LMax := 1024
+    else
+      if i and 255 <> 0 then
+      LMax := 4 * 1024
+    else
+      LMax := 256 * 1024;
     {Get the size, minimum 1}
     Inc(FCurValue, FPrime);
     LSize := (FCurValue mod LMax) + 1;
@@ -108,12 +108,12 @@ begin
         LMax := 64
       else
         if i and 15 <> 0 then
-          LMax := 1024
-        else
-          if i and 255 <> 0 then
-            LMax := 4 * 1024
-          else
-            LMax := 256 * 1024;
+        LMax := 1024
+      else
+        if i and 255 <> 0 then
+        LMax := 4 * 1024
+      else
+        LMax := 256 * 1024;
       {Get the size, minimum 1}
       Inc(FCurValue, FPrime);
       LSize := (FCurValue mod LMax) + 1;
@@ -123,7 +123,7 @@ begin
       for kloop := 0 to (LSize - 1) div 32 do
       begin
         kcalc := kloop;
-        PByte(NativeUInt(LPointers[i]) + kcalc * 32)^ := byte(i);
+        PByte(NativeUint(LPointers[i]) + kcalc * 32)^ := byte(i);
       end;
       {Read the memory}
       LSum := 0;
@@ -132,7 +132,7 @@ begin
         for kloop := 0 to (LSize - 16) div 32 do
         begin
           kcalc := kloop;
-          Inc(LSum, PShortInt(NativeUInt(LPointers[i]) + kcalc * 32 + 15)^);
+          Inc(LSum, PShortInt(NativeUint(LPointers[i]) + kcalc * 32 + 15)^);
         end;
       end;
       {"Use" the sum to suppress the compiler warning}
@@ -148,7 +148,7 @@ end;
 
 class function TMultiThreadReallocateBenchmarkAbstract.GetBenchmarkDescription: string;
 begin
-  Result := 'A '+IntToStr(GetNumThreads)+'-threaded benchmark that allocates and reallocates memory '
+  Result := 'A ' + IntToStr(GetNumThreads) + '-threaded benchmark that allocates and reallocates memory '
     + 'blocks. The usage of different block sizes approximates real-world usage '
     + 'as seen in various replays. Allocated memory is actually "used", i.e. '
     + 'written to and read.  '
@@ -181,23 +181,25 @@ var
   LNumThreads: Integer;
 begin
   inherited;
-  PrimeIndex := Low(VeryGoodPrimes);
-  threads:=TList.Create;
+  PrimeIndex := low(VeryGoodPrimes);
+  threads := TList.Create;
   LNumThreads := GetNumThreads;
   {create threads}
   for n := 1 to LNumThreads do begin
     LCreateAndFree := TCreateAndFreeThread.Create(True);
     LCreateAndFree.FPrime := VeryGoodPrimes[PrimeIndex];
     LCreateAndFree.FRepeatCount := CRepeatCountTotal div LNumThreads;
-    Inc(PrimeIndex); if PrimeIndex > High(VeryGoodPrimes) then PrimeIndex := Low(VeryGoodPrimes);
-    LCreateAndFree.FreeOnTerminate:=False;
+    Inc(PrimeIndex);
+    if PrimeIndex > high(VeryGoodPrimes) then
+      PrimeIndex := low(VeryGoodPrimes);
+    LCreateAndFree.FreeOnTerminate := False;
     threads.Add(LCreateAndFree);
   end;
   {start all threads at the same time}
   SetThreadPriority(GetCurrentThread, THREAD_PRIORITY_ABOVE_NORMAL);
-  for n:=0 to threads.Count-1 do
+  for n := 0 to threads.Count - 1 do
   begin
-    LCreateAndFree:=TCreateAndFreeThread(threads.Items[n]);
+    LCreateAndFree := TCreateAndFreeThread(threads.Items[n]);
     LCreateAndFree.Suspended := False;
   end;
   SetThreadPriority(GetCurrentThread, THREAD_PRIORITY_NORMAL);

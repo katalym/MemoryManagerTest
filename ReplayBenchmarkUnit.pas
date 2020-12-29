@@ -10,6 +10,7 @@ uses
 type
   {A single operation}
   PMMOperation = ^TMMOperation;
+
   TMMOperation = packed record
     {The old pointer number. Will be < 0 for GetMem requests, non-zero otherwise.}
     OldPointerNumber: Integer;
@@ -36,7 +37,7 @@ type
     class function GetBenchmarkName: string; override;
     class function GetCategory: TBenchmarkCategory; override;
     {repeat count for replay log}
-    class function RepeatCount: integer; virtual;
+    class function RepeatCount: Integer; virtual;
     procedure RunBenchmark; override;
     class function RunByDefault: boolean; override;
   end;
@@ -59,7 +60,7 @@ type
     constructor CreateBenchmark; override;
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
-    class function RepeatCount: integer; override;
+    class function RepeatCount: Integer; override;
     class function RunByDefault: boolean; override;
   end;
 
@@ -68,7 +69,7 @@ type
     constructor CreateBenchmark; override;
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
-    class function RepeatCount: integer; override;
+    class function RepeatCount: Integer; override;
     class function RunByDefault: boolean; override;
   end;
 
@@ -77,7 +78,7 @@ type
     constructor CreateBenchmark; override;
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
-    class function RepeatCount: integer; override;
+    class function RepeatCount: Integer; override;
     class function RunByDefault: boolean; override;
   end;
 
@@ -119,7 +120,7 @@ type
     constructor CreateBenchmark; override;
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
-    class function RepeatCount: integer; override;
+    class function RepeatCount: Integer; override;
     class function RunByDefault: boolean; override;
     class function RunningThreads: Integer; override;
     class function ThreadCount: Integer; override;
@@ -136,21 +137,21 @@ type
   private
     FBenchmark: TMMBenchmark;
     FOperations: string;
-    FRepeatCount: integer;
+    FRepeatCount: Integer;
     procedure ExecuteReplay;
   public
-    constructor Create(ASuspended: Boolean; ABenchmark: TMMBenchmark; RepeatCount: integer);
+    constructor Create(ASuspended: boolean; ABenchmark: TMMBenchmark; RepeatCount: Integer);
     procedure Execute; override;
     property Operations: string read FOperations write FOperations;
   end;
 
 const
-  INVALID_SET_FILE_POINTER = DWORD(-1);
+  INVALID_SET_FILE_POINTER = DWORD( - 1);
 
-{Reads a file in its entirety and returns the contents as a string. Returns a blank string on error.}
+  {Reads a file in its entirety and returns the contents as a string. Returns a blank string on error.}
 function LoadFile(const AFileName: string): string;
 var
-//  LFileInfo: OFSTRUCT;
+  // LFileInfo: OFSTRUCT;
   LHandle: THandle;
   LFileSize: Cardinal;
   LBytesRead: Cardinal;
@@ -158,7 +159,7 @@ begin
   {Default to empty string (file not found)}
   Result := '';
   {Try to open the file}
-  LHandle := CreateFile(PChar(AFileName),  GENERIC_READ, FILE_SHARE_READ, nil, OPEN_EXISTING, 0, 0);
+  LHandle := CreateFile(PChar(AFileName), GENERIC_READ, FILE_SHARE_READ, nil, OPEN_EXISTING, 0, 0);
   if LHandle <> HFILE_ERROR then
   begin
     try
@@ -197,7 +198,7 @@ begin
     FOperations := LoadFile(FUsageLogFileName);
     if FOperations = '' then
       FCanRunBenchmark := False;
-//      raise Exception.CreateFmt('The file "%s" could not be found in the current folder', [FUsageLogFileName]);
+    // raise Exception.CreateFmt('The file "%s" could not be found in the current folder', [FUsageLogFileName]);
   end
   else
   begin
@@ -212,7 +213,7 @@ begin
   end;
   {Set the list of pointers}
   SetLength(FPointers, length(FOperations) div SizeOf(TMMOperation));
-  Sleep(20);  // RH let system relax after big file load... seems to be useful to get consistent results
+  Sleep(20); // RH let system relax after big file load... seems to be useful to get consistent results
 end;
 
 class function TReplayBenchmark.GetBenchmarkDescription: string;
@@ -247,14 +248,14 @@ begin
   Result := bmSingleThreadReplay;
 end;
 
-class function TReplayBenchmark.RepeatCount: integer;
+class function TReplayBenchmark.RepeatCount: Integer;
 begin
   Result := 1;
 end;
 
 procedure TReplayBenchmark.RunBenchmark;
 var
-  i: integer;
+  i: Integer;
 begin
   inherited;
   for i := 1 to RepeatCount do
@@ -269,8 +270,8 @@ end;
 procedure TReplayBenchmark.RunReplay;
 var
   LPOperation: PMMOperation;
-  LInd, LOperationCount, LOffset: integer;
-  UintOfs: NativeUint;
+  LInd, LOperationCount, LOffset: Integer;
+  UintOfs: NativeUInt;
 begin
   {Get a pointer to the first operation}
   LPOperation := pointer(FOperations);
@@ -317,16 +318,16 @@ begin
     {Next operation}
     Inc(LPOperation);
     {Log peak usage every 1024 operations}
-    if LInd and $3ff = 0 then
+    if LInd and $3FF = 0 then
       UpdateUsageStatistics;
   end;
   {Make sure all memory is released to avoid memory leaks in benchmark}
-  for LInd := 0 to High(FPointers) do
+  for LInd := 0 to high(FPointers) do
     if FPointers[LInd] <> nil then
       FreeMem(FPointers[LInd]);
 end;
 
-constructor TReplayThread.Create(ASuspended: Boolean; ABenchmark: TMMBenchmark; RepeatCount: integer);
+constructor TReplayThread.Create(ASuspended: boolean; ABenchmark: TMMBenchmark; RepeatCount: Integer);
 begin
   inherited Create(ASuspended);
   FreeOnTerminate := False;
@@ -347,7 +348,7 @@ end;
 procedure TReplayThread.ExecuteReplay;
 var
   LPOperation: PMMOperation;
-  LInd, LOperationCount, LOffset: integer;
+  LInd, LOperationCount, LOffset: Integer;
   FPointers: array of pointer;
   UintOfs: NativeUInt;
 begin
@@ -398,15 +399,15 @@ begin
     {Next operation}
     Inc(LPOperation);
     {Log peak usage every 1024 operations}
-    if LInd and $3ff = 0 then
-      FBenchMark.UpdateUsageStatistics;
+    if LInd and $3FF = 0 then
+      FBenchmark.UpdateUsageStatistics;
     {the replay is probably running about 10 to 50 times faster than reality}
     {force thread switch every 8192 operations to prevent whole benchmark from running in a single time-slice}
-    if LInd and $1fff = 0 then
+    if LInd and $1FFF = 0 then
       Sleep(0);
   end;
   {Make sure all memory is released to avoid memory leaks in benchmark}
-  for LInd := 0 to High(FPointers) do
+  for LInd := 0 to high(FPointers) do
     if FPointers[LInd] <> nil then
       FreeMem(FPointers[LInd]);
 end;
@@ -420,10 +421,10 @@ end;
 
 procedure TMultiThreadReplayBenchmark.RunBenchmark;
 var
-  i, rc, slot : Integer;
-  WT : TReplayThread;
-  ThreadArray : array[0..63] of TReplayThread;
-  HandleArray : TWOHandleArray;
+  i, rc, slot: Integer;
+  WT: TReplayThread;
+  ThreadArray: array [0 .. 63] of TReplayThread;
+  HandleArray: TWOHandleArray;
 begin
   inherited;
 
@@ -597,7 +598,7 @@ begin
   Result := 'Replay: Reservations System';
 end;
 
-class function TReservationsSystemBenchmark.RepeatCount: integer;
+class function TReservationsSystemBenchmark.RepeatCount: Integer;
 begin
   Result := 50;
 end;
@@ -627,7 +628,7 @@ begin
   Result := 'Replay: XML Parser';
 end;
 
-class function TXMLParserBenchmark.RepeatCount: integer;
+class function TXMLParserBenchmark.RepeatCount: Integer;
 begin
   Result := 15;
 end;
@@ -653,7 +654,7 @@ begin
   Result := 'Replay: Beyond Compare 3 - 4 threads';
 end;
 
-class function TBeyondCompareBenchmark.RepeatCount: integer;
+class function TBeyondCompareBenchmark.RepeatCount: Integer;
 begin
   Result := 15;
 end;
@@ -689,7 +690,7 @@ begin
   Result := 'Replay: Document Classification';
 end;
 
-class function TDocumentClassificationBenchmark.RepeatCount: integer;
+class function TDocumentClassificationBenchmark.RepeatCount: Integer;
 begin
   Result := 30;
 end;
