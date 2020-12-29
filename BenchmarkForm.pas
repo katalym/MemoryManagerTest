@@ -512,8 +512,8 @@ begin
   except
     on E: Exception do begin
       ShowMessage('Test for ' + ABenchmarkClass.GetBenchmarkName + ' failed with error:'#13 + E.Message);
+      Abort;
     end;
-    Abort;
   end;
 end;
 

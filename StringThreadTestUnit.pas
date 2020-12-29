@@ -147,14 +147,10 @@ procedure TStringThreadTestAbstract.RunBenchmark;
 const
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug}
-  CIterations = 500;
-{$ELSE}
-{$IFDEF MM_FASTMM5_FullDebug}
-  CIterations = 500;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  CIterations = 200;
 {$ELSE}
   CIterations = 5000;
-{$ENDIF}
 {$ENDIF}
 var
   vtc, vic, i, bPrimeIndex: Integer;

@@ -7,6 +7,9 @@ uses
 {$IFDEF MM_DEFAULT}
   // use default Delphi memory manager
 {$ENDIF}
+{$IFDEF MM_TCMALLOC}
+  tcmalloc in 'TCMalloc/tcmalloc.pas',
+{$ENDIF}
 {$IFDEF MM_SCALEMM2}
   SCALEMM2 in 'ScaleMM2/ScaleMM2.pas',
   smmDump in 'ScaleMM2/smmDump.pas',

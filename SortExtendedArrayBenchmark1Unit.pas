@@ -2,6 +2,8 @@ unit SortExtendedArrayBenchmark1Unit;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses
   Windows, BenchmarkClassUnit, Classes, Math;
 
@@ -20,6 +22,13 @@ implementation
 uses
   SysUtils;
 
+const
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  ExtArraySize = 5000;
+{$ELSE}
+  ExtArraySize = 500000;
+{$ENDIF}
+
 type
 
   TStandardSortExtendedArrayThread = class(TThread)
@@ -33,7 +42,7 @@ type
    Pad1, Pad2, Pad3, Pad4, Pad5, Pad6 : Byte;
   end;
 
- TExtendedArray = array[0..500000] of TExtended;
+ TExtendedArray = array[0..ExtArraySize] of TExtended;
  PExtendedArray = ^TExtendedArray;
 
 procedure TStandardSortExtendedArrayThread.Execute;
@@ -43,8 +52,11 @@ var
  CurValue: Int64;
  Temp, Max : Extended;
 const
- MAXRUNNO = 100;
- MAXELEMENTVALUE = MAXINT;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  MAXRUNNO = 2;
+{$ELSE}
+  MAXRUNNO = 100;
+{$ENDIF}
  MINSIZE = 100;
  MAXSIZE = 10000;
 begin
@@ -52,14 +64,14 @@ begin
   GetMem(ExtArray, MINSIZE * SizeOf(TExtended));
   for RunNo := 1 to MAXRUNNO do
   begin
-    Size := (CurValue mod (MAXSIZE-MINSIZE)) + MINSIZE;
+    Size := Min(High(ExtArray^), (CurValue mod (MAXSIZE-MINSIZE)) + MINSIZE);
     Inc(CurValue, Prime);
     //SetLength(ExtArray, Size);
     ReallocMem(ExtArray, Size * SizeOf(TExtended));
     //Fill array with arbitary values
     for I1 := 0 to Size-1 do
     begin
-      ExtArray^[I1].X := (CurValue mod MAXELEMENTVALUE)*pi;
+      ExtArray^[I1].X := (CurValue mod MAXINT)*pi;
       Inc(CurValue, Prime);
     end;
     //Sort array just to create an acces pattern

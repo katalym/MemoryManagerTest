@@ -35,6 +35,9 @@ const
   {Default}
   MemoryManager_Name = 'Default';
 {$ENDIF}
+{$IFDEF MM_TCMALLOC}
+  MemoryManager_Name = 'TCMalloc';
+{$ENDIF}
 {$IFDEF MM_SCALEMM2}
   MemoryManager_Name = 'ScaleMM2';
 {$ENDIF}

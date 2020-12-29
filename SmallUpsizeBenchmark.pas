@@ -2,12 +2,19 @@ unit SmallUpsizeBenchmark;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses
   BenchmarkClassUnit;
 
 const
-  {The number of pointers}
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  NumPointers = 8000;
+  IterationsCount = 5;
+{$ELSE}
   NumPointers = 2000000;
+  IterationsCount = 15;
+{$ENDIF}
   {The maximum block size}
   MaxBlockSize = 32;
 
@@ -26,9 +33,6 @@ type
   end;
 
 implementation
-
-const
-  IterationsCount = 15;
 
 constructor TSmallUpsizeBench.CreateBenchmark;
 begin

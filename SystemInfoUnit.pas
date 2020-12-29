@@ -69,8 +69,8 @@ var
 begin
   if not FrequencyCPUKnown then
   begin
+    {$WARN SYMBOL_PLATFORM OFF}
     Win32Check(QueryPerformanceFrequency(PerfFreq));
-
     // First allow SpeedStep some time
     Win32Check(QueryPerformanceCounter(PerfStart));
     PerfEnd := PerfStart + (PerfFreq div 2);
@@ -86,6 +86,7 @@ begin
       Win32Check(QueryPerformanceCounter(PerfTemp));
     until PerfTemp >= PerfEnd;
     TscEnd := RdTsc;
+    {$WARN SYMBOL_PLATFORM ON}
 
     FrequencyCPU := (TscEnd - TscStart) * PerfFreq / (PerfTemp - PerfStart);
     FrequencyCPUKnown := True;
@@ -106,6 +107,7 @@ var
 begin
   SetLength(ApicIds, CpuCount.Log);
   SetLength(Threads, CpuCount.Log);
+  {$WARN SYMBOL_PLATFORM OFF}
 
   for I := Low(Threads) to High(Threads) do
     Threads[I] := 0;
@@ -134,6 +136,7 @@ begin
       if Threads[I] <> 0 then
         CloseHandle(Threads[I]);
   end;
+  {$WARN SYMBOL_PLATFORM ON}
 
   Result := False;
   for I := Low(ApicIds) to High(ApicIds) do

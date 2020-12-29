@@ -118,7 +118,9 @@ begin
   SingleFPThread := TSingleFPThread2.Create(True);
   SingleFPThread.FreeOnTerminate := False;
   SingleFPThread.FBenchmark := Self;
+  {$WARN SYMBOL_DEPRECATED OFF}
   SingleFPThread.Resume;
+  {$WARN SYMBOL_DEPRECATED ON}
   SingleFPThread.WaitFor;
   FreeAndNil(SingleFPThread);
 end;

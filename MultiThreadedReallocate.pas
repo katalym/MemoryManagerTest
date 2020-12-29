@@ -4,7 +4,10 @@ unit MultiThreadedReallocate;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+{$I MemoryManagerTest.inc}
+
+uses
+  Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
@@ -63,7 +66,11 @@ type
 
 procedure TCreateAndFreeThread.Execute;
 const
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  PointerCount = 25;
+{$ELSE}
   PointerCount = 2500;
+{$ENDIF}
 var
   i, j: Integer;
   kcalc: NativeUint;

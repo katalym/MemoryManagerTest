@@ -1,11 +1,13 @@
-{A benchmark that creates and frees many objects in a multi-threaded
- environment}
+{A benchmark that creates and frees many objects in a multi-threaded environment}
 
 unit SingleThreadedAllocAndFree;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+{$I MemoryManagerTest.inc}
+
+uses
+  Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
@@ -41,8 +43,13 @@ end;
 procedure TSingleThreadAllocateAndFreeBenchmark.RunBenchmark;
 const
   Prime = 13;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  RepeatCount = 50;
+  PointerCount = 6100;
+{$ELSE}
   RepeatCount = 100;
   PointerCount = 610000;
+{$ENDIF}
 type
   PPointers = ^TPointers;
   TPointers = array[0..PointerCount - 1] of Pointer;

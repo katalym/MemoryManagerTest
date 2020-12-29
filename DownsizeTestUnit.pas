@@ -44,17 +44,12 @@ procedure TDownsizeTest.RunBenchmark;
 Const
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug}
-  TotalStrings = 1000;
-  IterationCount = 5;
-{$ELSE}
-{$IFDEF MM_FASTMM5_FullDebug}
-  TotalStrings = 1000;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  TotalStrings = 5000;
   IterationCount = 5;
 {$ELSE}
   TotalStrings = 3000000;
   IterationCount = 45;
-{$ENDIF}
 {$ENDIF}
 var
   i, n, LOffset: integer;

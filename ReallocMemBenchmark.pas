@@ -161,25 +161,23 @@ end;
 
 class function TReallocBenchMedium.GetIterationCount: Integer;
 begin
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  Result := 250000;
+{$ELSE}
   Result := 25000000;
+{$ENDIF}
 end;
 
 class function TReallocBenchMedium.GetNumPointers: Integer;
 begin
-  Result := 521 {prime};
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug}
-  RUNS = 1;
-  NOOFPOINTERS = 1200;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  Result := 5 {prime};
 {$ELSE}
-{$IFDEF MM_FASTMM5_FullDebug}
-  RUNS = 1;
-  NOOFPOINTERS = 1200;
-{$ELSE}
-  RUNS = 2;
-  NOOFPOINTERS = 12000000;
-{$ENDIF}
+  Result := 521 {prime};
 {$ENDIF}
 end;
 
@@ -196,25 +194,23 @@ end;
 
 class function TReallocBenchTiny.GetIterationCount: Integer;
 begin
-  Result := 300000*100;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  Result := 300000;
+{$ELSE}
+  Result := 30000000;
+{$ENDIF}
 end;
 
 class function TReallocBenchTiny.GetNumPointers: Integer;
 begin
-  Result := 521 {prime}; // to fit in the cache better
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug}
-  RUNS = 1;
-  NOOFPOINTERS = 1200;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  Result := 5 {prime}; // to fit in the cache better
 {$ELSE}
-{$IFDEF MM_FASTMM5_FullDebug}
-  RUNS = 1;
-  NOOFPOINTERS = 1200;
-{$ELSE}
-  RUNS = 2;
-  NOOFPOINTERS = 12000000;
-{$ENDIF}
+  Result := 521 {prime}; // to fit in the cache better
 {$ENDIF}
 end;
 
@@ -230,25 +226,23 @@ end;
 
 class function TReallocBenchLarge.GetIterationCount: Integer;
 begin
-  Result := 265*1000;
+// full debug mode is used to detect memory leaks - not for actual performance test
+// value is decreased to avoid Out of Memory in fuul debug mode
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  Result := 2650;
+{$ELSE}
+  Result := 265000;
+{$ENDIF}
 end;
 
 class function TReallocBenchLarge.GetNumPointers: Integer;
 begin
-  Result := 2153 {prime};
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug}
-  RUNS = 1;
-  NOOFPOINTERS = 1200;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  Result := 5 {prime};
 {$ELSE}
-{$IFDEF MM_FASTMM5_FullDebug}
-  RUNS = 1;
-  NOOFPOINTERS = 1200;
-{$ELSE}
-  RUNS = 2;
-  NOOFPOINTERS = 12000000;
-{$ENDIF}
+  Result := 2153 {prime};
 {$ENDIF}
 end;
 

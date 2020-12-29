@@ -105,7 +105,7 @@ resourcestring
   TEXT_NO_VERSIONINFO = 'No version info';
 
 var
- CPUID_Level : DWORD;
+ {$IFDEF WIN32}CPUID_Level : DWORD;{$ENDIF}
  CPUID : TCPUIDResult;
 
 const
@@ -255,7 +255,9 @@ var
   EDX: Cardinal;
 begin
 {$IFnDEF FPC}
+ {$WARN SYMBOL_PLATFORM OFF}
  EDX := CPUIDTable[1].EDX;
+ {$WARN SYMBOL_PLATFORM ON}
 {$ELSE}
  EDX := 0;
 {$ENDIF}
@@ -315,19 +317,20 @@ end;
 
 function DetectCPUType(Family, Model: Integer): String;
 var
- P2Array : array[0..5] of Integer; // Family : 6
- P3Array : array[0..5] of Integer; // Family : 6
- P4Array : array[0..5] of Integer; // Family : 15
- XPArray : array[0..5] of Integer; // Family : 6
- PrescottArray : array[0..5] of Integer; // Family : 15
- OpteronArray : array[0..5] of Integer; // Family : 15
- PentiumMArray : array[0..5] of Integer; // Family : 6
- AthlonArray : array[0..5] of Integer; // Family : 6
- Athlon64Array : array[0..5] of Integer; // Family : 15
- CPUDetected : Boolean;
- I : Integer;
- Vendor: String;
-
+  P2Array : array[0..5] of Integer; // Family : 6
+  P3Array : array[0..5] of Integer; // Family : 6
+  P4Array : array[0..5] of Integer; // Family : 15
+  XPArray : array[0..5] of Integer; // Family : 6
+  PrescottArray : array[0..5] of Integer; // Family : 15
+  OpteronArray : array[0..5] of Integer; // Family : 15
+  AthlonArray : array[0..5] of Integer; // Family : 6
+  Athlon64Array : array[0..5] of Integer; // Family : 15
+  {$IFDEF WIN32}
+  CPUDetected : Boolean;
+  PentiumMArray : array[0..5] of Integer; // Family : 6
+  Vendor: String;
+  I : Integer;
+  {$ENDIF}
 begin
  P2Array[0] := 5; //0101
  P3Array[0] := 7; // 0111
@@ -344,8 +347,8 @@ begin
  OpteronArray[0] := 5; // 0101
  AthlonArray[0] := 4; // 0100
  Athlon64Array[0] := 4; // 0100
- CPUDetected := False;
 {$IFDEF WIN32}
+ CPUDetected := False;
  Vendor := GetCPUVendor;
  begin
   if Vendor = 'GenuineIntel' then

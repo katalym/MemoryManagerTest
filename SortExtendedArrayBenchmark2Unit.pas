@@ -2,7 +2,10 @@ unit SortExtendedArrayBenchmark2Unit;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+{$I MemoryManagerTest.inc}
+
+uses
+  Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
@@ -16,7 +19,15 @@ type
 
 implementation
 
-uses SysUtils;
+uses
+  SysUtils;
+
+const
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  ExtArraySize = 5000;
+{$ELSE}
+  ExtArraySize = 500000;
+{$ENDIF}
 
 type
 
@@ -31,7 +42,7 @@ type
    Pad1, Pad2, Pad3, Pad4, Pad5, Pad6 : Byte;
   end;
 
- TExtendedArray = array[0..500000] of TExtended;
+ TExtendedArray = array[0..ExtArraySize] of TExtended;
  PExtendedArray = ^TExtendedArray;
 
 function SortCompareExtended(Item1, Item2: Pointer): Integer;
@@ -55,11 +66,15 @@ var
   CurValue: Int64;
   List: TList;
 const
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  MAXRUNNO = 2;
+  RepeatCount = 25;
+{$ELSE}
   MAXRUNNO = 8;
-  MAXELEMENTVALUE = MAXINT;
+  RepeatCount = 600;
+{$ENDIF}
   MINSIZE = 100;
   MAXSIZE = 10000;
-  RepeatCount = 600;
 begin
   CurValue := Prime;
   for J := 1 to RepeatCount do
@@ -68,7 +83,7 @@ begin
     try
       for RunNo := 1 to MAXRUNNO do
       begin
-        Size := (CurValue mod (MAXSIZE-MINSIZE)) + MINSIZE;
+        Size := Min(High(ExtArray^), (CurValue mod (MAXSIZE-MINSIZE)) + MINSIZE);
         Inc(CurValue, Prime);
         ReallocMem(ExtArray, Size * SizeOf(TExtended));
         List := TList.Create;
@@ -76,7 +91,7 @@ begin
           List.Count := Size;
           for I := 0 to Size-1 do
           begin
-            ExtArray^[I].X := (CurValue mod MAXELEMENTVALUE)*pi;
+            ExtArray^[I].X := (CurValue mod MAXINT)*pi;
             Inc(CurValue, Prime);
             List[I] := @(ExtArray^[I].X);
           end;

@@ -2,7 +2,10 @@ unit SortIntArrayBenchmark2Unit;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+{$I MemoryManagerTest.inc}
+
+uses
+  Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
@@ -38,8 +41,13 @@ var
   FCurValue: Int64;
 const
   MINSIZE = 500;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  MAXSIZE = 600;
+  RepeatCount = 4;
+{$ELSE}
   MAXSIZE = 1500;
   RepeatCount = 20;
+{$ENDIF}
   CMaxValue = 101 {prime};
 begin
   FCurValue := FPrime;
@@ -79,8 +87,7 @@ begin
   Result := 'Quick Sort Integer Array';
 end;
 
-class function TQuickSortIntArrayThreads.GetCategory:
-TBenchmarkCategory;
+class function TQuickSortIntArrayThreads.GetCategory: TBenchmarkCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;

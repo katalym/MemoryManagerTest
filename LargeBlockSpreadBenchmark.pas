@@ -10,14 +10,10 @@ uses
 const
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug}
-  NumPointers = 20;
-{$ELSE}
-{$IFDEF MM_FASTMM5_FullDebug}
-  NumPointers = 20;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  NumPointers = 50;
 {$ELSE}
   NumPointers = 2000;
-{$ENDIF}
 {$ENDIF}
   {The block size}
   BlockSize = 65537;

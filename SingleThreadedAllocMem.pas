@@ -2,6 +2,8 @@
 
 unit SingleThreadedAllocMem;
 
+{$I MemoryManagerTest.inc}
+
 interface
 
 uses Windows, SysUtils, BenchmarkClassUnit, Classes, Math;
@@ -17,8 +19,6 @@ type
   end;
 
 implementation
-
-{ TSingleThreadAllocMemBenchmark }
 
 class function TSingleThreadAllocMemBenchmark.GetBenchmarkDescription: string;
 begin
@@ -39,7 +39,11 @@ end;
 procedure TSingleThreadAllocMemBenchmark.RunBenchmark;
 const
   Prime = 17;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  RepeatCount = 5;
+{$ELSE}
   RepeatCount = 100;
+{$ENDIF}
   PointerCount = 300;
   MaxBlockSize = 300000;
 type

@@ -2,7 +2,10 @@ unit SortIntArrayBenchmark1Unit;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+{$I MemoryManagerTest.inc}
+
+uses
+  Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
@@ -16,7 +19,8 @@ type
 
 implementation
 
-uses SysUtils;
+uses
+  SysUtils;
 
 type
 
@@ -33,9 +37,12 @@ var
  Size, I1, I2, I3, IndexMax, Temp, Max : Integer;
 const
  MINSIZE = 5;
- MAXSIZE = 3200;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  MAXSIZE = 300;
+{$ELSE}
+  MAXSIZE = 3200;
+{$ENDIF}
  MaxValue = 103 {prime};
-
 begin
  FCurValue := FPrime;
  for Size := MINSIZE to MAXSIZE do

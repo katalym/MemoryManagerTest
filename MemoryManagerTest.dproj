@@ -64,6 +64,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="TCMalloc\tcmalloc.pas"/>
         <DCCReference Include="ScaleMM2\ScaleMM2.pas"/>
         <DCCReference Include="ScaleMM2\Optimize.Move.pas"/>
         <DCCReference Include="FastMM4\FastMM4.pas"/>

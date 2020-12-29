@@ -2,6 +2,8 @@ unit SmallDownsizeBenchmark;
 
 interface
 
+{$I MemoryManagerTest.inc}
+
 uses
   BenchmarkClassUnit, Math;
 
@@ -131,12 +133,20 @@ end;
 
 class function TTinyDownsizeBench.GetIterationsCount: Integer;
 begin
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  Result := 1;
+{$ELSE}
   Result := 3;
+{$ENDIF}
 end;
 
 function TTinyDownsizeBench.GetNumPointers: Integer;
 begin
-  Result := 900000; // OK
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  Result := 90000;
+{$ELSE}
+  Result := 900000;
+{$ENDIF}
 end;
 
 class function TVerySmallDownsizeBench.GetBenchmarkDescription: string;

@@ -14,6 +14,10 @@ echo Building for SCALEMM2
 call _BuildForMemoryManager.bat ScaleMM2 
 if %errorlevel% NEQ 0 goto errorexit
 
+echo Building for TCMAlloc
+call _BuildForMemoryManager.bat TCMAlloc 
+if %errorlevel% NEQ 0 goto errorexit
+
 echo Building for FASTMM4
 call _BuildForMemoryManager.bat FastMM4 
 if %errorlevel% NEQ 0 goto errorexit

@@ -27,14 +27,10 @@ implementation
 const
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug}
-  IterationCount = 5;
-{$ELSE}
-{$IFDEF MM_FASTMM5_FullDebug}
-  IterationCount = 5;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  IterationCount = 3;
 {$ELSE}
   IterationCount = 120;
-{$ENDIF}
 {$ENDIF}
 
 class function TFragmentationTest.GetBenchmarkDescription: string;

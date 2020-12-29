@@ -1,12 +1,13 @@
 {A single-threaded benchmark that reallocates and uses memory blocks.}
 
-//79
-
 unit SingleThreadedReallocate;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+{$I MemoryManagerTest.inc}
+
+uses
+  Windows, BenchmarkClassUnit, Classes, Math;
 
 type
 
@@ -19,9 +20,6 @@ type
   end;
 
 implementation
-
-const
-  IterationsCount = 45;
 
 class function TSingleThreadReallocateVariousBlocksBenchmark.GetBenchmarkDescription: string;
 begin
@@ -45,11 +43,16 @@ end;
 procedure TSingleThreadReallocateVariousBlocksBenchmark.RunBenchmark;
 const
   Prime = 29;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  IterationsCount = 25;
+  PointerCount = 4000;
+{$ELSE}
+  IterationsCount = 45;
   PointerCount = 450000;
+{$ENDIF}
 type
   PPointers = ^TPointers;
   TPointers = array[0..PointerCount - 1] of Pointer;
-
 var
   i, j: Integer;
   kcalc: NativeUint;

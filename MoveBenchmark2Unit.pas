@@ -141,7 +141,9 @@ begin
   MoveThread2 := TMoveThread2.Create(True);
   MoveThread2.FreeOnTerminate := False;
   MoveThread2.FBenchmark := Self;
+  {$WARN SYMBOL_DEPRECATED OFF}
   MoveThread2.Resume;
+  {$WARN SYMBOL_DEPRECATED ON}
   MoveThread2.WaitFor;
   FreeAndNil(MoveThread2);
 end;

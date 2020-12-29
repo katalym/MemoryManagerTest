@@ -10,14 +10,10 @@ uses
 const
 // full debug mode is used to detect memory leaks - not for actual performance test
 // value is decreased to avoid Out of Memory in fuul debug mode
-{$IFDEF MM_FASTMM4_FullDebug}
-  cNB_LIST_ITEMS = 12000;
-{$ELSE}
-{$IFDEF MM_FASTMM5_FullDebug}
-  cNB_LIST_ITEMS = 12000;
+{$IFDEF MM_FASTMM4_FullDebug or MM_FASTMM5_FullDebug}
+  cNB_LIST_ITEMS = 20000;
 {$ELSE}
   cNB_LIST_ITEMS = 1200000;
-{$ENDIF}
 {$ENDIF}
 
 type
