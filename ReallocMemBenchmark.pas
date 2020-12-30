@@ -28,7 +28,7 @@ type
     class function GetCategory: TBenchmarkCategory; override;
     class function GetIterationCount: Integer; virtual; abstract;
     class function GetNumPointers: Integer; virtual; abstract;
-    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
+    procedure RunBenchmark; override;
   end;
 
   TReallocBenchLarge = class(TReallocBenchAbstract)

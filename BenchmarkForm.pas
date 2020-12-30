@@ -458,6 +458,7 @@ begin
     Top := vIniFile.ReadInteger('FormSettings', 'Top', Top);
     Height := vIniFile.ReadInteger('FormSettings', 'Height', Height);
     Width := vIniFile.ReadInteger('FormSettings', 'Width', Width);
+    edtUsageReplay.Text := vIniFile.ReadString('FormSettings', edtUsageReplay.Name, edtUsageReplay.Text);
 
   finally
     vIniFile.Free;
@@ -482,9 +483,10 @@ begin
       if LBenchmark.CanRunBenchmark then
       begin
         {Do the getmem test}
+        LBenchmark.PrepareBenchmarkForRun(edtUsageReplay.Text);
         vStartCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total;
         vStartTicks := GetTickCount;
-        LBenchmark.RunBenchmark(edtUsageReplay.Text);
+        LBenchmark.RunBenchmark;
         vCurrentCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total - vStartCPUUsage;
         vCurrentTicks := GetTickCount - vStartTicks;
         {Add a line}
@@ -578,6 +580,7 @@ begin
     vIniFile.WriteInteger('FormSettings', 'Top', Top);
     vIniFile.WriteInteger('FormSettings', 'Height', Height);
     vIniFile.WriteInteger('FormSettings', 'Width', Width);
+    vIniFile.WriteString('FormSettings', edtUsageReplay.Name, edtUsageReplay.Text);
 
   finally
     vIniFile.Free;

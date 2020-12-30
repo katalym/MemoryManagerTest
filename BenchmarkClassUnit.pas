@@ -33,29 +33,28 @@ type
     function GetBenchmarkOverhead: NativeUInt; virtual;
   public
     constructor CreateBenchmark; virtual;
-    {The tests - should return true if implemented}
-    procedure RunBenchmark(const aUsageFileToReplay: string =''); virtual;
+    {A description for the benchmark}
+    class function GetBenchmarkDescription: string; virtual;
+    {The name of the benchmark}
+    class function GetBenchmarkName: string; virtual;
+    {Benchmark Category}
+    class function GetCategory: TBenchmarkCategory; virtual;
+    class function IsThreadedSpecial: Boolean; virtual;
+    procedure PrepareBenchmarkForRun(const aUsageFileToReplay: string =''); virtual;
     {Resets the peak usage measurement}
     procedure ResetUsageStatistics;
+    {The tests - should return true if implemented}
+    procedure RunBenchmark; virtual;
+    {Should this benchmark be run by default?}
+    class function RunByDefault: Boolean; virtual;
     {Measures the address space usage and updates the peak value if the current
       usage is greater}
     procedure UpdateUsageStatistics;
-    {The name of the benchmark}
-    class function GetBenchmarkName: string; virtual;
-    {A description for the benchmark}
-    class function GetBenchmarkDescription: string; virtual;
-    {Should this benchmark be run by default?}
-    class function RunByDefault: Boolean; virtual;
-    {Benchmark Category}
-    class function GetCategory: TBenchmarkCategory; virtual;
-
-    class function IsThreadedSpecial: Boolean; virtual;
-
-    {The peak usage measured since the last reset}
-    property PeakAddressSpaceUsage: Int64 read FPeakAddressSpaceUsage;
     {Indicates whether the benchmark can be run - or if a problem was
       discovered, possibly during create}
     property CanRunBenchmark: Boolean read FCanRunBenchmark;
+    {The peak usage measured since the last reset}
+    property PeakAddressSpaceUsage: Int64 read FPeakAddressSpaceUsage;
   end;
 
   TMMBenchmarkClass = class of TMMBenchmark;
@@ -98,10 +97,15 @@ uses
   SortIntArrayBenchmark2Unit, SortExtendedArrayBenchmark2Unit,
   SingleThreadedAllocMem, SingleThreadedTinyReloc, System.Generics.Defaults, System.SysUtils;
 
-procedure TMMBenchmark.RunBenchmark;
+constructor TMMBenchmark.CreateBenchmark;
 begin
-  {Reset the peak usage statistic}
-  ResetUsageStatistics;
+  inherited;
+  FCanRunBenchmark := True;
+end;
+
+class function TMMBenchmark.GetBenchmarkDescription: string;
+begin
+  Result := '';
 end;
 
 class function TMMBenchmark.GetBenchmarkName: string;
@@ -109,15 +113,41 @@ begin
   Result := '(Unnamed)';
 end;
 
-constructor TMMBenchmark.CreateBenchmark;
+function TMMBenchmark.GetBenchmarkOverhead: NativeUInt;
 begin
-  inherited;
-  FCanRunBenchmark := True;
+  {Return the address space usage on startup}
+  Result := InitialAddressSpaceUsed;
+end;
+
+class function TMMBenchmark.GetCategory: TBenchmarkCategory;
+begin
+  Result := bmMemoryAccessSpeed;
+end;
+
+class function TMMBenchmark.IsThreadedSpecial: Boolean;
+begin
+  Result := False;
+end;
+
+procedure TMMBenchmark.PrepareBenchmarkForRun(const aUsageFileToReplay: string);
+begin
+
 end;
 
 procedure TMMBenchmark.ResetUsageStatistics;
 begin
   FPeakAddressSpaceUsage := 0;
+end;
+
+procedure TMMBenchmark.RunBenchmark;
+begin
+  {Reset the peak usage statistic}
+  ResetUsageStatistics;
+end;
+
+class function TMMBenchmark.RunByDefault: Boolean;
+begin
+  Result := True;
 end;
 
 procedure TMMBenchmark.UpdateUsageStatistics;
@@ -136,27 +166,6 @@ begin
   {Update the peak usage}
   if LCurrentUsage > FPeakAddressSpaceUsage then
     FPeakAddressSpaceUsage := LCurrentUsage;
-end;
-
-class function TMMBenchmark.GetBenchmarkDescription: string;
-begin
-  Result := '';
-end;
-
-class function TMMBenchmark.RunByDefault: Boolean;
-begin
-  Result := True;
-end;
-
-class function TMMBenchmark.IsThreadedSpecial: Boolean;
-begin
-  Result := False;
-end;
-
-function TMMBenchmark.GetBenchmarkOverhead: NativeUInt;
-begin
-  {Return the address space usage on startup}
-  Result := InitialAddressSpaceUsed;
 end;
 
 procedure AddBenchMark(ABenchmarkClass: TMMBenchmarkClass);
@@ -264,11 +273,6 @@ begin
       Result := System.SysUtils.CompareText(A.GetBenchmarkName, B.GetBenchmarkName);
     end));
 
-end;
-
-class function TMMBenchmark.GetCategory: TBenchmarkCategory;
-begin
-  Result := bmMemoryAccessSpeed;
 end;
 
 initialization

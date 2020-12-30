@@ -35,9 +35,10 @@ type
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
     class function GetCategory: TBenchmarkCategory; override;
+    procedure PrepareBenchmarkForRun(const aUsageFileToReplay: string =''); override;
     {repeat count for replay log}
     class function RepeatCount: Integer; virtual;
-    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
+    procedure RunBenchmark; override;
     class function RunByDefault: boolean; override;
   end;
 
@@ -45,7 +46,7 @@ type
   TMultiThreadReplayBenchmark = class(TReplayBenchmark)
   public
     class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
+    procedure RunBenchmark; override;
     {number of simultaneously running threads}
     class function RunningThreads: Integer; virtual;
     {total number of threads running}
@@ -218,15 +219,9 @@ begin
   Result := bmSingleThreadReplay;
 end;
 
-class function TReplayBenchmark.RepeatCount: Integer;
+procedure TReplayBenchmark.PrepareBenchmarkForRun(const aUsageFileToReplay: string);
 begin
-  Result := 1;
-end;
-
-procedure TReplayBenchmark.RunBenchmark(const aUsageFileToReplay: string ='');
-var
-  i: Integer;
-begin
+  inherited;
   FUsageLogFileName := aUsageFileToReplay;
 
   {Try to load the usage log}
@@ -241,7 +236,17 @@ begin
   {Set the list of pointers}
   SetLength(FPointers, length(FOperations) div SizeOf(TMMOperation));
   Sleep(20); // RH let system relax after big file load... seems to be useful to get consistent results
+end;
 
+class function TReplayBenchmark.RepeatCount: Integer;
+begin
+  Result := 1;
+end;
+
+procedure TReplayBenchmark.RunBenchmark;
+var
+  i: Integer;
+begin
   inherited;
   for i := 1 to RepeatCount do
     RunReplay;

@@ -22,7 +22,7 @@ type
     class function GetCategory: TBenchmarkCategory; override;
     class function IsThreadedSpecial: Boolean; override;
     class function NumThreads: Integer; virtual; abstract;
-    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
+    procedure RunBenchmark; override;
   end;
 
   TStringThreadTest2 = class(TStringThreadTestAbstract)
@@ -58,7 +58,7 @@ type
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
     class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
+    procedure RunBenchmark; override;
   end;
 
 procedure DecRunningThreads;

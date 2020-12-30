@@ -31,7 +31,7 @@ type
     class function GetCategory: TBenchmarkCategory; override;
     class function IterationCount: integer; virtual;
     class function NumThreads: integer; virtual; abstract;
-    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
+    procedure RunBenchmark; override;
   end;
 
   TNexusBenchmarkThread = class(TNexusBenchmark)
