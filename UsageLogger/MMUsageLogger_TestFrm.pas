@@ -41,7 +41,7 @@ end;
 
 procedure TMMUsageLogger_TestForm.Button2Click(Sender: TObject);
 const
-  CRepeatCountTotal = 25555;
+  CRepeatCountTotal = 55555;
 var
   PrimeIndex, n: Integer;
   LCreateAndFree: TCreateAndFreeThread;

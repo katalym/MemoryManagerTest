@@ -29,7 +29,7 @@ interface
 
 const
   {The name of the usage log file}
-  LogFileName = 'D:\git\MMUsage.Log';
+  LogFileName = 'C:\MemoryManagerUsageLogs\MMUsage.Log';
 
 implementation
 

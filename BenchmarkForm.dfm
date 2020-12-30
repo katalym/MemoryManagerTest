@@ -127,9 +127,7 @@ object BenchmarkFrm: TBenchmarkFrm
         Margins.Bottom = 4
         Align = alClient
         TabOrder = 2
-        Text = 
-          'D:\git\bvs_feature_FastMM5_64bit\Components\Test Components\Fast' +
-          'MM5_Test_MMUsage.Log'
+        Text = 'C:\MemoryManagerUsageLogs\MMUsage.Log'
       end
     end
   end
