@@ -2,9 +2,9 @@ program MMUsageLogger_Test;
 
 uses
   MMUsageLogger in 'MMUsageLogger.pas',
+  MMUsageLogger_MemotyOperationRecordUnit in 'MMUsageLogger_MemotyOperationRecordUnit.pas',
   Vcl.Forms,
-  MMUsageLogger_TestFrm in 'MMUsageLogger_TestFrm.pas' {MMUsageLogger_TestForm},
-  MMUsageLogger_MemotyOperationRecordUnit in 'MMUsageLogger_MemotyOperationRecordUnit.pas';
+  MMUsageLogger_TestFrm in 'MMUsageLogger_TestFrm.pas' {MMUsageLogger_TestForm};
 
 {$R *.res}
 
