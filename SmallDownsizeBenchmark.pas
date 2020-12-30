@@ -19,7 +19,7 @@ type
     class function GetCategory: TBenchmarkCategory; override;
     class function GetIterationsCount: Integer; virtual; abstract;
     function GetNumPointers: Integer; virtual;
-    procedure RunBenchmark; override;
+    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
   end;
 
   TTinyDownsizeBench = class(TSmallDownsizeBenchAbstract)

@@ -24,8 +24,10 @@ type
     btnDeleteTestResults: TToolButton;
     btnRunAllCheckedBenchmarks: TBitBtn;
     btnRunSelectedBenchmark: TBitBtn;
+    edtUsageReplay: TEdit;
     gbBenchmarks: TGroupBox;
     imlImages: TImageList;
+    lblUsageReplay: TLabel;
     ListViewResults: TListView;
     lvBenchmarkList: TListView;
     mBenchmarkDescription: TMemo;
@@ -39,6 +41,7 @@ type
     mResults: TMemo;
     pcBenchmarkResults: TPageControl;
     pnlButtons: TPanel;
+    pnlUsage: TPanel;
     Splitter2: TSplitter;
     TabSheetBenchmarkResults: TTabSheet;
     TabSheetCPU: TTabSheet;
@@ -58,10 +61,10 @@ type
     procedure lvBenchmarkListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure tmrAutoRunTimer(Sender: TObject);
   private
+    FApplicationIniFileName: string;
     FBenchmarkHasBeenRun: Boolean;
     FRanBenchmarkCount: Integer;
     FTestResultsFileName: string;
-    FApplicationIniFileName: string;
     procedure AddResultsToDisplay(
       const aBenchName, aMMName: string;
       const aCpuUsage: Int64;
@@ -198,29 +201,34 @@ begin
   Application.ProcessMessages;
   Enabled := True;
   mResults.Lines.Add('***Running All Checked Benchmarks***');
-  for i := 0 to Benchmarks.Count - 1 do begin
-    {Must this benchmark be run?}
-    if lvBenchmarkList.Items[i].Checked then
-    begin
-      {Show progress in checkboxlist}
-      lvBenchmarkList.Items[i].Selected := True;
-      lvBenchmarkList.Items[i].Focused := True;
-      lvBenchmarkList.Selected.MakeVisible(False);
-      lvBenchmarkListSelectItem(nil, lvBenchmarkList.Selected, lvBenchmarkList.Selected <> nil);
-      Enabled := False;
-      Application.ProcessMessages;
-      Enabled := True;
-      {Run the benchmark}
-      RunBenchmarks(Benchmarks[i]);
-      {Wait one second}
-      Sleep(1000);
+  try
+
+    for i := 0 to Benchmarks.Count - 1 do begin
+      {Must this benchmark be run?}
+      if lvBenchmarkList.Items[i].Checked then
+      begin
+        {Show progress in checkboxlist}
+        lvBenchmarkList.Items[i].Selected := True;
+        lvBenchmarkList.Items[i].Focused := True;
+        lvBenchmarkList.Selected.MakeVisible(False);
+        lvBenchmarkListSelectItem(nil, lvBenchmarkList.Selected, lvBenchmarkList.Selected <> nil);
+        Enabled := False;
+        Application.ProcessMessages;
+        Enabled := True;
+        {Run the benchmark}
+        RunBenchmarks(Benchmarks[i]);
+        {Wait one second}
+        Sleep(1000);
+      end;
     end;
+    mResults.Lines.Add('***All Checked Benchmarks Done***');
+
+  finally
+    actRunAllCheckedBenchmarks.Caption := 'Run All Checked Benchmarks';
+    Screen.Cursor := crDefault;
   end;
-  mResults.Lines.Add('***All Checked Benchmarks Done***');
-  actRunAllCheckedBenchmarks.Caption := 'Run All Checked Benchmarks';
   if FRanBenchmarkCount > 0 then
     SaveResults;
-  Screen.Cursor := crDefault;
 end;
 
 procedure TBenchmarkFrm.actRunSelectedBenchmarkExecute(Sender: TObject);
@@ -234,17 +242,19 @@ begin
   Enabled := False;
   Application.ProcessMessages;
   Enabled := True;
+  try
 
-  RunBenchmarks(Benchmarks[NativeInt(lvBenchmarkList.Selected.Data)]);
-  if FRanBenchmarkCount > 0 then
-    SaveResults;
+    RunBenchmarks(Benchmarks[NativeInt(lvBenchmarkList.Selected.Data)]);
+    if FRanBenchmarkCount > 0 then
+      SaveResults;
 
-  actRunSelectedBenchmark.Caption := 'Run Selected Benchmark';
-  Enabled := False;
-  Application.ProcessMessages;
-  Enabled := True;
-
-  Screen.Cursor := crDefault;
+  finally
+    actRunSelectedBenchmark.Caption := 'Run Selected Benchmark';
+    Enabled := False;
+    Application.ProcessMessages;
+    Enabled := True;
+    Screen.Cursor := crDefault;
+  end;
 end;
 
 procedure TBenchmarkFrm.AddResultsToDisplay(
@@ -425,7 +435,6 @@ end;
 procedure TBenchmarkFrm.lvBenchmarkListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 var
   LBenchmarkClass: TMMBenchmarkClass;
-
 begin
   // Set the benchmark description
   if (Item <> nil) and Selected then
@@ -475,7 +484,7 @@ begin
         {Do the getmem test}
         vStartCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total;
         vStartTicks := GetTickCount;
-        LBenchmark.RunBenchmark;
+        LBenchmark.RunBenchmark(edtUsageReplay.Text);
         vCurrentCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total - vStartCPUUsage;
         vCurrentTicks := GetTickCount - vStartTicks;
         {Add a line}

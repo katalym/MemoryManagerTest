@@ -18,7 +18,7 @@ type
     class function GetCategory: TBenchmarkCategory; override;
     class function GetNumThreads: Integer; virtual; abstract;
     class function IsThreadedSpecial: Boolean; override;
-    procedure RunBenchmark; override;
+    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
   end;
 
   TMultiThreadAllocateAndFreeBenchmark2 = class(TMultiThreadAllocateAndFreeBenchmarkAbstract)

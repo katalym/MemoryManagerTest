@@ -27,31 +27,40 @@ unit MMUsageLogger;
 
 interface
 
+const
+  {The name of the usage log file}
+  LogFileName = 'D:\git\MMUsage.Log';
+
 implementation
 
-uses Windows;
+uses
+  Windows;
+
+function LoggedFreeMem(APointer: Pointer): Integer; forward;
+function LoggedGetMem(ASize: NativeInt): Pointer; forward;
+function LoggedReallocMem(APointer: Pointer; ASize: NativeInt): Pointer; forward;
+procedure LogOperation(AOldPointerNumber, ARequestedSize, ANewPointerNumber: integer); forward;
 
 const
   {The number of operations to buffer}
   BufferCount = 1024 * 1024;
-  {The name of the usage log file}
-  LogFileName = 'c:\MMUsage.Log';
 
 type
 
   {A single operation}
   PMMOperation = ^TMMOperation;
+
   TMMOperation = packed record
     {The old pointer number. Will be < 0 for GetMem requests, non-zero otherwise.}
     OldPointerNumber: Integer;
     {The requested size. Will be zero for FreeMem requests, non-zero otherwise.}
-    RequestedSize: Integer;
+    RequestedSize: NativeInt;
     {The new pointer number. Will be < 0 for FreeMem requests, non-zero otherwise.}
     NewPointerNumber: Integer;
   end;
 
   {The array of operations}
-  TMMOperationArray = array[0..BufferCount - 1] of TMMOperation;
+  TMMOperationArray = array [0 .. BufferCount - 1] of TMMOperation;
   PMMOperationArray = ^TMMOperationArray;
 
 var
@@ -76,7 +85,7 @@ var
   {Is the MM in place a shared memory manager?}
   OwnsMMWindow: Boolean;
   {The log file handle}
-  LogFileHandle: HFILE;
+  LogFileHandle: int64;
 
 {Flushes the buffer to disk}
 procedure FlushBuffer;
@@ -84,8 +93,7 @@ var
   LBytesWritten: Cardinal;
 begin
   {Append to the logfile}
-  WriteFile(LogFilehandle, OperationBuffer^, OperationBufferUsageCount * SizeOf(TMMOperation),
-    LBytesWritten, nil);
+  WriteFile(LogFilehandle, OperationBuffer^, OperationBufferUsageCount * SizeOf(TMMOperation), LBytesWritten, nil);
   {Reset buffer size}
   OperationBufferUsageCount := 0;
 end;
@@ -123,9 +131,7 @@ begin
     OperationBuffer := VirtualAlloc(nil, SizeOf(TMMOperationArray), MEM_COMMIT,
       PAGE_READWRITE);
     {Create the log file}
-    LogFileHandle := Integer(CreateFile(LogFileName,
-      GENERIC_READ or GENERIC_WRITE, 0, nil, CREATE_ALWAYS,
-      FILE_ATTRIBUTE_NORMAL, 0));
+    LogFileHandle := CreateFile(LogFileName, GENERIC_READ or GENERIC_WRITE, 0, nil, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
   end
   else
   begin
@@ -164,7 +170,7 @@ begin
   {Decrement the pointer}
   Dec(PByte(APointer), 4);
   {Log the operation}
-  LogOperation(PInteger(APointer)^, 0, -1);
+  LogOperation(PInteger(APointer)^, 0, - 1);
   {Call the old freemem}
   Result := OldMemoryManager.FreeMem(APointer);
   {Unlock the logger}
@@ -172,13 +178,13 @@ begin
 end;
 
 {Replacement for SysGetMem}
-function LoggedGetMem(ASize: Integer): Pointer;
+function LoggedGetMem(ASize: NativeInt): Pointer;
 begin
   LockLogger;
   {Call the old getmem}
   Result := OldMemoryManager.GetMem(ASize + 4);
   {Log the operation}
-  LogOperation(-1, ASize, PointerNumber);
+  LogOperation( - 1, ASize, PointerNumber);
   {Store the pointer number before the memory block}
   PCardinal(Result)^ := PointerNumber;
   {Advance the pointer}
@@ -190,7 +196,7 @@ begin
 end;
 
 {Replacement for SysReallocMem}
-function LoggedReallocMem(APointer: Pointer; ASize: Integer): Pointer;
+function LoggedReallocMem(APointer: Pointer; ASize: NativeInt): Pointer;
 var
   LOldPointerNumber: integer;
 begin
@@ -246,15 +252,17 @@ begin
 end;
 
 initialization
-  {Has the Borland MM been used? If so, this file is not the first unit in the
+
+{Has the Borland MM been used? If so, this file is not the first unit in the
    uses clause of the project's .dpr file.}
-  if GetHeapStatus.TotalAllocated <> 0 then
-    System.Error(reInvalidPtr);
+if GetHeapStatus.TotalAllocated <> 0 then
+  System.Error(reInvalidPtr);
   {Install the memory manager}
-  InstallMemoryManager;
+InstallMemoryManager;
 
 finalization
-  {Restore the old memory manager}
-  UninstallMemoryManager;
+
+{Restore the old memory manager}
+UninstallMemoryManager;
 
 end.

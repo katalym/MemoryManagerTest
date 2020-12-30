@@ -15,7 +15,7 @@ type
     {The old pointer number. Will be < 0 for GetMem requests, non-zero otherwise.}
     OldPointerNumber: Integer;
     {The requested size. Will be zero for FreeMem requests, non-zero otherwise.}
-    RequestedSize: Integer;
+    RequestedSize: NativeInt;
     {The new pointer number. Will be < 0 for FreeMem requests, non-zero otherwise.}
     NewPointerNumber: Integer;
   end;
@@ -32,13 +32,12 @@ type
     function GetBenchmarkOverhead: NativeUInt; override;
     procedure RunReplay;
   public
-    constructor CreateBenchmark; override;
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
     class function GetCategory: TBenchmarkCategory; override;
     {repeat count for replay log}
     class function RepeatCount: Integer; virtual;
-    procedure RunBenchmark; override;
+    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
     class function RunByDefault: boolean; override;
   end;
 
@@ -46,7 +45,7 @@ type
   TMultiThreadReplayBenchmark = class(TReplayBenchmark)
   public
     class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
     {number of simultaneously running threads}
     class function RunningThreads: Integer; virtual;
     {total number of threads running}
@@ -188,46 +187,17 @@ begin
   end;
 end;
 
-constructor TReplayBenchmark.CreateBenchmark;
-begin
-  inherited;
-  {Try to load the usage log}
-  if FUsageLogFileName <> '' then
-  begin
-    // descendant has specified usage log file
-    FOperations := LoadFile(FUsageLogFileName);
-    if FOperations = '' then
-      FCanRunBenchmark := False;
-    // raise Exception.CreateFmt('The file "%s" could not be found in the current folder', [FUsageLogFileName]);
-  end
-  else
-  begin
-    // use default usage log file
-    FOperations := LoadFile('MMUsage.Log');
-    if FOperations = '' then
-    begin
-      FOperations := LoadFile('c:\MMUsage.Log');
-      if FOperations = '' then
-        raise Exception.Create('The file MMUsage.Log could not be found in the current folder or c:\');
-    end;
-  end;
-  {Set the list of pointers}
-  SetLength(FPointers, length(FOperations) div SizeOf(TMMOperation));
-  Sleep(20); // RH let system relax after big file load... seems to be useful to get consistent results
-end;
-
 class function TReplayBenchmark.GetBenchmarkDescription: string;
 begin
   Result := 'Plays back the memory operations of another application as '
     + 'recorded by the MMUsageLogger utility. To record and replay the '
     + 'operations performed by your application:'#13#10
-    + '1) Place MMUsageLogger.pas as the first unit in the .dpr of your app.'#13#10
-    + '2) Run the application (a file c:\MMUsage.log will be created).'#13#10
-    + '3) Copy the .log into the this Application folder.'#13#10
-    + '4) Run the Application with the replacement MM that you want to test as the '
-    + 'first unit in the .dpr.'#13#10
-    + '5) Select this benchmark and run it.'#13#10
-    + '6) The Application tool will replay the exact sequence of '
+    + '1. Place MMUsageLogger.pas as the first unit in the .dpr of your app'#13#10
+    + '2. In MMUsageLogger.pas specidy LogFileName = ... to file where memory operations to be stored'#13#10
+    + '3. Run the application (a file <LogFileName> with all memory operations performed will be created)'#13#10
+    + '4. Specify this <LogFileName> file in the Usage file to replay'#13#10
+    + '5. Select this benchmark and run it'#13#10
+    + '6. The Application tool will replay the exact sequence of '
     + 'allocations/deallocations/reallocations of your application, giving you a '
     + 'good idea of how your app will perform with the given memory manager.';
 end;
@@ -253,10 +223,25 @@ begin
   Result := 1;
 end;
 
-procedure TReplayBenchmark.RunBenchmark;
+procedure TReplayBenchmark.RunBenchmark(const aUsageFileToReplay: string ='');
 var
   i: Integer;
 begin
+  FUsageLogFileName := aUsageFileToReplay;
+
+  {Try to load the usage log}
+  if FileExists(FUsageLogFileName) then
+  begin
+    // descendant has specified usage log file
+    FOperations := LoadFile(FUsageLogFileName);
+    if FOperations = '' then
+      FCanRunBenchmark := False;
+  end else
+    raise Exception.CreateFmt('Usage Ffile to replay "%s" not exists', [FUsageLogFileName]);
+  {Set the list of pointers}
+  SetLength(FPointers, length(FOperations) div SizeOf(TMMOperation));
+  Sleep(20); // RH let system relax after big file load... seems to be useful to get consistent results
+
   inherited;
   for i := 1 to RepeatCount do
     RunReplay;

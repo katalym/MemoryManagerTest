@@ -34,7 +34,7 @@ type
   public
     constructor CreateBenchmark; virtual;
     {The tests - should return true if implemented}
-    procedure RunBenchmark; virtual;
+    procedure RunBenchmark(const aUsageFileToReplay: string =''); virtual;
     {Resets the peak usage measurement}
     procedure ResetUsageStatistics;
     {Measures the address space usage and updates the peak value if the current

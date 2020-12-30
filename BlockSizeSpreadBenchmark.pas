@@ -30,7 +30,7 @@ type
   public
     constructor CreateBenchmark; override;
     destructor Destroy; override;
-    procedure RunBenchmark; override;
+    procedure RunBenchmark(const aUsageFileToReplay: string =''); override;
     class function GetBenchmarkName: string; override;
     class function GetBenchmarkDescription: string; override;
     class function GetCategory: TBenchmarkCategory; override;

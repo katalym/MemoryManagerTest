@@ -37,7 +37,7 @@ object BenchmarkFrm: TBenchmarkFrm
       Left = 3
       Top = 18
       Width = 1184
-      Height = 225
+      Height = 171
       Margins.Left = 1
       Align = alClient
       Checkboxes = True
@@ -62,15 +62,75 @@ object BenchmarkFrm: TBenchmarkFrm
     object mBenchmarkDescription: TMemo
       AlignWithMargins = True
       Left = 3
-      Top = 249
+      Top = 195
       Width = 1186
-      Height = 68
+      Height = 91
       Margins.Left = 1
       Margins.Right = 1
       Align = alBottom
       ReadOnly = True
       ScrollBars = ssVertical
       TabOrder = 1
+    end
+    object pnlUsage: TPanel
+      Left = 2
+      Top = 289
+      Width = 1188
+      Height = 31
+      Align = alBottom
+      BevelOuter = bvNone
+      Color = clBtnShadow
+      ParentBackground = False
+      TabOrder = 2
+      object lblUsageReplay: TLabel
+        AlignWithMargins = True
+        Left = 460
+        Top = 9
+        Width = 119
+        Height = 13
+        Margins.Top = 9
+        Margins.Bottom = 9
+        Align = alLeft
+        Caption = 'Usage Log file to Replay:'
+      end
+      object btnRunAllCheckedBenchmarks: TBitBtn
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 220
+        Height = 25
+        Action = actRunAllCheckedBenchmarks
+        Align = alLeft
+        Caption = 'Run All Checked Benchmarks'
+        TabOrder = 0
+      end
+      object btnRunSelectedBenchmark: TBitBtn
+        AlignWithMargins = True
+        Left = 234
+        Top = 3
+        Width = 220
+        Height = 25
+        Margins.Left = 8
+        Action = actRunSelectedBenchmark
+        Align = alLeft
+        Caption = 'Run Selected Benchmark'
+        TabOrder = 1
+      end
+      object edtUsageReplay: TEdit
+        AlignWithMargins = True
+        Left = 585
+        Top = 6
+        Width = 603
+        Height = 21
+        Margins.Top = 6
+        Margins.Right = 0
+        Margins.Bottom = 4
+        Align = alClient
+        TabOrder = 2
+        Text = 
+          'D:\git\bvs_feature_FastMM5_64bit\Components\Test Components\Fast' +
+          'MM5_Test_MMUsage.Log'
+      end
     end
   end
   object pcBenchmarkResults: TPageControl
@@ -206,29 +266,6 @@ object BenchmarkFrm: TBenchmarkFrm
       Align = alRight
       Kind = bkClose
       NumGlyphs = 2
-      TabOrder = 2
-    end
-    object btnRunSelectedBenchmark: TBitBtn
-      AlignWithMargins = True
-      Left = 234
-      Top = 3
-      Width = 220
-      Height = 25
-      Margins.Left = 8
-      Action = actRunSelectedBenchmark
-      Align = alLeft
-      Caption = 'Run Selected Benchmark'
-      TabOrder = 1
-    end
-    object btnRunAllCheckedBenchmarks: TBitBtn
-      AlignWithMargins = True
-      Left = 3
-      Top = 3
-      Width = 220
-      Height = 25
-      Action = actRunAllCheckedBenchmarks
-      Align = alLeft
-      Caption = 'Run All Checked Benchmarks'
       TabOrder = 0
     end
   end
