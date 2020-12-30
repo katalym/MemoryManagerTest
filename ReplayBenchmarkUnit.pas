@@ -5,21 +5,9 @@ unit ReplayBenchmarkUnit;
 interface
 
 uses
-  Windows, SysUtils, Classes, VCL.Dialogs, BenchmarkClassUnit, Math;
+  Windows, SysUtils, Classes, VCL.Dialogs, BenchmarkClassUnit, Math, MMUsageLogger_MemotyOperationRecordUnit;
 
 type
-  {A single operation}
-  PMMOperation = ^TMMOperation;
-
-  TMMOperation = packed record
-    {The old pointer number. Will be < 0 for GetMem requests, non-zero otherwise.}
-    OldPointerNumber: Integer;
-    {The requested size. Will be zero for FreeMem requests, non-zero otherwise.}
-    RequestedSize: NativeInt;
-    {The new pointer number. Will be < 0 for FreeMem requests, non-zero otherwise.}
-    NewPointerNumber: Integer;
-  end;
-
   {The single-thread replay benchmark ancestor}
   TReplayBenchmark = class(TMMBenchmark)
   protected
@@ -148,7 +136,7 @@ type
 const
   INVALID_SET_FILE_POINTER = DWORD( - 1);
 
-  {Reads a file in its entirety and returns the contents as a string. Returns a blank string on error.}
+{Reads a file in its entirety and returns the contents as a string. Returns a blank string on error.}
 function LoadFile(const AFileName: string): string;
 var
   // LFileInfo: OFSTRUCT;
@@ -271,39 +259,39 @@ begin
   for LInd := 0 to LOperationCount - 1 do
   begin
     {Perform the operation}
-    if LPOperation^.NewPointerNumber >= 0 then
+    if LPOperation^.FNewPointerNumber >= 0 then
     begin
-      if LPOperation^.OldPointerNumber <> LPOperation^.NewPointerNumber then
+      if LPOperation^.FOldPointerNumber <> LPOperation^.FNewPointerNumber then
       begin
         {GetMem}
-        GetMem(FPointers[LPOperation^.NewPointerNumber], LPOperation^.RequestedSize);
+        GetMem(FPointers[LPOperation^.FNewPointerNumber], LPOperation^.FRequestedSize);
       end
       else
       begin
         {ReallocMem}
-        ReallocMem(FPointers[LPOperation^.OldPointerNumber], LPOperation^.RequestedSize);
+        ReallocMem(FPointers[LPOperation^.FOldPointerNumber], LPOperation^.FRequestedSize);
       end;
       {Touch every 4K page}
       LOffset := 0;
-      while LOffset < LPOperation^.RequestedSize do
+      while LOffset < LPOperation^.FRequestedSize do
       begin
         UintOfs := LOffset;
-        PByte(NativeUInt(FPointers[LPOperation^.NewPointerNumber]) + UintOfs)^ := 1;
+        PByte(NativeUInt(FPointers[LPOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
         Inc(LOffset, 4096);
       end;
       {Touch the last byte}
-      if LPOperation^.RequestedSize > 2 then
+      if LPOperation^.FRequestedSize > 2 then
       begin
-        UintOfs := LPOperation^.RequestedSize;
+        UintOfs := LPOperation^.FRequestedSize;
         Dec(UintOfs);
-        PByte(NativeUInt(FPointers[LPOperation^.NewPointerNumber]) + UintOfs)^ := 1;
+        PByte(NativeUInt(FPointers[LPOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
       end;
     end
     else
     begin
       {FreeMem}
-      FreeMem(FPointers[LPOperation^.OldPointerNumber]);
-      FPointers[LPOperation^.OldPointerNumber] := nil;
+      FreeMem(FPointers[LPOperation^.FOldPointerNumber]);
+      FPointers[LPOperation^.FOldPointerNumber] := nil;
     end;
     {Next operation}
     Inc(LPOperation);
@@ -352,39 +340,39 @@ begin
   for LInd := 0 to LOperationCount - 1 do
   begin
     {Perform the operation}
-    if LPOperation^.NewPointerNumber >= 0 then
+    if LPOperation^.FNewPointerNumber >= 0 then
     begin
-      if LPOperation^.OldPointerNumber <> LPOperation^.NewPointerNumber then
+      if LPOperation^.FOldPointerNumber <> LPOperation^.FNewPointerNumber then
       begin
         {GetMem}
-        GetMem(FPointers[LPOperation^.NewPointerNumber], LPOperation^.RequestedSize);
+        GetMem(FPointers[LPOperation^.FNewPointerNumber], LPOperation^.FRequestedSize);
       end
       else
       begin
         {ReallocMem}
-        ReallocMem(FPointers[LPOperation^.OldPointerNumber], LPOperation^.RequestedSize);
+        ReallocMem(FPointers[LPOperation^.FOldPointerNumber], LPOperation^.FRequestedSize);
       end;
       {Touch every 4K page}
       LOffset := 0;
-      while LOffset < LPOperation^.RequestedSize do
+      while LOffset < LPOperation^.FRequestedSize do
       begin
         UintOfs := LOffset;
-        PByte(NativeUInt(FPointers[LPOperation^.NewPointerNumber]) + UintOfs)^ := 1;
+        PByte(NativeUInt(FPointers[LPOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
         Inc(LOffset, 4096);
       end;
       {Touch the last byte}
-      if LPOperation^.RequestedSize > 2 then
+      if LPOperation^.FRequestedSize > 2 then
       begin
-        UintOfs := LPOperation^.RequestedSize;
+        UintOfs := LPOperation^.FRequestedSize;
         Dec(UintOfs);
-        PByte(NativeUInt(FPointers[LPOperation^.NewPointerNumber]) + UintOfs)^ := 1;
+        PByte(NativeUInt(FPointers[LPOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
       end;
     end
     else
     begin
       {FreeMem}
-      FreeMem(FPointers[LPOperation^.OldPointerNumber]);
-      FPointers[LPOperation^.OldPointerNumber] := nil;
+      FreeMem(FPointers[LPOperation^.FOldPointerNumber]);
+      FPointers[LPOperation^.FOldPointerNumber] := nil;
     end;
     {Next operation}
     Inc(LPOperation);

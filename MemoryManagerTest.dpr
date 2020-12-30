@@ -45,6 +45,7 @@ uses
 {$ENDIF}
   {Other units}
   VCL.Forms,
+  MMUsageLogger_MemotyOperationRecordUnit in 'UsageLogger/MMUsageLogger_MemotyOperationRecordUnit.pas',
   AddressSpaceCreepBenchmark in 'AddressSpaceCreepBenchmark.pas',
   AddressSpaceCreepBenchmarkLarge in 'AddressSpaceCreepBenchmarkLarge.pas',
   ArrayUpsizeSingleThread in 'ArrayUpsizeSingleThread.pas',

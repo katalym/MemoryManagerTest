@@ -29,39 +29,17 @@ interface
 
 const
   {The name of the usage log file}
-  LogFileName = 'C:\MemoryManagerUsageLogs\MMUsage.Log';
+  LogFileName = 'C:\MemoryManagerUsageLogs\TVSServer.MemoryManager.Usage';
 
 implementation
 
 uses
-  Windows;
+  Windows, MMUsageLogger_MemotyOperationRecordUnit;
 
 function LoggedFreeMem(APointer: Pointer): Integer; forward;
 function LoggedGetMem(ASize: NativeInt): Pointer; forward;
 function LoggedReallocMem(APointer: Pointer; ASize: NativeInt): Pointer; forward;
 procedure LogOperation(AOldPointerNumber, ARequestedSize, ANewPointerNumber: integer); forward;
-
-const
-  {The number of operations to buffer}
-  BufferCount = 1024 * 1024;
-
-type
-
-  {A single operation}
-  PMMOperation = ^TMMOperation;
-
-  TMMOperation = packed record
-    {The old pointer number. Will be < 0 for GetMem requests, non-zero otherwise.}
-    OldPointerNumber: Integer;
-    {The requested size. Will be zero for FreeMem requests, non-zero otherwise.}
-    RequestedSize: NativeInt;
-    {The new pointer number. Will be < 0 for FreeMem requests, non-zero otherwise.}
-    NewPointerNumber: Integer;
-  end;
-
-  {The array of operations}
-  TMMOperationArray = array [0 .. BufferCount - 1] of TMMOperation;
-  PMMOperationArray = ^TMMOperationArray;
 
 var
   {The address of the usage buffer}
@@ -85,7 +63,7 @@ var
   {Is the MM in place a shared memory manager?}
   OwnsMMWindow: Boolean;
   {The log file handle}
-  LogFileHandle: int64;
+  LogFileHandle: THandle;
 
 {Flushes the buffer to disk}
 procedure FlushBuffer;
@@ -132,6 +110,8 @@ begin
       PAGE_READWRITE);
     {Create the log file}
     LogFileHandle := CreateFile(LogFileName, GENERIC_READ or GENERIC_WRITE, 0, nil, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    if LogFileHandle = INVALID_HANDLE_VALUE then
+      System.Error(reAssertionFailed);
   end
   else
   begin
@@ -170,7 +150,7 @@ begin
   {Decrement the pointer}
   Dec(PByte(APointer), 4);
   {Log the operation}
-  LogOperation(PInteger(APointer)^, 0, - 1);
+  LogOperation(PInteger(APointer)^, 0, -1);
   {Call the old freemem}
   Result := OldMemoryManager.FreeMem(APointer);
   {Unlock the logger}
@@ -184,7 +164,7 @@ begin
   {Call the old getmem}
   Result := OldMemoryManager.GetMem(ASize + 4);
   {Log the operation}
-  LogOperation( - 1, ASize, PointerNumber);
+  LogOperation(-1, ASize, PointerNumber);
   {Store the pointer number before the memory block}
   PCardinal(Result)^ := PointerNumber;
   {Advance the pointer}
@@ -223,9 +203,9 @@ begin
   {Log the operation}
   with OperationBuffer[OperationBufferUsageCount] do
   begin
-    OldPointerNumber := AOldPointerNumber;
-    RequestedSize := ARequestedSize;
-    NewPointerNumber := ANewPointerNumber;
+    FOldPointerNumber := AOldPointerNumber;
+    FRequestedSize := ARequestedSize;
+    FNewPointerNumber := ANewPointerNumber;
   end;
   {Increment the operation count}
   Inc(OperationBufferUsageCount);
