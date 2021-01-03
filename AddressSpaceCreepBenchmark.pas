@@ -15,7 +15,7 @@ const
 {$ELSE}
   NumPointers = 3000000;
 {$ENDIF}
-  {The maximum block size}
+  // The maximum block size
   MaxBlockSize = 256;
 
 type
@@ -71,38 +71,38 @@ var
   i, j, LSize: integer;
   NextValue: Int64;
 begin
-  {Call the inherited handler}
+  // Call the inherited handler
   inherited;
-  {Allocate the pointers}
+  // Allocate the pointers
   NextValue := Prime;
   for i := 0 to high(FPointers) do
   begin
-    {Get an initial size}
+    // Get an initial size
     LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
     Inc(NextValue, Prime);
-    {Allocate the pointer}
+    // Allocate the pointer
     GetMem(FPointers[i], LSize);
-    {Touch the memory}
+    // Touch the memory
     FPointers[i][0] := AnsiChar(byte(i));
     if LSize > 2 then
     begin
       FPointers[i][LSize - 1] := AnsiChar(byte(i));
     end;
   end;
-  {Free and get new pointers in a loop}
+  // Free and get new pointers in a loop
   for j := 1 to IterationsCount do
   begin
     for i := 0 to high(FPointers) do
     begin
-      {Free the pointer}
+      // Free the pointer
       FreeMem(FPointers[i]);
       FPointers[i] := nil;
-      {Get the new size}
+      // Get the new size
       LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
       Inc(NextValue, Prime);
-      {Allocate the pointer}
+      // Allocate the pointer
       GetMem(FPointers[i], LSize);
-      {Touch the memory}
+      // Touch the memory
       FPointers[i][0] := AnsiChar(byte(i));
       if LSize > 2 then
       begin
@@ -110,9 +110,9 @@ begin
       end;
     end;
   end;
-  {What we end with should be close to the peak usage}
+  // What we end with should be close to the peak usage
   UpdateUsageStatistics;
-  {Free the pointers}
+  // Free the pointers
   for i := 0 to high(FPointers) do
   begin
     FreeMem(FPointers[i]);

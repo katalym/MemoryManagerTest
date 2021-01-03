@@ -1,9 +1,10 @@
-object BenchmarkFrm: TBenchmarkFrm
+object PerformanceForm: TPerformanceForm
   Left = 179
   Top = 89
-  Caption = 'Memory Manager Test'
-  ClientHeight = 582
-  ClientWidth = 1192
+  BorderWidth = 4
+  Caption = 'Compare performace for Memory Managers'#39' tests'
+  ClientHeight = 574
+  ClientWidth = 1184
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,80 +14,39 @@ object BenchmarkFrm: TBenchmarkFrm
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 353
-    Width = 1192
+    Top = 571
+    Width = 1184
     Height = 3
     Cursor = crVSplit
     Align = alBottom
   end
-  object gbBenchmarks: TGroupBox
+  object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 1192
-    Height = 353
+    Width = 1184
+    Height = 571
     Align = alClient
-    Caption = ' Benchmarks '
+    BevelOuter = bvNone
     TabOrder = 0
-    object lvBenchmarkList: TListView
-      AlignWithMargins = True
-      Left = 3
-      Top = 18
-      Width = 1184
-      Height = 202
-      Margins.Left = 1
-      Align = alClient
-      Checkboxes = True
-      Columns = <
-        item
-          Caption = 'Benchmarks'
-          Width = 300
-        end
-        item
-          Caption = 'Category'
-          Width = 250
-        end>
-      ColumnClick = False
-      HideSelection = False
-      ReadOnly = True
-      RowSelect = True
-      PopupMenu = mnuBenchmarks
-      TabOrder = 0
-      ViewStyle = vsReport
-      OnSelectItem = lvBenchmarkListSelectItem
-    end
-    object mBenchmarkDescription: TMemo
-      AlignWithMargins = True
-      Left = 3
-      Top = 226
-      Width = 1186
-      Height = 91
-      Margins.Left = 1
-      Margins.Right = 1
-      Align = alBottom
-      ReadOnly = True
-      ScrollBars = ssVertical
-      TabOrder = 1
-    end
     object pnlUsage: TPanel
-      Left = 2
-      Top = 320
-      Width = 1188
+      Left = 0
+      Top = 540
+      Width = 1184
       Height = 31
       Align = alBottom
       BevelOuter = bvNone
       Color = clBtnShadow
       ParentBackground = False
-      TabOrder = 2
+      TabOrder = 0
       object lblUsageReplay: TLabel
         AlignWithMargins = True
-        Left = 460
+        Left = 374
         Top = 9
         Width = 119
         Height = 13
@@ -95,20 +55,20 @@ object BenchmarkFrm: TBenchmarkFrm
         Align = alLeft
         Caption = 'Usage Log file to Replay:'
       end
-      object btnRunAllCheckedBenchmarks: TBitBtn
+      object btnReloadResults: TBitBtn
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 220
+        Width = 134
         Height = 25
-        Action = actRunAllCheckedBenchmarks
+        Action = actReloadResults
         Align = alLeft
-        Caption = 'Run All Checked Benchmarks'
+        Caption = 'Reload Results'
         TabOrder = 0
       end
       object btnRunSelectedBenchmark: TBitBtn
         AlignWithMargins = True
-        Left = 234
+        Left = 148
         Top = 3
         Width = 220
         Height = 25
@@ -120,9 +80,9 @@ object BenchmarkFrm: TBenchmarkFrm
       end
       object edtUsageReplay: TEdit
         AlignWithMargins = True
-        Left = 585
+        Left = 499
         Top = 6
-        Width = 599
+        Width = 681
         Height = 21
         Margins.Top = 6
         Margins.Right = 4
@@ -132,117 +92,22 @@ object BenchmarkFrm: TBenchmarkFrm
         Text = 'C:\MemoryManagerUsageLogs\MMUsage.Log'
       end
     end
-  end
-  object pcBenchmarkResults: TPageControl
-    Left = 0
-    Top = 356
-    Width = 1192
-    Height = 226
-    ActivePage = TabSheetBenchmarkResults
-    Align = alBottom
-    TabOrder = 1
-    object TabSheetBenchmarkResults: TTabSheet
-      Caption = 'Benchmark Results'
-      ImageIndex = 1
-      object ListViewResults: TListView
-        Left = 0
-        Top = 36
-        Width = 1184
-        Height = 162
-        Align = alClient
-        Columns = <
-          item
-            Caption = 'Benchmark'
-            Width = 220
-          end
-          item
-            Caption = 'Memory Manager'
-            Width = 90
-          end
-          item
-            Alignment = taRightJustify
-            Caption = 'CPU Usage (ms)'
-            Width = 110
-          end
-          item
-            Alignment = taRightJustify
-            Caption = 'Ticks (ms)'
-            Width = 110
-          end
-          item
-            Alignment = taRightJustify
-            Caption = 'Peak Addr Space (Kb)'
-            Width = 120
-          end>
-        ColumnClick = False
-        HideSelection = False
-        ReadOnly = True
-        RowSelect = True
-        TabOrder = 0
-        ViewStyle = vsReport
-      end
-      object ToolBar1: TToolBar
+    object pnlResults: TPanel
+      Left = 0
+      Top = 0
+      Width = 1184
+      Height = 209
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 1
+      object lstResults: TListBox
         Left = 0
         Top = 0
-        Width = 1184
-        Height = 36
-        AutoSize = True
-        ButtonHeight = 36
-        ButtonWidth = 90
-        Caption = 'ToolBar1'
-        Images = imlImages
-        ShowCaptions = True
-        TabOrder = 1
-        object btnCopyResultsToClipboard: TToolButton
-          Left = 0
-          Top = 0
-          Action = actCopyResultsToClipboard
-        end
-        object btnDeleteTestResults: TToolButton
-          Left = 90
-          Top = 0
-          Action = actDeletelTestResults
-        end
-      end
-    end
-    object TabSheetProgress: TTabSheet
-      Margins.Left = 1
-      Margins.Right = 1
-      Caption = 'Progress'
-      ImageIndex = 2
-      object mResults: TMemo
-        Left = 0
-        Top = 0
-        Width = 1184
-        Height = 198
-        Margins.Right = 1
-        Align = alClient
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Courier New'
-        Font.Style = []
-        ParentFont = False
-        ScrollBars = ssVertical
-        TabOrder = 0
-      end
-    end
-    object TabSheetCPU: TTabSheet
-      Caption = 'Environment'
-      ImageIndex = 4
-      object MemoEnvironment: TMemo
-        Left = 0
-        Top = 0
-        Width = 1184
-        Height = 198
-        Align = alClient
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Courier New'
-        Font.Style = []
-        ParentFont = False
-        ScrollBars = ssVertical
+        Width = 578
+        Height = 209
+        Align = alLeft
+        ItemHeight = 13
+        Sorted = True
         TabOrder = 0
       end
     end
@@ -527,85 +392,44 @@ object BenchmarkFrm: TBenchmarkFrm
     Left = 100
     Top = 76
     object mniPopupClearAllCheckMarks: TMenuItem
-      Action = actPopupClearAllCheckMarks
+      Caption = 'Clear All Check Marks'
+      Hint = 'Clear All Check Marks'
+      ImageIndex = 6
     end
     object mniPopupSelectAllCheckMarks: TMenuItem
-      Action = actPopupSelectAllCheckMarks
+      Caption = 'Check All Benchmarks'
+      Hint = 'Check All Benchmarks'
+      ImageIndex = 4
     end
     object mniSep: TMenuItem
       Caption = '-'
     end
     object mniPopupCheckAllDefaultBenchmarks: TMenuItem
-      Action = actPopupCheckAllDefaultBenchmarks
+      Caption = 'Check All Default Benchmarks'
+      Hint = 'Check All Default Benchmarks'
+      ImageIndex = 4
     end
     object mniPopupCheckAllThreadedBenchmarks: TMenuItem
-      Action = actPopupCheckAllThreadedBenchmarks
+      Caption = 'Check Special Thread Benchmarks'
+      Hint = 'Check Special Thread Benchmarks'
     end
-  end
-  object tmrAutoRun: TTimer
-    Enabled = False
-    OnTimer = tmrAutoRunTimer
-    Left = 256
-    Top = 80
   end
   object alActions: TActionList
     Images = imlImages
     Left = 256
     Top = 136
-    object actCopyResultsToClipboard: TAction
+    object actReloadResults: TAction
       Category = 'Actions'
-      Caption = 'Copy to Clipboard'
-      Hint = 'Copy Results to Clipboard'
-      ImageIndex = 0
-      OnExecute = actCopyResultsToClipboardExecute
-    end
-    object actDeletelTestResults: TAction
-      Category = 'Actions'
-      Caption = 'Delete Results'
-      Hint = 'Delete Results'
-      ImageIndex = 1
-      OnExecute = actDeletelTestResultsExecute
-    end
-    object actRunAllCheckedBenchmarks: TAction
-      Category = 'Actions'
-      Caption = 'Run All Checked Benchmarks'
-      Hint = 'Run All Checked Benchmarks'
+      Caption = 'Reload Results'
+      Hint = 'Reload Results'
       ImageIndex = 4
-      OnExecute = actRunAllCheckedBenchmarksExecute
+      OnExecute = actReloadResultsExecute
     end
     object actRunSelectedBenchmark: TAction
       Category = 'Actions'
       Caption = 'Run Selected Benchmark'
       Hint = 'Run Selected Benchmark'
       ImageIndex = 5
-      OnExecute = actRunSelectedBenchmarkExecute
-    end
-    object actPopupClearAllCheckMarks: TAction
-      Category = 'Popup'
-      Caption = 'Clear All Check Marks'
-      Hint = 'Clear All Check Marks'
-      ImageIndex = 6
-      OnExecute = actPopupClearAllCheckMarksExecute
-    end
-    object actPopupSelectAllCheckMarks: TAction
-      Category = 'Popup'
-      Caption = 'Check All Benchmarks'
-      Hint = 'Check All Benchmarks'
-      ImageIndex = 4
-      OnExecute = actPopupSelectAllCheckMarksExecute
-    end
-    object actPopupCheckAllDefaultBenchmarks: TAction
-      Category = 'Popup'
-      Caption = 'Check All Default Benchmarks'
-      Hint = 'Check All Default Benchmarks'
-      ImageIndex = 4
-      OnExecute = actPopupCheckAllDefaultBenchmarksExecute
-    end
-    object actPopupCheckAllThreadedBenchmarks: TAction
-      Category = 'Popup'
-      Caption = 'Check Special Thread Benchmarks'
-      Hint = 'Check Special Thread Benchmarks'
-      OnExecute = actPopupCheckAllThreadedBenchmarksExecute
     end
   end
 end

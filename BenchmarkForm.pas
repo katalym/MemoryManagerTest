@@ -19,7 +19,6 @@ type
     actRunAllCheckedBenchmarks: TAction;
     actRunSelectedBenchmark: TAction;
     alActions: TActionList;
-    btnClose: TBitBtn;
     btnCopyResultsToClipboard: TToolButton;
     btnDeleteTestResults: TToolButton;
     btnRunAllCheckedBenchmarks: TBitBtn;
@@ -40,7 +39,6 @@ type
     mnuBenchmarks: TPopupMenu;
     mResults: TMemo;
     pcBenchmarkResults: TPageControl;
-    pnlButtons: TPanel;
     pnlUsage: TPanel;
     Splitter2: TSplitter;
     TabSheetBenchmarkResults: TTabSheet;
@@ -56,21 +54,24 @@ type
     procedure actPopupSelectAllCheckMarksExecute(Sender: TObject);
     procedure actRunAllCheckedBenchmarksExecute(Sender: TObject);
     procedure actRunSelectedBenchmarkExecute(Sender: TObject);
-    procedure FormClose(Sender: TObject; var AAction: TCloseAction);
+    procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure lvBenchmarkListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure tmrAutoRunTimer(Sender: TObject);
   private
     FApplicationIniFileName: string;
     FBenchmarkHasBeenRun: Boolean;
+    FFormActivated: Boolean;
     FRanBenchmarkCount: Integer;
+    FTestDescriptionMaxSize: integer;
     FTestResultsFileName: string;
     procedure AddResultsToDisplay(
       const aBenchName, aMMName: string;
       const aCpuUsage: Int64;
-      const aTicks, aPeak: Cardinal;
-      const CurrentSession: string = 'T';
-      const InitialLoad: Boolean = False);
+      const aTicks, aPeak: Cardinal);
+    procedure DoActivateForm;
     procedure InitResultsDisplay;
     procedure LoadResultsToDisplay;
     procedure ReadIniFile;
@@ -204,10 +205,10 @@ begin
   try
 
     for i := 0 to Benchmarks.Count - 1 do begin
-      {Must this benchmark be run?}
+      // Must this benchmark be run?
       if lvBenchmarkList.Items[i].Checked then
       begin
-        {Show progress in checkboxlist}
+        // Show progress in checkboxlist
         lvBenchmarkList.Items[i].Selected := True;
         lvBenchmarkList.Items[i].Focused := True;
         lvBenchmarkList.Selected.MakeVisible(False);
@@ -215,9 +216,9 @@ begin
         Enabled := False;
         Application.ProcessMessages;
         Enabled := True;
-        {Run the benchmark}
+        // Run the benchmark
         RunBenchmarks(Benchmarks[i]);
-        {Wait one second}
+        // Wait one second
         Sleep(1000);
       end;
     end;
@@ -260,9 +261,7 @@ end;
 procedure TBenchmarkFrm.AddResultsToDisplay(
   const aBenchName, aMMName: string;
   const aCpuUsage: Int64;
-  const aTicks, aPeak: Cardinal;
-  const CurrentSession: string = 'T';
-  const InitialLoad: Boolean = False);
+  const aTicks, aPeak: Cardinal);
 var
   Item: TListItem;
 begin
@@ -274,37 +273,69 @@ begin
   Item.SubItems.Add(aCpuUsage.ToString);
   Item.SubItems.Add(aTicks.ToString);
   Item.SubItems.Add(aPeak.ToString);
-  Item.SubItems.Add(CurrentSession);
 
   // if not InitialLoad then
   // ListViewResults.AlphaSort;
 end;
 
-procedure TBenchmarkFrm.FormClose(Sender: TObject; var AAction: TCloseAction);
-begin
-
-  WriteIniFile;
-
-  if FRanBenchmarkCount > 0 then
-    SaveResults;
-end;
-
-procedure TBenchmarkFrm.FormCreate(Sender: TObject);
+procedure TBenchmarkFrm.DoActivateForm;
 var
   i: Integer;
   vItem: TListItem;
-  vCustomExeName: string;
   vBenchmark: TMMBenchmarkClass;
 begin
-  Caption := Format('%s %s %s for "%s" memory manager', [Caption, {$IFDEF WIN32}'32-bit'{$ELSE}'64-bit'{$ENDIF}, GetFormattedVersion, MemoryManager_Name]);
-  Height := 900;
-  Width := 1200;
+  FFormActivated := True;
 
   MemoEnvironment.Lines.Clear;
   MemoEnvironment.Lines.Add(SystemInfoCPU);
   MemoEnvironment.Lines.Add('****************');
   MemoEnvironment.Lines.Add(SystemInfoWindows);
 
+  FBenchmarkHasBeenRun := False;
+  FTestDescriptionMaxSize := 0;
+
+  lvBenchmarkList.SortType := stNone; // Do not perform extra sort - already sorted
+  // List the benchmarks
+  for i := 0 to Benchmarks.Count - 1 do begin
+    vBenchmark := Benchmarks[i];
+    vItem := lvBenchmarkList.Items.Add;
+    vItem.Data := Pointer(i);
+    if Assigned(vBenchmark) then
+    begin
+      vItem.Checked := vBenchmark.RunByDefault;
+      vItem.Caption := vBenchmark.GetBenchmarkName;
+      FTestDescriptionMaxSize := Max(FTestDescriptionMaxSize, Length(vBenchmark.GetBenchmarkName));
+      vItem.SubItems.Add(BenchmarkCategoryNames[vBenchmark.GetCategory]);
+    end;
+  end;
+
+  if lvBenchmarkList.Items.Count > 0 then
+  begin
+    // Select the first benchmark
+    lvBenchmarkList.Items[0].Selected := True;
+    lvBenchmarkList.Items[0].Focused := True;
+    // Set the benchmark description.
+    lvBenchmarkListSelectItem(nil, lvBenchmarkList.Selected, lvBenchmarkList.Selected <> nil);
+  end;
+
+  InitResultsDisplay;
+
+  pcBenchmarkResults.ActivePage := TabSheetBenchmarkResults;
+
+  tmrAutoRun.Enabled := ParamCount > 0;
+
+end;
+
+procedure TBenchmarkFrm.FormActivate(Sender: TObject);
+begin
+  if not FFormActivated then
+    DoActivateForm;
+end;
+
+procedure TBenchmarkFrm.FormCreate(Sender: TObject);
+var
+  vCustomExeName: string;
+begin
   // make a copy of the application's Exe for later use
   // Skip copy if this is the MM specific exe.
   if not ContainsText(ExtractFileName(Application.ExeName), '_' + MemoryManager_Name + '_') then
@@ -323,39 +354,27 @@ begin
 
   FTestResultsFileName := Format('%s.csv', [ChangeFileExt(vCustomExeName, '.Results')]);
 
-  FBenchmarkHasBeenRun := False;
+end;
 
-  lvBenchmarkList.SortType := stNone; // Do not perform extra sort - already sorted
-  {List the benchmarks}
-  for i := 0 to Benchmarks.Count - 1 do begin
-    vBenchmark := Benchmarks[i];
-    vItem := lvBenchmarkList.Items.Add;
-    vItem.Data := Pointer(i);
-    if Assigned(vBenchmark) then
-    begin
-      vItem.Checked := vBenchmark.RunByDefault;
-      vItem.Caption := vBenchmark.GetBenchmarkName;
-      vItem.SubItems.Add(BenchmarkCategoryNames[vBenchmark.GetCategory]);
-    end;
-  end;
+procedure TBenchmarkFrm.FormDestroy(Sender: TObject);
+begin
 
-  if lvBenchmarkList.Items.Count > 0 then
+  WriteIniFile;
+
+  if FRanBenchmarkCount > 0 then
+    SaveResults;
+
+end;
+
+procedure TBenchmarkFrm.FormShow(Sender: TObject);
+begin
+  if not FFormActivated then
   begin
-    // Select the first benchmark
-    lvBenchmarkList.Items[0].Selected := True;
-    lvBenchmarkList.Items[0].Focused := True;
-    // Set the benchmark description.
-    lvBenchmarkListSelectItem(nil, lvBenchmarkList.Selected, lvBenchmarkList.Selected <> nil);
+    Caption := Format('%s %s %s for "%s" memory manager', [Caption, {$IFDEF WIN32}'32-bit'{$ELSE}'64-bit'{$ENDIF}, GetFormattedVersion, MemoryManager_Name]);
+    Height := 900;
+    Width := 1200;
+    ReadIniFile;
   end;
-
-  InitResultsDisplay;
-
-  pcBenchmarkResults.ActivePage := TabSheetBenchmarkResults;
-
-  ReadIniFile;
-
-  tmrAutoRun.Enabled := ParamCount > 0;
-
 end;
 
 procedure TBenchmarkFrm.InitResultsDisplay;
@@ -413,7 +432,7 @@ begin
         vTicks := Max(StrToIntDef(Bench[RESULTS_TICKS], 0), 0);
         vPeak := Max(StrToIntDef(Bench[RESULTS_MEM], 0), 0);
 
-        AddResultsToDisplay(BenchName, MMName, vCPUUsage, vTicks, vPeak, 'F');
+        AddResultsToDisplay(BenchName, MMName, vCPUUsage, vTicks, vPeak);
       end;
     finally
       ListViewResults.Items.EndUpdate;
@@ -448,6 +467,53 @@ begin
 end;
 
 procedure TBenchmarkFrm.ReadIniFile;
+
+  function _GetFormMonitorByPosition: Integer;
+  var
+    i: Integer;
+  begin
+    Result := 0;
+    for i := 0 to Screen.MonitorCount - 1 do
+      if (Self.Left >= Screen.Monitors[i].Left) and (Self.Left <= Screen.Monitors[i].Left + Screen.Monitors[i].Width) and
+         (Self.Top >= Screen.Monitors[i].Top) and (Self.Top <= Screen.Monitors[i].Top + Screen.Monitors[i].Height) then
+      begin
+        Result := i;
+        Break;
+      end;
+  end;
+
+  procedure _RestoreFormBounds;
+  var
+    vMonitorNumber, vLeft, vTop, vHeight, vWidth: Integer;
+  begin
+
+    // restore form position and size saved on the last run
+    vLeft := Self.Left;
+    vTop := Self.Top;
+    vHeight := Height;
+    vWidth := Width;
+
+    vMonitorNumber := _GetFormMonitorByPosition;
+
+    // if form extends beyongs the monitor lets center it in existed monitor's boundaries
+    if vTop + vHeight > Screen.Monitors[vMonitorNumber].Top + Screen.Monitors[vMonitorNumber].Height then
+      vTop := Screen.Monitors[vMonitorNumber].Top + Screen.Monitors[vMonitorNumber].Height - vHeight;
+    if vLeft + vWidth > Screen.Monitors[vMonitorNumber].Left + Screen.Monitors[vMonitorNumber].Width then
+      vLeft := Screen.Monitors[vMonitorNumber].Left + Screen.Monitors[vMonitorNumber].Width - vWidth;
+
+    if vTop < Screen.Monitors[vMonitorNumber].Top then
+      vTop := Screen.Monitors[vMonitorNumber].Top;
+    if vLeft < Screen.Monitors[vMonitorNumber].Left then
+      vLeft := Screen.Monitors[vMonitorNumber].Left;
+
+    // imitate different size of the form to force resize methods to be applied
+    if (vLeft = Left) and (vTop = Top) and (vWidth = Width) and (vHeight = Height) then
+      SetBounds(vLeft, vTop, vWidth + 1, vHeight);
+
+    SetBounds(vLeft, vTop, vWidth, vHeight);
+
+  end;
+
 var
   vIniFile: TIniFile;
 begin
@@ -459,15 +525,19 @@ begin
     Height := vIniFile.ReadInteger('FormSettings', 'Height', Height);
     Width := vIniFile.ReadInteger('FormSettings', 'Width', Width);
     edtUsageReplay.Text := vIniFile.ReadString('FormSettings', edtUsageReplay.Name, edtUsageReplay.Text);
+    BenchmarkClassUnit.gUsageReplayFileName := edtUsageReplay.Text;
 
   finally
     vIniFile.Free;
   end;
+
+  _RestoreFormBounds;
+
 end;
 
 procedure TBenchmarkFrm.RunBenchmarks(ABenchmarkClass: TMMBenchmarkClass);
 var
-  LBenchmark: TMMBenchmark;
+  vBenchmark: TMMBenchmark;
   vStartCPUUsage, vCurrentCPUUsage: Int64;
   vStartTicks, vCurrentTicks: Cardinal;
   s: string;
@@ -477,23 +547,23 @@ begin
 
     s := Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' Running : ' + ABenchmarkClass.GetBenchmarkName + '...');
     mResults.Lines.Add(s);
-    {Create the benchmark}
-    LBenchmark := ABenchmarkClass.CreateBenchmark;
+    // Create the benchmark
+    vBenchmark := ABenchmarkClass.CreateBenchmark;
     try
-      if LBenchmark.CanRunBenchmark then
+      if vBenchmark.CanRunBenchmark then
       begin
-        {Do the getmem test}
-        LBenchmark.PrepareBenchmarkForRun(edtUsageReplay.Text);
+        // performance data
+        vBenchmark.PrepareBenchmarkForRun(edtUsageReplay.Text);
         vStartCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total;
         vStartTicks := GetTickCount;
-        LBenchmark.RunBenchmark;
-        vCurrentCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total - vStartCPUUsage;
-        vCurrentTicks := GetTickCount - vStartTicks;
-        {Add a line}
+        vBenchmark.RunBenchmark;
+        vCurrentCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total - vStartCPUUsage - vBenchmark.FExcludeThisCPUUsage;
+        vCurrentTicks := GetTickCount - vStartTicks - vBenchmark.FExcludeThisTicks;
 
+        // Add a line
         mResults.Lines[mResults.Lines.Count - 1] := // Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' '
-          Format('%-45s | CPU Usage(ms) = %6d | Ticks(ms)=%6d | Peak Address Space Usage(Kb) = %7d',
-          [ABenchmarkClass.GetBenchmarkName.Trim, vCurrentCPUUsage, vCurrentTicks, LBenchmark.PeakAddressSpaceUsage]);
+          Format('%-' + FTestDescriptionMaxSize.ToString + 's | CPU Usage(ms) = %7d | Ticks(ms)=%7d | Peak Address Space Usage(Kb) = %7d',
+          [ABenchmarkClass.GetBenchmarkName.Trim, vCurrentCPUUsage, vCurrentTicks, vBenchmark.PeakAddressSpaceUsage]);
         Enabled := False;
         Application.ProcessMessages;
         Enabled := True;
@@ -502,7 +572,7 @@ begin
           MemoryManager_Name,
           vCurrentCPUUsage,
           vCurrentTicks,
-          LBenchmark.PeakAddressSpaceUsage);
+          vBenchmark.PeakAddressSpaceUsage);
         if not FBenchmarkHasBeenRun then
         begin
           FBenchmarkHasBeenRun := True;
@@ -516,8 +586,8 @@ begin
         Enabled := True;
       end;
     finally
-      {Free the benchmark}
-      FreeAndNil(LBenchmark);
+      // Free the benchmark
+      FreeAndNil(vBenchmark);
     end;
 
   except
@@ -566,7 +636,7 @@ begin
   Application.ProcessMessages;
   actRunAllCheckedBenchmarks.Execute;
   Application.ProcessMessages;
-  btnClose.Click;
+  Close;
 end;
 
 procedure TBenchmarkFrm.WriteIniFile;

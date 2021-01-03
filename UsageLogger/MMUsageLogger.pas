@@ -106,8 +106,7 @@ begin
     {Owns the MMWindow}
     OwnsMMWindow := True;
     {Allocate the buffer}
-    OperationBuffer := VirtualAlloc(nil, SizeOf(TMMOperationArray), MEM_COMMIT,
-      PAGE_READWRITE);
+    OperationBuffer := VirtualAlloc(nil, SizeOf(TMMOperationArray), MEM_COMMIT, PAGE_READWRITE);
     {Create the log file}
     LogFileHandle := CreateFile(LogFileName, GENERIC_READ or GENERIC_WRITE, 0, nil, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
     if LogFileHandle = INVALID_HANDLE_VALUE then

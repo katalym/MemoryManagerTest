@@ -4,7 +4,7 @@ interface
 
 const
   {The number of operations to buffer}
-  BufferCount = 32 * 1024 * 1024;
+  BufferCount = 4 * 1024 * 1024;
 
 type
   {A single operation}
@@ -15,7 +15,7 @@ type
     {The old pointer number. Will be < 0 for GetMem requests, non-zero otherwise.}
     FOldPointerNumber: Integer;
     {The requested size. Will be zero for FreeMem requests, non-zero otherwise.}
-    FRequestedSize: NativeInt;
+    FRequestedSize: Integer; // should be NativeInt but assume 32 bit will be enough
     {The new pointer number. Will be < 0 for FreeMem requests, non-zero otherwise.}
     FNewPointerNumber: Integer;
   end;

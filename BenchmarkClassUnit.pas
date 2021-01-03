@@ -8,44 +8,38 @@ uses
   Windows, System.Generics.Collections;
 
 type
-
-  {Benchmark categories}
   TBenchmarkCategory = (
     bmSingleThreadRealloc, bmMultiThreadRealloc, bmSingleThreadAllocAndFree,
     bmMultiThreadAllocAndFree, bmSingleThreadReplay, bmMultiThreadReplay,
     bmMemoryAccessSpeed);
   TBenchmarkCategorySet = set of TBenchmarkCategory;
 
-const
-  AllCategories: TBenchmarkCategorySet = [low(TBenchmarkCategory) .. high(TBenchmarkCategory)];
-
-type
-
-  {The benchmark class}
   TMMBenchmark = class(TObject)
   protected
     {Indicates whether the benchmark can be run - or if a problem was
       discovered, possibly during create}
     FCanRunBenchmark: Boolean;
-    {The peak address space usage measured}
+    // The peak address space usage measured
     FPeakAddressSpaceUsage: Int64;
-    {Gets the memory overhead of the benchmark that should be subtracted}
+    // Gets the memory overhead of the benchmark that should be subtracted
     function GetBenchmarkOverhead: NativeUInt; virtual;
   public
+    FExcludeThisCPUUsage: Int64;
+    FExcludeThisTicks: Cardinal;
     constructor CreateBenchmark; virtual;
-    {A description for the benchmark}
+    // A description for the benchmark
     class function GetBenchmarkDescription: string; virtual;
-    {The name of the benchmark}
+    // The name of the benchmark
     class function GetBenchmarkName: string; virtual;
-    {Benchmark Category}
+    // Benchmark Category
     class function GetCategory: TBenchmarkCategory; virtual;
     class function IsThreadedSpecial: Boolean; virtual;
     procedure PrepareBenchmarkForRun(const aUsageFileToReplay: string =''); virtual;
-    {Resets the peak usage measurement}
+    // Resets the peak usage measurement
     procedure ResetUsageStatistics;
-    {The tests - should return true if implemented}
+    // The tests - should return true if implemented
     procedure RunBenchmark; virtual;
-    {Should this benchmark be run by default?}
+    // Should this benchmark be run by default?
     class function RunByDefault: Boolean; virtual;
     {Measures the address space usage and updates the peak value if the current
       usage is greater}
@@ -53,14 +47,14 @@ type
     {Indicates whether the benchmark can be run - or if a problem was
       discovered, possibly during create}
     property CanRunBenchmark: Boolean read FCanRunBenchmark;
-    {The peak usage measured since the last reset}
+    // The peak usage measured since the last reset
     property PeakAddressSpaceUsage: Int64 read FPeakAddressSpaceUsage;
   end;
 
   TMMBenchmarkClass = class of TMMBenchmark;
 
 const
-  {Benchmark category names}
+  // Benchmark category names
   BenchmarkCategoryNames: array [TBenchmarkCategory] of string = (
     'Single Thread ReallocMem', 'Multi-threaded ReallocMem',
     'Single Thread GetMem and FreeMem',
@@ -69,11 +63,14 @@ const
     'Multi-threaded Replay',
     'Memory Access Speed');
 
+  AllCategories: TBenchmarkCategorySet = [low(TBenchmarkCategory) .. high(TBenchmarkCategory)];
+
 var
-  {All the benchmarks}
+  gUsageReplayFileName: string;
+  // All the benchmarks
   Benchmarks: TList<TMMBenchmarkClass>;
 
-  {Get the list of benchmarks}
+  // Get the list of benchmarks
 procedure DefineBenchmarks;
 
 implementation
@@ -101,6 +98,8 @@ constructor TMMBenchmark.CreateBenchmark;
 begin
   inherited;
   FCanRunBenchmark := True;
+  FExcludeThisCPUUsage := 0;
+  FExcludeThisTicks := 0;
 end;
 
 class function TMMBenchmark.GetBenchmarkDescription: string;
@@ -115,7 +114,7 @@ end;
 
 function TMMBenchmark.GetBenchmarkOverhead: NativeUInt;
 begin
-  {Return the address space usage on startup}
+  // Return the address space usage on startup
   Result := InitialAddressSpaceUsed;
 end;
 
@@ -141,7 +140,7 @@ end;
 
 procedure TMMBenchmark.RunBenchmark;
 begin
-  {Reset the peak usage statistic}
+  // Reset the peak usage statistic
   ResetUsageStatistics;
 end;
 
@@ -163,7 +162,7 @@ begin
     LCurrentUsage := 0
   else
     LCurrentUsage := LCurrentUsage - LBenchmarkOverhead;
-  {Update the peak usage}
+  // Update the peak usage
   if LCurrentUsage > FPeakAddressSpaceUsage then
     FPeakAddressSpaceUsage := LCurrentUsage;
 end;
@@ -194,9 +193,6 @@ begin
   AddBenchMark(TSingleThreadReallocateVariousBlocksBenchmark);
   AddBenchMark(TSingleThreadedTinyRelocBenchmark);
   AddBenchMark(TSingleThreadAllocateAndFreeBenchmark);
-  AddBenchMark(TReservationsSystemBenchmark);
-  AddBenchMark(TXMLParserBenchmark);
-  AddBenchMark(TDocumentClassificationBenchmark);
   // ...then all the benchmarks that create TThread descendants
   AddBenchMark(TSingleFPThreads);
   AddBenchMark(TSingleFPThreads2);
@@ -256,12 +252,8 @@ begin
   AddBenchMark(TStringThreadTest16);
   AddBenchMark(TStringThreadTest31);
   AddBenchMark(TStringThreadTest64);
-  AddBenchMark(TeLinkBenchmark);
-  AddBenchMark(TeLinkComServerBenchmark);
-  AddBenchMark(TWebbrokerReplayBenchmark);
-  AddBenchMark(TBeyondCompareBenchmark);
-  AddBenchMark(TSingleThreadAllocMemBenchmark);
-  {End of benchmark list}
+  // End of benchmark list
+  AddBenchMark(TMultiThreadReplayBenchmark);
   AddBenchMark(TReplayBenchmark); // not active by default, added so you can run your own replays
 
   // now sort them by name
@@ -278,7 +270,7 @@ end;
 initialization
 
 Benchmarks := TList<TMMBenchmarkClass>.Create;
-{Get the list of benchmarks}
+// Get the list of benchmarks
 DefineBenchmarks;
 
 finalization
