@@ -49,7 +49,6 @@
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_Optimize>false</DCC_Optimize>
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
-        <DCC_Define>madExcept;$(DCC_Define)</DCC_Define>
         <DCC_UnitSearchPath>MadExcept\Win32;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">

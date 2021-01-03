@@ -8,35 +8,56 @@ uses
 
 type
   TPerformanceForm = class(TForm)
+    actCompareToThisResult: TAction;
+    actExcludeFromComparison: TAction;
+    actIncludeIntoComparison: TAction;
     actReloadResults: TAction;
-    actRunSelectedBenchmark: TAction;
     alActions: TActionList;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    btnMoveToRight: TBitBtn;
     btnReloadResults: TBitBtn;
     btnRunSelectedBenchmark: TBitBtn;
     edtUsageReplay: TEdit;
-    imlImages: TImageList;
+    lblCompareToThisResult: TLabel;
     lblUsageReplay: TLabel;
-    lstResults: TListBox;
+    lstAvailableResults: TListBox;
+    lstBenchmarks: TListBox;
+    lstCompareResults: TListBox;
     mniPopupCheckAllDefaultBenchmarks: TMenuItem;
     mniPopupCheckAllThreadedBenchmarks: TMenuItem;
     mniPopupClearAllCheckMarks: TMenuItem;
     mniPopupSelectAllCheckMarks: TMenuItem;
     mniSep: TMenuItem;
     mnuBenchmarks: TPopupMenu;
-    pnlResults: TPanel;
+    Panel1: TPanel;
+    pnlCompareToThisResult: TPanel;
+    pnlListActions: TPanel;
+    pnlResults: TGridPanel;
     pnlTop: TPanel;
     pnlUsage: TPanel;
     Splitter2: TSplitter;
+    procedure actCompareToThisResultExecute(Sender: TObject);
+    procedure actCompareToThisResultUpdate(Sender: TObject);
+    procedure actExcludeFromComparisonExecute(Sender: TObject);
+    procedure actExcludeFromComparisonUpdate(Sender: TObject);
+    procedure actIncludeIntoComparisonExecute(Sender: TObject);
+    procedure actIncludeIntoComparisonUpdate(Sender: TObject);
     procedure actReloadResultsExecute(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
+    FCompareToThisResult: string;
     FFormActivated: Boolean;
     procedure DoActivateForm;
     procedure DoReloadResults;
     procedure ReadIniFile;
+    procedure SetCompareToThisResult(const Value: string);
     procedure WriteIniFile;
+  public
+    property CompareToThisResult: string read FCompareToThisResult write
+        SetCompareToThisResult;
   end;
 
 var
@@ -49,6 +70,41 @@ uses
 
 {$R *.dfm}
 
+procedure TPerformanceForm.actCompareToThisResultExecute(Sender: TObject);
+begin
+  CompareToThisResult := lstCompareResults.Items[lstCompareResults.ItemIndex];
+end;
+
+procedure TPerformanceForm.actCompareToThisResultUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled :=
+    (lstCompareResults.Count > 0) and (lstCompareResults.ItemIndex <> -1);
+end;
+
+procedure TPerformanceForm.actExcludeFromComparisonExecute(Sender: TObject);
+begin
+  lstAvailableResults.Items.Add(lstCompareResults.Items[lstCompareResults.ItemIndex]);
+  lstCompareResults.Items.Delete(lstCompareResults.ItemIndex);
+end;
+
+procedure TPerformanceForm.actExcludeFromComparisonUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled :=
+    (lstCompareResults.Count > 0) and (lstCompareResults.ItemIndex <> -1);
+end;
+
+procedure TPerformanceForm.actIncludeIntoComparisonExecute(Sender: TObject);
+begin
+  lstCompareResults.Items.Add(lstAvailableResults.Items[lstAvailableResults.ItemIndex]);
+  lstAvailableResults.Items.Delete(lstAvailableResults.ItemIndex);
+end;
+
+procedure TPerformanceForm.actIncludeIntoComparisonUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled :=
+    (lstAvailableResults.Count > 0) and (lstAvailableResults.ItemIndex <> -1);
+end;
+
 procedure TPerformanceForm.actReloadResultsExecute(Sender: TObject);
 begin
   DoReloadResults;
@@ -57,9 +113,8 @@ end;
 procedure TPerformanceForm.DoActivateForm;
 begin
   FFormActivated := True;
-
+  CompareToThisResult := '';
   DoReloadResults;
-
 end;
 
 procedure TPerformanceForm.DoReloadResults;
@@ -67,14 +122,14 @@ var
   vFiles: TStringDynArray;
   vDir, s: string;
 begin
-  FFormActivated := True;
+  lstAvailableResults.Clear;
+  lstCompareResults.Clear;
 
   vDir := ExtractFilePath(Application.ExeName);
   vFiles := TDirectory.GetFiles(vDir, '*.results.csv', TSearchOption.soAllDirectories);
-  lstResults.Clear;
 
   for s in vFiles do
-    lstResults.Items.Add(ReplaceText(s, vDir, ''));
+    lstAvailableResults.Items.Add(ReplaceText(s, vDir, ''));
 end;
 
 procedure TPerformanceForm.FormActivate(Sender: TObject);
@@ -166,6 +221,18 @@ begin
 
   _RestoreFormBounds;
 
+end;
+
+procedure TPerformanceForm.SetCompareToThisResult(const Value: string);
+begin
+  lstBenchmarks.Clear;
+  FCompareToThisResult := Value;
+  if not FCompareToThisResult.IsEmpty then
+  begin
+    lblCompareToThisResult.Caption := FCompareToThisResult + ' is used as for comparison';
+    lstBenchmarks.Items.LoadFromFile(FCompareToThisResult);
+  end else
+    lblCompareToThisResult.Caption := '';
 end;
 
 procedure TPerformanceForm.WriteIniFile;
