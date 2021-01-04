@@ -39,7 +39,7 @@ uses
 function LoggedFreeMem(APointer: Pointer): Integer; forward;
 function LoggedGetMem(ASize: NativeInt): Pointer; forward;
 function LoggedReallocMem(APointer: Pointer; ASize: NativeInt): Pointer; forward;
-procedure LogOperation(aOldPointerNumber1, aRequestedSize1, aNewPointerNumber1: Cardinal); forward;
+procedure LogOperation(aOldPointerNumber, aRequestedSize, aNewPointerNumber: Cardinal); forward;
 
 var
   // The address of the usage buffer
@@ -197,14 +197,14 @@ begin
 end;
 
 // Logs an operation
-procedure LogOperation(aOldPointerNumber1, aRequestedSize1, aNewPointerNumber1: Cardinal);
+procedure LogOperation(aOldPointerNumber, aRequestedSize, aNewPointerNumber: Cardinal);
 begin
   // Log the operation
   with OperationBuffer[OperationBufferUsageCount] do
   begin
-    FOldPointerNumber := aOldPointerNumber1;
-    FRequestedSize := aRequestedSize1;
-    FNewPointerNumber := aNewPointerNumber1;
+    FOldPointerNumber := aOldPointerNumber;
+    FRequestedSize := aRequestedSize;
+    FNewPointerNumber := aNewPointerNumber;
     FThreadID := GetCurrentThreadId;
     if FThreadID = MainThreadID then
       FThreadID := 0;
