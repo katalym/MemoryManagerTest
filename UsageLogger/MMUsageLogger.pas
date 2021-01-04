@@ -28,7 +28,7 @@ unit MMUsageLogger;
 interface
 
 const
-  {The name of the usage log file}
+  // The name of the usage log file
   LogFileName = 'C:\MemoryManagerUsageLogs\TVSServer.MemoryManager.Usage';
 
 implementation
@@ -39,193 +39,197 @@ uses
 function LoggedFreeMem(APointer: Pointer): Integer; forward;
 function LoggedGetMem(ASize: NativeInt): Pointer; forward;
 function LoggedReallocMem(APointer: Pointer; ASize: NativeInt): Pointer; forward;
-procedure LogOperation(AOldPointerNumber, ARequestedSize, ANewPointerNumber: integer); forward;
+procedure LogOperation(aOldPointerNumber1, aRequestedSize1, aNewPointerNumber1: Cardinal); forward;
 
 var
-  {The address of the usage buffer}
+  // The address of the usage buffer
   OperationBuffer: PMMOperationArray;
-  {The number of used entries in the buffer}
+  // The number of used entries in the buffer
   OperationBufferUsageCount: Cardinal = 0;
-  {The number of pointers used}
-  PointerNumber: Integer = 0;
-  {Is the logger locked?}
+  // The number of pointers used
+  PointerNumber: Cardinal = 1;
+  // Is the logger locked?
   LoggerLocked: boolean;
-  {Hexadecimal characters}
+  // Hexadecimal characters
   LHexTable: ShortString = '0123456789ABCDEF';
-  {The memory manager that was replaced}
+  // The memory manager that was replaced
   OldMemoryManager: TMemoryManager;
-  {The replacement memory manager}
+  // The replacement memory manager
   NewMemoryManager: TMemoryManager;
-  {A string uniquely identifying the current process (for sharing memory managers)}
+  // A string uniquely identifying the current process (for sharing memory managers)
   UniqueProcessIDString: ShortString = '????????_PID_MMUsageLogger'#0;
-  {The handle of the MM window}
+  // The handle of the MM window
   MMWindow: HWND;
-  {Is the MM in place a shared memory manager?}
+  // Is the MM in place a shared memory manager?
   OwnsMMWindow: Boolean;
-  {The log file handle}
+  // The log file handle
   LogFileHandle: THandle;
 
-{Flushes the buffer to disk}
+// Flushes the buffer to disk
 procedure FlushBuffer;
 var
   LBytesWritten: Cardinal;
 begin
-  {Append to the logfile}
+  // Append to the logfile
   WriteFile(LogFilehandle, OperationBuffer^, OperationBufferUsageCount * SizeOf(TMMOperation), LBytesWritten, nil);
-  {Reset buffer size}
+  // Reset buffer size
   OperationBufferUsageCount := 0;
 end;
 
-{Sets up and installs the memory manager}
+// Sets up and installs the memory manager
 procedure InstallMemoryManager;
 var
   i, LCurrentProcessID: Cardinal;
 begin
-  {Build a string identifying the current process}
+  // Build a string identifying the current process
   LCurrentProcessID := GetCurrentProcessId;
   for i := 0 to 7 do
   begin
     UniqueProcessIDString[8 - i] :=
       LHexTable[1 + ((LCurrentProcessID shr (i * 4)) and $F)];
   end;
-  {Is the replacement memory manager already installed for this process?}
+  // Is the replacement memory manager already installed for this process?
   MMWindow := FindWindow('STATIC', PChar(@UniqueProcessIDString[1]));
   if MMWindow = 0 then
   begin
-    {No memory manager installed yet - create the invisible window}
+    // No memory manager installed yet - create the invisible window
     MMWindow := CreateWindow('STATIC',
       PChar(@UniqueProcessIDString[1]),
       WS_POPUP, 0, 0, 0, 0,
       0, 0, LCurrentProcessID, nil);
-    {The window data is a pointer to this memory manager}
+    // The window data is a pointer to this memory manager
     SetWindowLong(MMWindow, GWL_USERDATA, Integer(@NewMemoryManager));
-    {We will be using this memory manager}
+    // We will be using this memory manager
     NewMemoryManager.GetMem := LoggedGetMem;
     NewMemoryManager.FreeMem := LoggedFreeMem;
     NewMemoryManager.ReallocMem := LoggedReallocMem;
-    {Owns the MMWindow}
+    // Owns the MMWindow
     OwnsMMWindow := True;
-    {Allocate the buffer}
+    // Allocate the buffer
     OperationBuffer := VirtualAlloc(nil, SizeOf(TMMOperationArray), MEM_COMMIT, PAGE_READWRITE);
-    {Create the log file}
+    // Create the log file
     LogFileHandle := CreateFile(LogFileName, GENERIC_READ or GENERIC_WRITE, 0, nil, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
     if LogFileHandle = INVALID_HANDLE_VALUE then
       System.Error(reAssertionFailed);
   end
   else
   begin
-    {Get the address of the shared memory manager}
+    // Get the address of the shared memory manager
     NewMemoryManager := PMemoryManager(GetWindowLong(MMWindow, GWL_USERDATA))^;
-    {The MMWindow is owned by the main program (not this DLL)}
+    // The MMWindow is owned by the main program (not this DLL)
     OwnsMMWindow := False;
   end;
-  {Save the old memory manager}
+  // Save the old memory manager
   GetMemoryManager(OldMemoryManager);
-  {Replace the memory manager with either this one or the shared one.}
+  // Replace the memory manager with either this one or the shared one.
   SetMemoryManager(NewMemoryManager);
 end;
 
-{Locks the logger so only this thread can access it}
+// Locks the logger so only this thread can access it
 procedure LockLogger;
 asm
 @LockLoop:
   xor al, al
   mov dl, 1
-  {Attempt to lock the batches}
+  // Attempt to lock the batches
   lock cmpxchg LoggerLocked, dl
   jz @Done
-  {Couldn't lock the batches - sleep and try again}
+  // Couldn't lock the batches - sleep and try again
   push 0
   call sleep
-  {Try again}
+  // Try again
   jmp @LockLoop
 @Done:
 end;
 
-{Replacement for SysFreeMem}
+// Replacement for SysFreeMem
 function LoggedFreeMem(APointer: Pointer): Integer;
 begin
   LockLogger;
-  {Decrement the pointer}
+  // Decrement the pointer
   Dec(PByte(APointer), 4);
-  {Log the operation}
-  LogOperation(PInteger(APointer)^, 0, -1);
-  {Call the old freemem}
+  // Log the operation
+  LogOperation(PCardinal(APointer)^, 0, 0);
+  // Call the old freemem
   Result := OldMemoryManager.FreeMem(APointer);
-  {Unlock the logger}
+  // Unlock the logger
   LoggerLocked := False;
 end;
 
-{Replacement for SysGetMem}
+// Replacement for SysGetMem
 function LoggedGetMem(ASize: NativeInt): Pointer;
 begin
   LockLogger;
-  {Call the old getmem}
+  // Call the old getmem
   Result := OldMemoryManager.GetMem(ASize + 4);
-  {Log the operation}
-  LogOperation(-1, ASize, PointerNumber);
-  {Store the pointer number before the memory block}
+  // Log the operation
+  LogOperation(0, ASize, PointerNumber);
+  // Store the pointer number before the memory block
   PCardinal(Result)^ := PointerNumber;
-  {Advance the pointer}
+  // Advance the pointer
   Inc(PByte(Result), 4);
-  {Increment the pointer number}
+  // Increment the pointer number
   Inc(PointerNumber);
-  {Unlock the logger}
+  // Unlock the logger
   LoggerLocked := False;
 end;
 
-{Replacement for SysReallocMem}
+// Replacement for SysReallocMem
 function LoggedReallocMem(APointer: Pointer; ASize: NativeInt): Pointer;
 var
   LOldPointerNumber: integer;
 begin
   LockLogger;
-  {Decrement the pointer}
+  // Decrement the pointer
   Dec(PByte(APointer), 4);
-  {Get the old pointer number}
-  LOldPointerNumber := PInteger(APointer)^;
-  {Call the old reallocmem}
+  // Get the old pointer number
+  LOldPointerNumber := PCardinal(APointer)^;
+  // Call the old reallocmem
   Result := OldMemoryManager.ReallocMem(APointer, ASize + 4);
-  {Store the pointer number before the memory block}
-  PInteger(Result)^ := LOldPointerNumber;
-  {Advance the pointer}
+  // Store the pointer number before the memory block
+  PCardinal(Result)^ := LOldPointerNumber;
+  // Advance the pointer
   Inc(PByte(Result), 4);
-  {Log the operation}
+  // Log the operation
   LogOperation(LOldPointerNumber, ASize, LOldPointerNumber);
-  {Unlock the logger}
+  // Unlock the logger
   LoggerLocked := False;
 end;
 
-{Logs an operation}
-procedure LogOperation(AOldPointerNumber, ARequestedSize, ANewPointerNumber: integer);
+// Logs an operation
+procedure LogOperation(aOldPointerNumber1, aRequestedSize1, aNewPointerNumber1: Cardinal);
 begin
-  {Log the operation}
+  // Log the operation
   with OperationBuffer[OperationBufferUsageCount] do
   begin
-    FOldPointerNumber := AOldPointerNumber;
-    FRequestedSize := ARequestedSize;
-    FNewPointerNumber := ANewPointerNumber;
+    FOldPointerNumber := aOldPointerNumber1;
+    FRequestedSize := aRequestedSize1;
+    FNewPointerNumber := aNewPointerNumber1;
+    FThreadID := GetCurrentThreadId;
+    if FThreadID = MainThreadID then
+      FThreadID := 0;
+    FTicks := GetTickCount;
   end;
-  {Increment the operation count}
+  // Increment the operation count
   Inc(OperationBufferUsageCount);
-  {Buffer full?}
+  // Buffer full?
   if OperationBufferUsageCount = BufferCount then
     FlushBuffer;
 end;
 
 procedure UninstallMemoryManager;
 begin
-  {Restore the old memory manager}
+  // Restore the old memory manager
   SetMemoryManager(OldMemoryManager);
-  {Is this the owner of the shared MM window?}
+  // Is this the owner of the shared MM window?
   if OwnsMMWindow then
   begin
     DestroyWindow(MMWindow);
-    {Flush the buffer}
+    // Flush the buffer
     FlushBuffer;
-    {Close the file}
+    // Close the file
     CloseHandle(LogFileHandle);
-    {Free the buffer}
+    // Free the buffer
     VirtualFree(OperationBuffer, 0, MEM_RELEASE);
   end;
 end;
@@ -236,12 +240,12 @@ initialization
    uses clause of the project's .dpr file.}
 if GetHeapStatus.TotalAllocated <> 0 then
   System.Error(reInvalidPtr);
-  {Install the memory manager}
+  // Install the memory manager
 InstallMemoryManager;
 
 finalization
 
-{Restore the old memory manager}
+// Restore the old memory manager
 UninstallMemoryManager;
 
 end.

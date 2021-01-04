@@ -172,60 +172,60 @@ procedure TReplayBenchmark.RunReplay;
 
   procedure DoRunReplay(aArraySize: int64);
   var
-    LPOperation: PMMOperation;
-    LInd, LOperationCount, LOffset: Integer;
+    vOperation: PMMOperation;
+    i, vOperations, vOffset: Cardinal;
     UintOfs: NativeUInt;
     p: pointer;
   begin
     // Get a pointer to the first operation
-    LPOperation := pointer(FOperations);
+    vOperation := pointer(FOperations);
     // Get the number of operations to perform
-    LOperationCount := aArraySize div SizeOf(TMMOperation);
+    vOperations := aArraySize div SizeOf(TMMOperation);
 
     // Perform all the operations
-    for LInd := 0 to LOperationCount - 1 do
+    for i := 0 to vOperations - 1 do
     begin
       // Perform the operation
-      if LPOperation^.FNewPointerNumber >= 0 then
+      if vOperation^.FNewPointerNumber > 0 then
       begin
-        if LPOperation^.FOldPointerNumber <> LPOperation^.FNewPointerNumber then
+        if vOperation^.FOldPointerNumber <> vOperation^.FNewPointerNumber then
         begin
           // GetMem
-          GetMem(p, LPOperation^.FRequestedSize);
-          FPointers.AddOrSetValue(LPOperation^.FNewPointerNumber, p);
+          GetMem(p, vOperation^.FRequestedSize);
+          FPointers.AddOrSetValue(vOperation^.FNewPointerNumber, p);
         end
         else
         begin
           // ReallocMem
-          p := FPointers[LPOperation^.FOldPointerNumber];
-          ReallocMem(p, LPOperation^.FRequestedSize);
-          FPointers[LPOperation^.FOldPointerNumber] := p;
+          p := FPointers[vOperation^.FOldPointerNumber];
+          ReallocMem(p, vOperation^.FRequestedSize);
+          FPointers[vOperation^.FOldPointerNumber] := p;
         end;
         // Touch every 4K page
-        LOffset := 0;
-        while LOffset < LPOperation^.FRequestedSize do
+        vOffset := 0;
+        while vOffset < vOperation^.FRequestedSize do
         begin
-          UintOfs := LOffset;
-          PByte(NativeUInt(FPointers[LPOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
-          Inc(LOffset, 4096);
+          UintOfs := vOffset;
+          PByte(NativeUInt(FPointers[vOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
+          Inc(vOffset, 4096);
         end;
         // Touch the last byte
-        if LPOperation^.FRequestedSize > 2 then
+        if vOperation^.FRequestedSize > 2 then
         begin
-          UintOfs := LPOperation^.FRequestedSize;
+          UintOfs := vOperation^.FRequestedSize;
           Dec(UintOfs);
-          PByte(NativeUInt(FPointers[LPOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
+          PByte(NativeUInt(FPointers[vOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
         end;
       end
       else
       begin
         // FreeMem
-        FreeMem(FPointers[LPOperation^.FOldPointerNumber]);
-//        FPointers[LPOperation^.FOldPointerNumber] := nil;
-        FPointers.Remove(LPOperation^.FOldPointerNumber);
+        FreeMem(FPointers[vOperation^.FOldPointerNumber]);
+//        FPointers[vOperation^.FOldPointerNumber] := nil;
+        FPointers.Remove(vOperation^.FOldPointerNumber);
       end;
       // Next operation
-      Inc(LPOperation);
+      Inc(vOperation);
     end;
   end;
 
@@ -302,69 +302,69 @@ end;
 
 procedure TReplayThread.ExecuteReplay;
 var
-  LPOperation: PMMOperation;
-  LInd, LOperationCount, LOffset: Integer;
+  vOperation: PMMOperation;
+  i, vOperations, vOffset: Cardinal;
   FPointers: array of pointer;
   UintOfs: NativeUInt;
 begin
   // Set the list of pointers
   SetLength(FPointers, length(FOperations) div SizeOf(TMMOperation));
   // Get a pointer to the first operation
-  LPOperation := pointer(FOperations);
+  vOperation := pointer(FOperations);
   // Get the number of operations to perform
-  LOperationCount := length(FPointers);
+  vOperations := length(FPointers);
   // Perform all the operations
-  for LInd := 0 to LOperationCount - 1 do
+  for i := 0 to vOperations - 1 do
   begin
     // Perform the operation
-    if LPOperation^.FNewPointerNumber >= 0 then
+    if vOperation^.FNewPointerNumber > 0 then
     begin
-      if LPOperation^.FOldPointerNumber <> LPOperation^.FNewPointerNumber then
+      if vOperation^.FOldPointerNumber <> vOperation^.FNewPointerNumber then
       begin
         // GetMem
-        GetMem(FPointers[LPOperation^.FNewPointerNumber], LPOperation^.FRequestedSize);
+        GetMem(FPointers[vOperation^.FNewPointerNumber], vOperation^.FRequestedSize);
       end
       else
       begin
         // ReallocMem
-        ReallocMem(FPointers[LPOperation^.FOldPointerNumber], LPOperation^.FRequestedSize);
+        ReallocMem(FPointers[vOperation^.FOldPointerNumber], vOperation^.FRequestedSize);
       end;
       // Touch every 4K page
-      LOffset := 0;
-      while LOffset < LPOperation^.FRequestedSize do
+      vOffset := 0;
+      while vOffset < vOperation^.FRequestedSize do
       begin
-        UintOfs := LOffset;
-        PByte(NativeUInt(FPointers[LPOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
-        Inc(LOffset, 4096);
+        UintOfs := vOffset;
+        PByte(NativeUInt(FPointers[vOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
+        Inc(vOffset, 4096);
       end;
       // Touch the last byte
-      if LPOperation^.FRequestedSize > 2 then
+      if vOperation^.FRequestedSize > 2 then
       begin
-        UintOfs := LPOperation^.FRequestedSize;
+        UintOfs := vOperation^.FRequestedSize;
         Dec(UintOfs);
-        PByte(NativeUInt(FPointers[LPOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
+        PByte(NativeUInt(FPointers[vOperation^.FNewPointerNumber]) + UintOfs)^ := 1;
       end;
     end
     else
     begin
       // FreeMem
-      FreeMem(FPointers[LPOperation^.FOldPointerNumber]);
-      FPointers[LPOperation^.FOldPointerNumber] := nil;
+      FreeMem(FPointers[vOperation^.FOldPointerNumber]);
+      FPointers[vOperation^.FOldPointerNumber] := nil;
     end;
     // Next operation
-    Inc(LPOperation);
+    Inc(vOperation);
     // Log peak usage every 1024 operations
-    if LInd and $3FF = 0 then
+    if i and $3FF = 0 then
       FBenchmark.UpdateUsageStatistics;
     // the replay is probably running about 10 to 50 times faster than reality
     // force thread switch every 8192 operations to prevent whole benchmark from running in a single time-slice
-    if LInd and $1FFF = 0 then
+    if i and $1FFF = 0 then
       Sleep(0);
   end;
   // Make sure all memory is released to avoid memory leaks in benchmark
-  for LInd := 0 to high(FPointers) do
-    if FPointers[LInd] <> nil then
-      FreeMem(FPointers[LInd]);
+  for i := 0 to high(FPointers) do
+    if FPointers[i] <> nil then
+      FreeMem(FPointers[i]);
 end;
 
 // add your replay benchmarks below...
