@@ -138,7 +138,7 @@ begin
 {$IFDEF FullDebug}
   Result := 1;
 {$ELSE}
-  Result := 3;
+  Result := 15;
 {$ENDIF}
 end;
 

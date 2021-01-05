@@ -19,7 +19,7 @@ type
 implementation
 
 const
-  IterationsCount = 10000;
+  IterationsCount = 120000;
 
 class function TSingleThreadedTinyRelocBenchmark.GetBenchmarkDescription: string;
 begin
