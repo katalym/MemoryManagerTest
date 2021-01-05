@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, VCL.Controls, VCL.Forms, VCL.StdCtrls, VCL.Buttons, VCL.ExtCtrls, VCL.Menus,
-  VCL.ActnList, System.Actions, System.ImageList, Vcl.ImgList;
+  VCL.ActnList, System.Actions, System.ImageList, Vcl.ImgList, Data.DB, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids;
 
 type
   TPerformanceForm = class(TForm)
@@ -12,17 +12,20 @@ type
     actExcludeFromComparison: TAction;
     actIncludeIntoComparison: TAction;
     actReloadResults: TAction;
+    actSaveComparionResults: TAction;
     alActions: TActionList;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
     btnMoveToRight: TBitBtn;
     btnReloadResults: TBitBtn;
-    btnRunSelectedBenchmark: TBitBtn;
-    edtUsageReplay: TEdit;
+    btnSaveComparionResults: TBitBtn;
+    cdsCompareTo: TClientDataSet;
+    dscCompareTo: TDataSource;
+    edtComparisonFileName: TEdit;
     lblCompareToThisResult: TLabel;
-    lblUsageReplay: TLabel;
+    lblComparisonFileName: TLabel;
     lstAvailableResults: TListBox;
-    lstBenchmarks: TListBox;
+    lstBenchmarks: TDBGrid;
     lstCompareResults: TListBox;
     mniPopupCheckAllDefaultBenchmarks: TMenuItem;
     mniPopupCheckAllThreadedBenchmarks: TMenuItem;
@@ -36,7 +39,6 @@ type
     pnlResults: TGridPanel;
     pnlTop: TPanel;
     pnlUsage: TPanel;
-    Splitter2: TSplitter;
     procedure actCompareToThisResultExecute(Sender: TObject);
     procedure actCompareToThisResultUpdate(Sender: TObject);
     procedure actExcludeFromComparisonExecute(Sender: TObject);
@@ -44,6 +46,8 @@ type
     procedure actIncludeIntoComparisonExecute(Sender: TObject);
     procedure actIncludeIntoComparisonUpdate(Sender: TObject);
     procedure actReloadResultsExecute(Sender: TObject);
+    procedure actSaveComparionResultsExecute(Sender: TObject);
+    procedure actSaveComparionResultsUpdate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -52,12 +56,13 @@ type
     FFormActivated: Boolean;
     procedure DoActivateForm;
     procedure DoReloadResults;
+    procedure LoadTestData;
+    procedure PrepareComparisonData;
     procedure ReadIniFile;
     procedure SetCompareToThisResult(const Value: string);
     procedure WriteIniFile;
   public
-    property CompareToThisResult: string read FCompareToThisResult write
-        SetCompareToThisResult;
+    property CompareToThisResult: string read FCompareToThisResult write SetCompareToThisResult;
   end;
 
 var
@@ -83,8 +88,11 @@ end;
 
 procedure TPerformanceForm.actExcludeFromComparisonExecute(Sender: TObject);
 begin
+  if SameText(CompareToThisResult, lstCompareResults.Items[lstCompareResults.ItemIndex]) then
+    CompareToThisResult := '';
   lstAvailableResults.Items.Add(lstCompareResults.Items[lstCompareResults.ItemIndex]);
   lstCompareResults.Items.Delete(lstCompareResults.ItemIndex);
+  PrepareComparisonData;
 end;
 
 procedure TPerformanceForm.actExcludeFromComparisonUpdate(Sender: TObject);
@@ -97,6 +105,7 @@ procedure TPerformanceForm.actIncludeIntoComparisonExecute(Sender: TObject);
 begin
   lstCompareResults.Items.Add(lstAvailableResults.Items[lstAvailableResults.ItemIndex]);
   lstAvailableResults.Items.Delete(lstAvailableResults.ItemIndex);
+  PrepareComparisonData;
 end;
 
 procedure TPerformanceForm.actIncludeIntoComparisonUpdate(Sender: TObject);
@@ -108,6 +117,48 @@ end;
 procedure TPerformanceForm.actReloadResultsExecute(Sender: TObject);
 begin
   DoReloadResults;
+  PrepareComparisonData;
+end;
+
+procedure TPerformanceForm.actSaveComparionResultsExecute(Sender: TObject);
+var
+  vData: TStringList;
+  i: integer;
+  s: string;
+begin
+  //create a new file
+  vData := TStringList.Create;
+  try
+
+    s := ''; //initialize empty string
+
+    //write field names (as column headers)
+    for i := 0 to cdsCompareTo.FieldCount - 1 do begin
+      s := s + Format('"%s";', [cdsCompareTo.Fields[i].DisplayLabel]);
+    end;
+    vData.Add(s);
+
+    cdsCompareTo.First;
+    while not cdsCompareTo.Eof do begin
+      s := '';
+      for i := 0 to cdsCompareTo.FieldCount - 1 do begin
+        s := s + Format('"%s";', [cdsCompareTo.Fields[i].AsString]);
+      end;
+      vData.Add(s);
+      cdsCompareTo.Next;
+    end;
+
+    vData.SaveToFile(Trim(edtComparisonFileName.Text));
+
+  finally
+    vData.Free;
+  end;
+end;
+
+procedure TPerformanceForm.actSaveComparionResultsUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled :=
+    (cdsCompareTo.Active) and (cdsCompareTo.RecordCount > 0) and not Trim(edtComparisonFileName.Text).IsEmpty;
 end;
 
 procedure TPerformanceForm.DoActivateForm;
@@ -130,6 +181,7 @@ begin
 
   for s in vFiles do
     lstAvailableResults.Items.Add(ReplaceText(s, vDir, ''));
+  CompareToThisResult := '';
 end;
 
 procedure TPerformanceForm.FormActivate(Sender: TObject);
@@ -153,6 +205,153 @@ begin
     Width := 1200;
     ReadIniFile;
   end;
+end;
+
+procedure TPerformanceForm.LoadTestData;
+
+  function _GetTestName(const aTestFileName: string): string;
+  begin
+    Result := ExtractFileName(aTestFileName);
+    Result := ReplaceText(Result, 'MemoryManagerTest_', '');
+    Result := Copy(Result, 1, pos('.', Result) - 1);
+  end;
+
+var
+  vData: TStringList;
+  s, vMM, vMMCompareTo, vResFile: string;
+  vDyn: TStringDynArray;
+  vField: TField;
+begin
+
+  cdsCompareTo.Fields.Clear;
+  cdsCompareTo.FieldDefs.Clear;
+  cdsCompareTo.IndexDefs.Clear;
+  vMMCompareTo := _GetTestName(FCompareToThisResult);
+
+  vField := TStringField.Create(cdsCompareTo);
+  vField.DisplayWidth := 40;
+  vField.FieldName := 'Test';
+  vField.Size := 80;
+  vField.DataSet := cdsCompareTo;
+
+  vField := TStringField.Create(cdsCompareTo);
+  vField.DisplayWidth := 15;
+  vField.DisplayLabel := 'Manager';
+  vField.FieldName := 'MemoryManager';
+  vField.Size := 40;
+  vField.DataSet := cdsCompareTo;
+  vField.Visible := False;
+
+  vField := TIntegerField.Create(cdsCompareTo);
+  (vField as TIntegerField).DisplayFormat := '0,0.';
+  vField.DisplayLabel := 'CPU(ms) ' + vMMCompareTo;
+  vField.FieldName := 'CPU' + vMMCompareTo;
+  vField.DataSet := cdsCompareTo;
+
+  vField := TIntegerField.Create(cdsCompareTo);
+  (vField as TIntegerField).DisplayFormat := '0,0.';
+  vField.DisplayLabel := 'Ticks(ms) ' + vMMCompareTo;
+  vField.FieldName := 'Ticks' + vMMCompareTo;
+  vField.DataSet := cdsCompareTo;
+
+  vField := TIntegerField.Create(cdsCompareTo);
+  (vField as TIntegerField).DisplayFormat := '0,0.';
+  vField.DisplayLabel := 'Memory(Kb) ' + vMMCompareTo;
+  vField.FieldName := 'Memory' + vMMCompareTo;
+  vField.DataSet := cdsCompareTo;
+
+  for vResFile in lstCompareResults.Items do begin
+    if not SameText(vResFile, FCompareToThisResult) then
+    begin
+      vMM := _GetTestName(vResFile);
+
+      vField := TCurrencyField.Create(cdsCompareTo);
+      (vField as TCurrencyField).DisplayFormat := ',0.0';
+      vField.DisplayLabel := 'CPU(%) ' + vMM;
+      vField.FieldName := 'CPU' + vMM;
+      vField.DataSet := cdsCompareTo;
+
+      vField := TCurrencyField.Create(cdsCompareTo);
+      (vField as TCurrencyField).DisplayFormat := ',0.0';
+      vField.DisplayLabel := 'Ticks(%) ' + vMM;
+      vField.FieldName := 'Ticks' + vMM;
+      vField.DataSet := cdsCompareTo;
+
+      vField := TCurrencyField.Create(cdsCompareTo);
+      (vField as TCurrencyField).DisplayFormat := ',0.0';
+      vField.DisplayLabel := 'Memory(%) ' + vMM;
+      vField.FieldName := 'Memory' + vMM;
+      vField.DataSet := cdsCompareTo;
+    end;
+  end;
+
+  cdsCompareTo.CreateDataSet;
+  cdsCompareTo.AddIndex('a', 'Test', [ixCaseInsensitive, ixUnique]);
+  cdsCompareTo.IndexName := 'a';
+
+  if FileExists(FCompareToThisResult) then
+  begin
+    vData := TStringList.Create;
+    try
+      vData.LoadFromFile(FCompareToThisResult);
+      for s in vData do begin
+        vDyn := SplitString(s, ';');
+        cdsCompareTo.Append;
+        cdsCompareTo.FieldByName('Test').Value := ReplaceText(vDyn[0], '"', '');
+        cdsCompareTo.FieldByName('MemoryManager').Value := vDyn[1];
+        cdsCompareTo.FieldByName('CPU' + vMMCompareTo).Value := vDyn[2];
+        cdsCompareTo.FieldByName('Ticks' + vMMCompareTo).Value := vDyn[3];
+        cdsCompareTo.FieldByName('Memory' + vMMCompareTo).Value := vDyn[4];
+      end;
+      cdsCompareTo.Post;
+
+      for vResFile in lstCompareResults.Items do begin
+        if not SameText(vResFile, FCompareToThisResult) then
+        begin
+          vMM := _GetTestName(vResFile);
+
+          vData.LoadFromFile(vResFile);
+          for s in vData do begin
+            vDyn := SplitString(s, ';');
+            if cdsCompareTo.Locate('Test', ReplaceText(vDyn[0], '"', ''), []) then
+            begin
+              cdsCompareTo.Edit;
+              if cdsCompareTo.FieldByName('CPU' + vMMCompareTo).Value > 0 then
+                cdsCompareTo.FieldByName('CPU' + vMM).Value :=
+                  vDyn[2].ToInteger * 100 / cdsCompareTo.FieldByName('CPU' + vMMCompareTo).Value;
+              if cdsCompareTo.FieldByName('Ticks' + vMMCompareTo).Value > 0 then
+                cdsCompareTo.FieldByName('Ticks' + vMM).Value :=
+                  vDyn[3].ToInteger * 100 / cdsCompareTo.FieldByName('Ticks' + vMMCompareTo).Value;
+              if cdsCompareTo.FieldByName('Memory' + vMMCompareTo).Value > 0 then
+                cdsCompareTo.FieldByName('Memory' + vMM).Value :=
+                  vDyn[4].ToInteger * 100 / cdsCompareTo.FieldByName('Memory' + vMMCompareTo).Value;
+              cdsCompareTo.Post;
+            end;
+          end;
+        end;
+      end;
+
+    finally
+      vData.Free;
+    end;
+    cdsCompareTo.First;
+  end;
+end;
+
+procedure TPerformanceForm.PrepareComparisonData;
+begin
+  if cdsCompareTo.Active then
+  begin
+    cdsCompareTo.IndexName := '';
+    cdsCompareTo.EmptyDataSet;
+    cdsCompareTo.Close;
+  end;
+  if not FCompareToThisResult.IsEmpty then
+  begin
+    lblCompareToThisResult.Caption := FCompareToThisResult + ' is used as for comparison';
+    LoadTestData;
+  end else
+    lblCompareToThisResult.Caption := '';
 end;
 
 procedure TPerformanceForm.ReadIniFile;
@@ -213,7 +412,7 @@ begin
     Top := vIniFile.ReadInteger('FormSettings', 'Top', Top);
     Height := vIniFile.ReadInteger('FormSettings', 'Height', Height);
     Width := vIniFile.ReadInteger('FormSettings', 'Width', Width);
-    edtUsageReplay.Text := vIniFile.ReadString('FormSettings', edtUsageReplay.Name, edtUsageReplay.Text);
+    edtComparisonFileName.Text := vIniFile.ReadString('FormSettings', edtComparisonFileName.Name, edtComparisonFileName.Text);
 
   finally
     vIniFile.Free;
@@ -225,14 +424,8 @@ end;
 
 procedure TPerformanceForm.SetCompareToThisResult(const Value: string);
 begin
-  lstBenchmarks.Clear;
   FCompareToThisResult := Value;
-  if not FCompareToThisResult.IsEmpty then
-  begin
-    lblCompareToThisResult.Caption := FCompareToThisResult + ' is used as for comparison';
-    lstBenchmarks.Items.LoadFromFile(FCompareToThisResult);
-  end else
-    lblCompareToThisResult.Caption := '';
+  PrepareComparisonData;
 end;
 
 procedure TPerformanceForm.WriteIniFile;
@@ -246,7 +439,7 @@ begin
     vIniFile.WriteInteger('FormSettings', 'Top', Top);
     vIniFile.WriteInteger('FormSettings', 'Height', Height);
     vIniFile.WriteInteger('FormSettings', 'Width', Width);
-    vIniFile.WriteString('FormSettings', edtUsageReplay.Name, edtUsageReplay.Text);
+    vIniFile.WriteString('FormSettings', edtComparisonFileName.Name, edtComparisonFileName.Text);
 
   finally
     vIniFile.Free;

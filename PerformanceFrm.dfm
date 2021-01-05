@@ -18,25 +18,17 @@ object PerformanceForm: TPerformanceForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Splitter2: TSplitter
-    Left = 0
-    Top = 571
-    Width = 1184
-    Height = 3
-    Cursor = crVSplit
-    Align = alBottom
-  end
   object pnlTop: TPanel
     Left = 0
     Top = 0
     Width = 1184
-    Height = 571
+    Height = 574
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object pnlUsage: TPanel
       Left = 0
-      Top = 540
+      Top = 543
       Width = 1184
       Height = 31
       Align = alBottom
@@ -44,16 +36,16 @@ object PerformanceForm: TPerformanceForm
       Color = clBtnShadow
       ParentBackground = False
       TabOrder = 1
-      object lblUsageReplay: TLabel
+      object lblComparisonFileName: TLabel
         AlignWithMargins = True
-        Left = 374
+        Left = 295
         Top = 9
-        Width = 119
+        Width = 95
         Height = 13
         Margins.Top = 9
         Margins.Bottom = 9
         Align = alLeft
-        Caption = 'Usage Log file to Replay:'
+        Caption = 'to file in CSV format:'
       end
       object btnReloadResults: TBitBtn
         AlignWithMargins = True
@@ -66,30 +58,30 @@ object PerformanceForm: TPerformanceForm
         Caption = 'Reload Results'
         TabOrder = 0
       end
-      object btnRunSelectedBenchmark: TBitBtn
+      object btnSaveComparionResults: TBitBtn
         AlignWithMargins = True
         Left = 148
         Top = 3
-        Width = 220
+        Width = 141
         Height = 25
         Margins.Left = 8
-        Action = actCompareToThisResult
+        Action = actSaveComparionResults
         Align = alLeft
-        Caption = 'Compare To ->'
+        Caption = 'Save Comparion Results'
         TabOrder = 1
       end
-      object edtUsageReplay: TEdit
+      object edtComparisonFileName: TEdit
         AlignWithMargins = True
-        Left = 499
+        Left = 396
         Top = 6
-        Width = 681
+        Width = 784
         Height = 21
         Margins.Top = 6
         Margins.Right = 4
         Margins.Bottom = 4
         Align = alClient
         TabOrder = 2
-        Text = 'C:\MemoryManagerUsageLogs\MMUsage.Log'
+        Text = 'comparison.csv'
       end
     end
     object pnlResults: TGridPanel
@@ -203,7 +195,7 @@ object PerformanceForm: TPerformanceForm
       Left = 0
       Top = 161
       Width = 1184
-      Height = 379
+      Height = 382
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 2
@@ -234,15 +226,19 @@ object PerformanceForm: TPerformanceForm
           ParentFont = False
         end
       end
-      object lstBenchmarks: TListBox
+      object lstBenchmarks: TDBGrid
         Left = 0
         Top = 21
-        Width = 449
-        Height = 358
-        Align = alLeft
-        ItemHeight = 13
-        Sorted = True
+        Width = 1184
+        Height = 361
+        Align = alClient
+        DataSource = dscCompareTo
         TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = []
       end
     end
   end
@@ -304,5 +300,22 @@ object PerformanceForm: TPerformanceForm
       OnExecute = actExcludeFromComparisonExecute
       OnUpdate = actExcludeFromComparisonUpdate
     end
+    object actSaveComparionResults: TAction
+      Category = 'Actions'
+      Caption = 'Save Comparion Results'
+      OnExecute = actSaveComparionResultsExecute
+      OnUpdate = actSaveComparionResultsUpdate
+    end
+  end
+  object cdsCompareTo: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 592
+    Top = 296
+  end
+  object dscCompareTo: TDataSource
+    DataSet = cdsCompareTo
+    Left = 592
+    Top = 360
   end
 end

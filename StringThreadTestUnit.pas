@@ -275,14 +275,14 @@ begin
   try
     vHandle := CreateEvent(nil, False, False, nil);
     // Launch a lot of threads
-    for i := 1 to 30 do
+    for i := 1 to 100 do
     begin
       AddThread(TStringThreadEx.Create(1000, 10, 512, False));
       AddThread(TStringThreadEx.Create(10, 2, 4096, False));
       AddThread(TStringThreadEx.Create(10, 2, 1024 * 1024, False));
     end;
     // Launch a lot of threads keeping threadmax in account
-    for i := 1 to 30 do
+    for i := 1 to 100 do
     begin
       AddThread(TStringThreadEx.Create(100, 1, 512, False));
       AddThread(TStringThreadEx.Create(100, 100, 512, False));
