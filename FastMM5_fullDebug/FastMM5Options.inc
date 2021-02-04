@@ -6,11 +6,53 @@ Set the default options for FastMM here.
 
 }
 
+{---------------------------Miscellaneous Options-----------------------------}
+
+{Enable this define to align all blocks on 16 byte boundaries so aligned SSE
+ instructions can be used safely. If this option is disabled then some of the
+ smallest block sizes will be 8-byte aligned instead which may result in a
+ reduction in memory usage. Medium and large blocks are always 16-byte aligned
+ irrespective of this setting.}
+{.$define Align16Bytes}
+
 {Enable to use faster fixed-size move routines when upsizing small blocks.
  These routines are much faster than the Borland RTL move procedure since they
  are optimized to move a fixed number of bytes. This option may be used
  together with the FastMove library for even better performance.}
 {$define UseCustomFixedSizeMoveRoutines}
+
+{Enable this option to use an optimized procedure for moving a memory block of
+ an arbitrary size. Disable this option when using the Fastcode move
+ ("FastMove") library. Using the Fastcode move library allows your whole
+ application to gain from faster move routines, not just the memory manager. It
+ is thus recommended that you use the Fastcode move library in conjunction with
+ this memory manager and disable this option.}
+{.$define UseCustomVariableSizeMoveRoutines}
+
+{Enable this option to only install FastMM as the memory manager when the
+ application is running inside the Delphi IDE. This is useful when you want
+ to deploy the same EXE that you use for testing, but only want the debugging
+ features active on development machines. When this option is enabled and
+ the application is not being run inside the IDE debugger, then the default
+ Delphi memory manager will be used (which, since Delphi 2006, is FastMM
+ without FullDebugMode.}
+{.$define InstallOnlyIfRunningInIDE}
+
+{Due to QC#14070 ("Delphi IDE attempts to free memory after the shutdown code
+ of borlndmm.dll has been called"), FastMM cannot be uninstalled safely when
+ used inside a replacement borlndmm.dll for the IDE. Setting this option will
+ circumvent this problem by never uninstalling the memory manager.}
+{.$define NeverUninstall}
+
+{Set this option when you use runtime packages in this application or library.
+ This will automatically set the "AssumeMultiThreaded" option. Note that you
+ have to ensure that FastMM is finalized after all live pointers have been
+ freed - failure to do so will result in a large leak report followed by a lot
+ of A/Vs. (See the FAQ for more detail.) You may have to combine this option
+ with the NeverUninstall option.}
+{.$define UseRuntimePackages}
+
+{-----------------------Concurrency Management Options------------------------}
 
 {Enable to always assume that the application is multithreaded. Enabling this
  option will cause a significant performance hit with single threaded
@@ -44,6 +86,14 @@ Set the default options for FastMM here.
  the memory manager code.}
 {$define NoDebugInfo}
 
+{Enable this option to suppress the display of all message dialogs. This is
+ useful in service applications that should not be interrupted.}
+{.$define NoMessageBoxes}
+
+{Set this option to use the Windows API OutputDebugString procedure to output
+ debug strings on startup/shutdown and when errors occur.}
+{.$define UseOutputDebugString}
+
 {Set this option to use the assembly language version which is faster than the
  pascal version. Disable only for debugging purposes. Setting the
  CheckHeapForCorruption option automatically disables this option.}
@@ -75,6 +125,12 @@ Set the default options for FastMM here.
  get an error on startup.}
 {$define FullDebugMode}
 
+  {Set this option to perform "raw" stack traces, i.e. check all entries on the
+   stack for valid return addresses. Note that this is significantly slower
+   than using the stack frame tracing method, but is usually more complete. Has
+   no effect unless FullDebugMode is enabled}
+  {.$define RawStackTraces}
+
   {Set this option to check for user code that uses an interface of a freed
    object. Note that this will disable the checking of blocks modified after
    being freed (the two are not compatible). This option has no effect if
@@ -99,10 +155,28 @@ Set the default options for FastMM here.
    also set.}
   {$define ClearLogFileOnStartup}
 
+  {Loads the FASTMM_FullDebugMode.dll dynamically. If the DLL cannot be found
+   then stack traces will not be available. Note that this may cause problems
+   due to a changed DLL unload order when sharing the memory manager. Use with
+   care.}
+  {.$define LoadDebugDLLDynamically}
+
     {$define DoNotInstallIfDLLMissing}
     {If the FastMM_FullDebugMode.dll file is not available then FastMM will not
      install itself. No effect unless FullDebugMode and LoadDebugDLLDynamically
      are also defined.}
+
+  {FastMM usually allocates large blocks from the topmost available address and
+   medium and small blocks from the lowest available address (This reduces
+   fragmentation somewhat). With this option set all blocks are always
+   allocated from the highest available address. If the process has a >2GB
+   address space and contains bad pointer arithmetic code, this option should
+   help to catch those errors sooner.}
+  {.$define AlwaysAllocateTopDown}
+
+  {Disables the logging of memory dumps together with the other detail for
+   memory errors.}
+  {.$define DisableLoggingOfMemoryDumps}
 
   {If FastMM encounters a problem with a memory block inside the FullDebugMode
    FreeMem handler then an "invalid pointer operation" exception will usually
@@ -112,6 +186,12 @@ Set the default options for FastMM here.
    exception is being handled, thus allowing the original exception to
    propagate.}
   {$define SuppressFreeMemErrorsInsideException}
+
+  {Adds support for notification of memory manager events in FullDebugMode.
+   With this define set, the application may assign the OnDebugGetMemFinish,
+   OnDebugFreeMemStart, etc. callbacks in order to be notified when the
+   particular memory manager event occurs.}
+  {.$define FullDebugModeCallBacks}
 
 {---------------------------Memory Leak Reporting-----------------------------}
 
@@ -126,6 +206,51 @@ Set the default options for FastMM here.
    hidden from the leak display if there are more leaks than are expected.}
   {$define HideExpectedLeaksRegisteredByPointer}
 
+  {Set this option to require the presence of the Delphi IDE to report memory
+   leaks. This option has no effect if the option "EnableMemoryLeakReporting"
+   is not also set.}
+  {.$define RequireIDEPresenceForLeakReporting}
+
+  {Set this option to require the program to be run inside the IDE debugger to
+   report memory leaks. This option has no effect if the option
+   "EnableMemoryLeakReporting" is not also set. Note that this option does not 
+   work with libraries, only EXE projects.}
+  {.$define RequireDebuggerPresenceForLeakReporting}
+
+  {Set this option to require the presence of debug info ($D+ option) in the
+   compiled unit to perform memory leak checking. This option has no effect if
+   the option "EnableMemoryLeakReporting" is not also set.}
+  {.$define RequireDebugInfoForLeakReporting}
+
+  {Set this option to enable manual control of the memory leak report. When
+   this option is set the ReportMemoryLeaksOnShutdown variable (default = false)
+   may be changed to select whether leak reporting should be done or not. When
+   this option is selected then both the variable must be set to true and the
+   other leak checking options must be applicable for the leak checking to be
+   done.}
+  {.$define ManualLeakReportingControl}
+
+  {Set this option to disable the display of the hint below the memory leak
+   message.}
+  {.$define HideMemoryLeakHintMessage}
+
+{--------------------------Instruction Set Options----------------------------}
+
+{Set this option to enable the use of MMX instructions. Disabling this option
+ will result in a slight performance hit, but will enable compatibility with
+ AMD K5, Pentium I and earlier CPUs. MMX is currently only used in the variable
+ size move routines, so if UseCustomVariableSizeMoveRoutines is not set then
+ this option has no effect.}
+{.$define EnableMMX}
+
+  {Set this option to force the use of MMX instructions without checking
+   whether the CPU supports it. If this option is disabled then the CPU will be
+   checked for compatibility first, and if MMX is not supported it will fall
+   back to the FPU move code. Has no effect unless EnableMMX is also set.}
+  {.$define ForceMMX}
+
+{-----------------------Memory Manager Sharing Options------------------------}
+
 {Allow sharing of the memory manager between a main application and DLLs that
  were also compiled with FastMM. This allows you to pass dynamic arrays and
  long strings to DLL functions provided both are compiled to use FastMM.
@@ -139,6 +264,19 @@ Set the default options for FastMM here.
  way around. }
 {$define ShareMM}
 
+  {Allow sharing of the memory manager by a DLL with other DLLs (or the main
+   application if this is a statically loaded DLL) that were also compiled with
+   FastMM. Set this option with care in dynamically loaded DLLs, because if the
+   DLL that is sharing its MM is unloaded and any other DLL is still sharing
+   the MM then the application will crash. This setting is only relevant for
+   DLL libraries and requires ShareMM to also be set to have any effect.
+   Sharing will only work if the library that is supposed to share the memory
+   manager was compiled with the "AttemptToUseSharedMM" option set. Note that
+   if DLLs are statically linked then they will be initialized before the main
+   application and then the DLL will in fact share its MM with the main
+   application. This option has no effect unless ShareMM is also set.}
+  {.$define ShareMMIfLibrary}
+
 {Define this to attempt to share the MM of the main application or other loaded
  DLLs in the same process that were compiled with ShareMM set. When sharing a
  memory manager, memory leaks caused by the sharer will not be freed
@@ -149,3 +287,125 @@ Set the default options for FastMM here.
 {Define this to enable backward compatibility for the memory manager sharing
  mechanism used by Delphi 2006 and 2007, as well as older FastMM versions.}
 {$define EnableBackwardCompatibleMMSharing}
+
+{-----------------------Security Options------------------------}
+
+{Windows clears physical memory before reusing it in another process. However,
+ it is not known how quickly this clearing is performed, so it is conceivable
+ that confidential data may linger in physical memory longer than absolutely
+ necessary. If you're paranoid about this kind of thing, enable this option to
+ clear all freed memory before returning it to the operating system. Note that
+ this incurs a noticeable performance hit.}
+{.$define ClearMemoryBeforeReturningToOS}
+
+{With this option enabled freed memory will immediately be cleared inside the
+ FreeMem routine. This incurs a big performance hit, but may be worthwhile for
+ additional peace of mind when working with highly sensitive data. This option
+ supersedes the ClearMemoryBeforeReturningToOS option.}
+{.$define AlwaysClearFreedMemory}
+
+{--------------------------------Option Grouping------------------------------}
+
+{Enabling this option enables FullDebugMode, InstallOnlyIfRunningInIDE and
+ LoadDebugDLLDynamically. Consequently, FastMM will install itself in
+ FullDebugMode if the application is being debugged inside the Delphi IDE.
+ Otherwise the default Delphi memory manager will be used (which is equivalent
+ to the non-FullDebugMode FastMM since Delphi 2006.)}
+{.$define FullDebugModeInIDE}
+
+{Combines the FullDebugMode, LoadDebugDLLDynamically and
+ DoNotInstallIfDLLMissing options. Consequently FastMM will only be installed
+ (In FullDebugMode) when the FastMM_FullDebugMode.dll file is available. This
+ is useful when the same executable will be distributed for both debugging as
+ well as deployment.}
+{.$define FullDebugModeWhenDLLAvailable}
+
+{--------------------Compilation Options For borlndmm.dll---------------------}
+{If you're compiling the replacement borlndmm.dll, set the defines below
+ for the kind of dll you require.}
+
+{Set this option when compiling the borlndmm.dll}
+{.$define borlndmmdll}
+
+{Set this option if the dll will be used by the Delphi IDE}
+{.$define dllforide}
+
+{Set this option if you're compiling a debug dll}
+{.$define debugdll}
+
+{Do not change anything below this line}
+{$ifdef borlndmmdll}
+  {$define AssumeMultiThreaded}
+  {$undef HideExpectedLeaksRegisteredByPointer}
+  {$undef RequireDebuggerPresenceForLeakReporting}
+  {$undef RequireDebugInfoForLeakReporting}
+  {$define DetectMMOperationsAfterUninstall}
+  {$undef ManualLeakReportingControl}
+  {$undef ShareMM}
+  {$undef AttemptToUseSharedMM}
+  {$ifdef dllforide}
+    {$define NeverUninstall}
+    {$define HideMemoryLeakHintMessage}
+    {$undef RequireIDEPresenceForLeakReporting}
+    {$ifndef debugdll}
+      {$undef EnableMemoryLeakReporting}
+    {$endif}
+  {$else}
+    {$define EnableMemoryLeakReporting}
+    {$undef NeverUninstall}
+    {$undef HideMemoryLeakHintMessage}
+    {$define RequireIDEPresenceForLeakReporting}
+  {$endif}
+  {$ifdef debugdll}
+    {$define FullDebugMode}
+    {$define RawStackTraces}
+    {$undef CatchUseOfFreedInterfaces}
+    {$define LogErrorsToFile}
+    {$define LogMemoryLeakDetailToFile}
+    {$undef ClearLogFileOnStartup}
+  {$else}
+    {$undef FullDebugMode}
+  {$endif}
+{$endif}
+
+{Move BCB related definitions here, because CB2006/CB2007 can build borlndmm.dll
+ for tracing memory leaks in BCB applications with "Build with Dynamic RTL"
+ switched on}
+{------------------------------Patch BCB Terminate----------------------------}
+{To enable the patching for BCB to make uninstallation and leak reporting
+ possible, you may need to add "BCB" definition
+ in "Project Options->Pascal/Delphi Compiler->Defines".
+ (Thanks to JiYuan Xie for implementing this.)}
+
+{$ifdef BCB}
+  {$ifdef CheckHeapForCorruption}
+    {$define PatchBCBTerminate}
+  {$else}
+    {$ifdef DetectMMOperationsAfterUninstall}
+      {$define PatchBCBTerminate}
+    {$else}
+       {$ifdef EnableMemoryLeakReporting}
+         {$define PatchBCBTerminate}
+       {$endif}
+    {$endif}
+  {$endif}
+
+  {$ifdef PatchBCBTerminate}
+    {$define CheckCppObjectType}
+    {$undef CheckCppObjectTypeEnabled}
+
+    {$ifdef CheckCppObjectType}
+      {$define CheckCppObjectTypeEnabled}
+    {$endif}
+
+    {Turn off "CheckCppObjectTypeEnabled" option if neither "CheckHeapForCorruption"
+     option or "EnableMemoryLeakReporting" option were defined.}
+    {$ifdef CheckHeapForCorruption}
+    {$else}
+      {$ifdef EnableMemoryLeakReporting}
+      {$else}
+        {$undef CheckCppObjectTypeEnabled}
+      {$endif}
+    {$endif}
+  {$endif}
+{$endif}
