@@ -1,4 +1,3 @@
-{ __DONT_PROFILE__ }
 {
 
 FastMM 5.03
@@ -8,7 +7,7 @@ Description:
   cores, is not prone to memory fragmentation, and supports shared memory without the use of external .DLL files.
 
 Developed by:
-  Pierre le Riche, copyright 2004 - 2020, all rights reserved
+  Pierre le Riche, copyright 2004 - 2021, all rights reserved
 
 Sponsored by:
   gs-soft AG
@@ -1046,7 +1045,7 @@ const
   protection is set at the page level.}
   CVirtualMemoryPageSize = 4096;
 
-  CCopyrightMessage: PAnsiChar = 'FastMM (c) 2004 - 2020 Pierre le Riche';
+  CCopyrightMessage: PAnsiChar = 'FastMM (c) 2004 - 2021 Pierre le Riche';
 
 type
 
@@ -3567,6 +3566,10 @@ begin
 
   if AEventType in FastMM_MessageBoxEvents then
   begin
+    {Ensure that the event log file is closed before showing any dialogs, so the user can access it while the dialog is
+    displayed.}
+    CloseEventLogFile;
+
     OS_ShowMessageBox(LPBodyStart, LPMessageBoxCaption);
   end;
 
