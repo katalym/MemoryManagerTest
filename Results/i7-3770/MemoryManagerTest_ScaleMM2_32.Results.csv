@@ -1,0 +1,69 @@
+"Address space creep";ScaleMM2;5250;5250;647388
+"Address space creep (larger blocks)";ScaleMM2;3968;3969;849460
+"Array Upsize 1 thread";ScaleMM2;656;656;364212
+"Block downsize";ScaleMM2;12641;12641;275508
+"Block size spread";ScaleMM2;8280;8281;558132
+"Double Variables Access  3 arrays at a time";ScaleMM2;1750;1750;142136
+"Double Variables Access  6 arrays at a time";ScaleMM2;1719;1719;142136
+"Double Variables Access 18 arrays at a time";ScaleMM2;1875;1875;142136
+"Fill Char using 2 threads";ScaleMM2;4938;2516;147196
+"Fragmentation Test";ScaleMM2;2453;2453;176572
+"Large block spread";ScaleMM2;2844;2844;392764
+"Linked-list container";ScaleMM2;4312;4312;938556
+"Many Short Lived Threads";ScaleMM2;609;109;141204
+"Mem Free 1";ScaleMM2;1016;1047;139412
+"Move 2 arrays at a time";ScaleMM2;2657;2657;159892
+"Move 4 arrays at a time";ScaleMM2;2843;2844;159892
+"Multi-threaded  2 allocate, use and free";ScaleMM2;6438;3265;140692
+"Multi-threaded  2 reallocate and use";ScaleMM2;6250;3187;142740
+"Multi-threaded  4 allocate, use and free";ScaleMM2;7219;1844;153492
+"Multi-threaded  4 reallocate and use";ScaleMM2;7905;2032;158612
+"Multi-threaded  8 allocate, use and free";ScaleMM2;12407;1594;182164
+"Multi-threaded  8 reallocate and use";ScaleMM2;13688;1781;189332
+"Multi-threaded 12 allocate, use and free";ScaleMM2;11733;1829;207764
+"Multi-threaded 12 reallocate and use";ScaleMM2;13719;1844;219028
+"Multi-threaded 16 allocate, use and free";ScaleMM2;11516;1672;232340
+"Multi-threaded 16 reallocate and use";ScaleMM2;13578;1968;247700
+"Multi-threaded 31 allocate, use and free";ScaleMM2;11469;1578;313004
+"Multi-threaded 31 reallocate and use";ScaleMM2;12812;1750;334512
+"Multi-threaded 64 allocate, use and free";ScaleMM2;11125;1500;448264
+"Multi-threaded 64 reallocate and use";ScaleMM2;12845;1688;553768
+"NexusDB with  1 thread(s)";ScaleMM2;3703;3703;240936
+"NexusDB with  2 thread(s)";ScaleMM2;3655;1828;228904
+"NexusDB with  4 thread(s)";ScaleMM2;4375;1297;217128
+"NexusDB with  8 thread(s)";ScaleMM2;5610;719;308264
+"NexusDB with 12 thread(s)";ScaleMM2;6906;1093;346152
+"NexusDB with 16 thread(s)";ScaleMM2;4484;625;364584
+"NexusDB with 31 thread(s)";ScaleMM2;3922;531;500520
+"NexusDB with 64 thread(s)";ScaleMM2;5438;704;535592
+"Quick Sort Extended Array";ScaleMM2;93813;12375;209960
+"Quick Sort Integer Array";ScaleMM2;4219;4219;201000
+"Raw Performance  1 thread";ScaleMM2;1422;1422;203816
+"Raw Performance  2 threads";ScaleMM2;1281;640;165416
+"Raw Performance  4 threads";ScaleMM2;1437;359;191528
+"Raw Performance  8 threads";ScaleMM2;2610;328;243752
+"Raw Performance 12 threads";ScaleMM2;2813;437;293928
+"Raw Performance 16 threads";ScaleMM2;2609;390;340008
+"Raw Performance 31 threads";ScaleMM2;2532;328;298536
+"Raw Performance 64 threads";ScaleMM2;5234;672;367144
+"ReallocMem Large (1-952224b)";ScaleMM2;4578;4578;1516968
+"ReallocMem Medium (1-4039b)";ScaleMM2;12656;12656;145448
+"ReallocMem Small (1-555b)";ScaleMM2;14453;14453;142376
+"Single Variables Access  3 arrays at a time";ScaleMM2;1500;1500;143656
+"Single Variables Access  6 arrays at a time";ScaleMM2;1328;1328;143656
+"Single-threaded allocate, use and free";ScaleMM2;20157;20157;841128
+"Single-threaded reallocate and use";ScaleMM2;6906;6906;963368
+"Single-threaded tiny reallocate and use";ScaleMM2;4141;4141;154664
+"Small upsize";ScaleMM2;8187;8188;159464
+"Sort Extended Array";ScaleMM2;90625;14032;161832
+"Sort Integer Array";ScaleMM2;10344;10359;152872
+"String  2 Thread Test";ScaleMM2;6327;3172;159784
+"String  4 Thread Test";ScaleMM2;13172;3313;158760
+"String  8 Thread Test";ScaleMM2;28829;3641;158760
+"String 12 Thread Test";ScaleMM2;27546;3625;158760
+"String 16 Thread Test";ScaleMM2;27891;3609;163880
+"String 31 Thread Test";ScaleMM2;28093;3609;157736
+"String 64 Thread Test";ScaleMM2;27829;3563;153648
+"Tiny downsize";ScaleMM2;2609;2610;153072
+"Transient threaded objects (96 threads)";ScaleMM2;1016;140;272564
+"VerySmall downsize";ScaleMM2;483;484;151284

@@ -1,0 +1,3 @@
+Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz (GenuineIntel, type 0, family 6, model A, stepping 9), 3410.0 MHz, 8 logical CPUs, 0 physical CPUs
+****************
+Microsoft Windows 10 Pro, version: 10.0.19042
