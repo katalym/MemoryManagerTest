@@ -1,4 +1,4 @@
-program PerformaceView;
+program PerformanceView;
 
 {$R *.res}
 

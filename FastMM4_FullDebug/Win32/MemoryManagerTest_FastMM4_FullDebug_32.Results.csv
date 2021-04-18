@@ -1,0 +1,69 @@
+"Address space creep";FastMM4_FullDebug;125;125;112056
+"Address space creep (larger blocks)";FastMM4_FullDebug;750;750;97848
+"Array Upsize 1 thread";FastMM4_FullDebug;1453;1469;252856
+"Block downsize";FastMM4_FullDebug;235;235;426808
+"Block size spread";FastMM4_FullDebug;31;32;434488
+"Double Variables Access  3 arrays at a time";FastMM4_FullDebug;1719;1766;458808
+"Double Variables Access  6 arrays at a time";FastMM4_FullDebug;1719;1719;458808
+"Double Variables Access 18 arrays at a time";FastMM4_FullDebug;1782;1781;458808
+"Fill Char using 2 threads";FastMM4_FullDebug;1265;641;462584
+"Fragmentation Test";FastMM4_FullDebug;1484;1484;492728
+"Large block spread";FastMM4_FullDebug;62;62;460088
+"Linked-list container";FastMM4_FullDebug;47;47;476728
+"Many Short Lived Threads";FastMM4_FullDebug;8703;1250;547384
+"Mem Free 1";FastMM4_FullDebug;16;47;565304
+"Move 2 arrays at a time";FastMM4_FullDebug;2641;2641;585528
+"Move 4 arrays at a time";FastMM4_FullDebug;2812;2812;585528
+"Multi-threaded  2 allocate, use and free";FastMM4_FullDebug;344;203;570424
+"Multi-threaded  2 reallocate and use";FastMM4_FullDebug;156;110;570424
+"Multi-threaded  4 allocate, use and free";FastMM4_FullDebug;500;157;572984
+"Multi-threaded  4 reallocate and use";FastMM4_FullDebug;188;78;572984
+"Multi-threaded  8 allocate, use and free";FastMM4_FullDebug;672;125;578104
+"Multi-threaded  8 reallocate and use";FastMM4_FullDebug;359;78;578104
+"Multi-threaded 12 allocate, use and free";FastMM4_FullDebug;657;125;583224
+"Multi-threaded 12 reallocate and use";FastMM4_FullDebug;375;78;583224
+"Multi-threaded 16 allocate, use and free";FastMM4_FullDebug;718;125;588344
+"Multi-threaded 16 reallocate and use";FastMM4_FullDebug;375;78;589624
+"Multi-threaded 31 allocate, use and free";FastMM4_FullDebug;875;140;608824
+"Multi-threaded 31 reallocate and use";FastMM4_FullDebug;375;78;608824
+"Multi-threaded 64 allocate, use and free";FastMM4_FullDebug;1000;171;652344
+"Multi-threaded 64 reallocate and use";FastMM4_FullDebug;609;109;653624
+"NexusDB with  1 thread(s)";FastMM4_FullDebug;31;31;580664
+"NexusDB with  2 thread(s)";FastMM4_FullDebug;63;31;583224
+"NexusDB with  4 thread(s)";FastMM4_FullDebug;125;31;587064
+"NexusDB with  8 thread(s)";FastMM4_FullDebug;250;31;592184
+"NexusDB with 12 thread(s)";FastMM4_FullDebug;219;31;597304
+"NexusDB with 16 thread(s)";FastMM4_FullDebug;250;32;602424
+"NexusDB with 31 thread(s)";FastMM4_FullDebug;110;16;621624
+"NexusDB with 64 thread(s)";FastMM4_FullDebug;218;31;663864
+"Quick Sort Extended Array";FastMM4_FullDebug;281;47;592184
+"Quick Sort Integer Array";FastMM4_FullDebug;16;16;579384
+"Raw Performance  1 thread";FastMM4_FullDebug;16;16;578104
+"Raw Performance  2 threads";FastMM4_FullDebug;93;47;580664
+"Raw Performance  4 threads";FastMM4_FullDebug;125;31;583224
+"Raw Performance  8 threads";FastMM4_FullDebug;500;62;589624
+"Raw Performance 12 threads";FastMM4_FullDebug;812;109;596024
+"Raw Performance 16 threads";FastMM4_FullDebug;1204;156;601144
+"Raw Performance 31 threads";FastMM4_FullDebug;2187;297;622904
+"Raw Performance 64 threads";FastMM4_FullDebug;4703;625;674104
+"ReallocMem Large (1-952224b)";FastMM4_FullDebug;31;31;597368
+"ReallocMem Medium (1-4039b)";FastMM4_FullDebug;47;47;592184
+"ReallocMem Small (1-555b)";FastMM4_FullDebug;78;78;592184
+"Single Variables Access  3 arrays at a time";FastMM4_FullDebug;1532;1547;595960
+"Single Variables Access  6 arrays at a time";FastMM4_FullDebug;1343;1344;593464
+"Single-threaded allocate, use and free";FastMM4_FullDebug;188;187;592184
+"Single-threaded reallocate and use";FastMM4_FullDebug;31;31;593464
+"Single-threaded tiny reallocate and use";FastMM4_FullDebug;7203;7203;593464
+"Small upsize";FastMM4_FullDebug;32;32;594744
+"Sort Extended Array";FastMM4_FullDebug;781;125;604984
+"Sort Integer Array";FastMM4_FullDebug;15;15;596024
+"String  2 Thread Test";FastMM4_FullDebug;1031;531;812344
+"String  4 Thread Test";FastMM4_FullDebug;1484;391;834104
+"String  8 Thread Test";FastMM4_FullDebug;2126;297;857144
+"String 12 Thread Test";FastMM4_FullDebug;2062;297;875064
+"String 16 Thread Test";FastMM4_FullDebug;2265;312;881464
+"String 31 Thread Test";FastMM4_FullDebug;2063;281;926264
+"String 64 Thread Test";FastMM4_FullDebug;2297;328;1091384
+"Tiny downsize";FastMM4_FullDebug;63;62;1091768
+"Transient threaded objects (96 threads)";FastMM4_FullDebug;124;15;1214264
+"VerySmall downsize";FastMM4_FullDebug;1625;1625;1233784

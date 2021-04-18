@@ -1,0 +1,69 @@
+"Address space creep";TCMalloc;3578;3578;531676
+"Address space creep (larger blocks)";TCMalloc;2984;2985;930868
+"Array Upsize 1 thread";TCMalloc;1204;1203;1455156
+"Block downsize";TCMalloc;10234;10234;1455156
+"Block size spread";TCMalloc;3484;3484;1455156
+"Double Variables Access  3 arrays at a time";TCMalloc;1750;1750;1456436
+"Double Variables Access  6 arrays at a time";TCMalloc;1781;1781;1456436
+"Double Variables Access 18 arrays at a time";TCMalloc;2829;2828;1456436
+"Fill Char using 2 threads";TCMalloc;3077;1610;1457716
+"Fragmentation Test";TCMalloc;2859;2859;1455156
+"Large block spread";TCMalloc;2531;2531;1455156
+"Linked-list container";TCMalloc;2829;2828;1455156
+"Many Short Lived Threads";TCMalloc;672;125;1456180
+"Mem Free 1";TCMalloc;890;922;1457460
+"Move 2 arrays at a time";TCMalloc;2610;2609;1457460
+"Move 4 arrays at a time";TCMalloc;2750;2750;1457460
+"Multi-threaded  2 allocate, use and free";TCMalloc;6312;3219;1454900
+"Multi-threaded  2 reallocate and use";TCMalloc;6500;3281;1454900
+"Multi-threaded  4 allocate, use and free";TCMalloc;7203;1860;1457460
+"Multi-threaded  4 reallocate and use";TCMalloc;7782;2016;1457460
+"Multi-threaded  8 allocate, use and free";TCMalloc;11797;1546;1462580
+"Multi-threaded  8 reallocate and use";TCMalloc;12609;1656;1462580
+"Multi-threaded 12 allocate, use and free";TCMalloc;11609;1609;1467700
+"Multi-threaded 12 reallocate and use";TCMalloc;12578;1687;1467700
+"Multi-threaded 16 allocate, use and free";TCMalloc;11640;1609;1472820
+"Multi-threaded 16 reallocate and use";TCMalloc;12547;1781;1472820
+"Multi-threaded 31 allocate, use and free";TCMalloc;12048;1594;1492020
+"Multi-threaded 31 reallocate and use";TCMalloc;12297;1641;1492020
+"Multi-threaded 64 allocate, use and free";TCMalloc;11906;1562;1534260
+"Multi-threaded 64 reallocate and use";TCMalloc;12094;1562;1534260
+"NexusDB with  1 thread(s)";TCMalloc;5203;5203;1453620
+"NexusDB with  2 thread(s)";TCMalloc;5187;2593;1454900
+"NexusDB with  4 thread(s)";TCMalloc;5579;1500;1457460
+"NexusDB with  8 thread(s)";TCMalloc;8375;1062;1462580
+"NexusDB with 12 thread(s)";TCMalloc;10218;1562;1467700
+"NexusDB with 16 thread(s)";TCMalloc;6906;984;1472820
+"NexusDB with 31 thread(s)";TCMalloc;6328;844;1492020
+"NexusDB with 64 thread(s)";TCMalloc;8797;1156;1534260
+"Quick Sort Extended Array";TCMalloc;94437;12422;1462580
+"Quick Sort Integer Array";TCMalloc;4234;4235;1453620
+"Raw Performance  1 thread";TCMalloc;1469;1469;1452340
+"Raw Performance  2 threads";TCMalloc;1078;796;1454900
+"Raw Performance  4 threads";TCMalloc;1032;719;1457460
+"Raw Performance  8 threads";TCMalloc;859;657;1462580
+"Raw Performance 12 threads";TCMalloc;1204;828;1467700
+"Raw Performance 16 threads";TCMalloc;1375;672;1472820
+"Raw Performance 31 threads";TCMalloc;1546;578;1492020
+"Raw Performance 64 threads";TCMalloc;8188;1359;1534260
+"ReallocMem Large (1-952224b)";TCMalloc;4890;4891;1452340
+"ReallocMem Medium (1-4039b)";TCMalloc;12750;12750;1452340
+"ReallocMem Small (1-555b)";TCMalloc;15125;15125;1452340
+"Single Variables Access  3 arrays at a time";TCMalloc;1500;1500;1453620
+"Single Variables Access  6 arrays at a time";TCMalloc;1437;1438;1453620
+"Single-threaded allocate, use and free";TCMalloc;16954;16953;1452340
+"Single-threaded reallocate and use";TCMalloc;6750;6750;1452340
+"Single-threaded tiny reallocate and use";TCMalloc;5797;5796;1452340
+"Small upsize";TCMalloc;8390;8391;1452340
+"Sort Extended Array";TCMalloc;90297;13907;1462580
+"Sort Integer Array";TCMalloc;10344;10360;1453620
+"String  2 Thread Test";TCMalloc;8953;4672;1452340
+"String  4 Thread Test";TCMalloc;12781;4125;1452340
+"String  8 Thread Test";TCMalloc;16251;4047;1452340
+"String 12 Thread Test";TCMalloc;21702;4016;1452340
+"String 16 Thread Test";TCMalloc;25423;3984;1452340
+"String 31 Thread Test";TCMalloc;30562;4000;1452340
+"String 64 Thread Test";TCMalloc;30515;3969;1452340
+"Tiny downsize";TCMalloc;2969;2968;1452340
+"Transient threaded objects (96 threads)";TCMalloc;1360;172;1575220
+"VerySmall downsize";TCMalloc;484;484;1452340

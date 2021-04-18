@@ -2,7 +2,7 @@ object PerformanceForm: TPerformanceForm
   Left = 179
   Top = 89
   BorderWidth = 4
-  Caption = 'Compare performace for Memory Managers'#39' tests'
+  Caption = 'Compare Performance for Memory Managers'#39' tests'
   ClientHeight = 574
   ClientWidth = 1184
   Color = clBtnFace

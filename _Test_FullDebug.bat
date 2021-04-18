@@ -1,0 +1,6 @@
+rem 64 bit
+FastMM4_FullDebug\Win64\MemoryManagerTest_FASTMM4_FullDebug_64.exe autorun
+FastMM5_FullDebug\Win64\MemoryManagerTest_FASTMM5_FullDebug_64.exe autorun
+rem 32 bit
+FastMM4_FullDebug\Win32\MemoryManagerTest_FASTMM4_FullDebug_32.exe autorun
+FastMM5_FullDebug\Win32\MemoryManagerTest_FASTMM5_FullDebug_32.exe autorun
