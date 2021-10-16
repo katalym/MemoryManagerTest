@@ -17,7 +17,7 @@ type
     actPopupClearAllCheckMarks: TAction;
     actPopupSelectAllCheckMarks: TAction;
     actRunAllCheckedBenchmarks: TAction;
-    actRunSelectedBenchmark: TAction;
+    actRunUsageReplayBenchmark: TAction;
     alActions: TActionList;
     btnCopyResultsToClipboard: TToolButton;
     btnDeleteTestResults: TToolButton;
@@ -46,6 +46,9 @@ type
     TabSheetProgress: TTabSheet;
     tmrAutoRun: TTimer;
     ToolBar1: TToolBar;
+    N1: TMenuItem;
+    mniRunAllCheckedBenchmarks: TMenuItem;
+    mniRunUsageReplayBenchmark: TMenuItem;
     procedure actCopyResultsToClipboardExecute(Sender: TObject);
     procedure actDeletelTestResultsExecute(Sender: TObject);
     procedure actPopupCheckAllDefaultBenchmarksExecute(Sender: TObject);
@@ -53,7 +56,7 @@ type
     procedure actPopupClearAllCheckMarksExecute(Sender: TObject);
     procedure actPopupSelectAllCheckMarksExecute(Sender: TObject);
     procedure actRunAllCheckedBenchmarksExecute(Sender: TObject);
-    procedure actRunSelectedBenchmarkExecute(Sender: TObject);
+    procedure actRunUsageReplayBenchmarkExecute(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -108,7 +111,7 @@ implementation
 
 uses
   BenchmarkUtilities, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit, System.StrUtils,
-  VCL.Dialogs;
+  VCL.Dialogs, ReplayBenchmarkUnit;
 
 {$R *.dfm}
 
@@ -232,25 +235,24 @@ begin
     SaveResults;
 end;
 
-procedure TBenchmarkFrm.actRunSelectedBenchmarkExecute(Sender: TObject);
+procedure TBenchmarkFrm.actRunUsageReplayBenchmarkExecute(Sender: TObject);
 begin
   Screen.Cursor := crHourglass;
 
   if lvBenchmarkList.Selected = nil then
     Exit;
 
-  actRunSelectedBenchmark.Caption := 'Running';
   Enabled := False;
   Application.ProcessMessages;
   Enabled := True;
   try
 
-    RunBenchmarks(Benchmarks[NativeInt(lvBenchmarkList.Selected.Data)]);
+    RunBenchmarks(TReplayBenchmark);
+
     if FRanBenchmarkCount > 0 then
       SaveResults;
 
   finally
-    actRunSelectedBenchmark.Caption := 'Run Selected Benchmark';
     Enabled := False;
     Application.ProcessMessages;
     Enabled := True;
