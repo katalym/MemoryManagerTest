@@ -14,5 +14,5 @@
   {$DEFINE FullDebug}
 {$ENDIF}
 {$IFDEF MM_FASTMM5_FullDebug}
-  {$DEFINE FullDebug}
+  {$DEFINE FastMM_FullDebug}
 {$ENDIF}
