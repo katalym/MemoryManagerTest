@@ -41,5 +41,5 @@ if %errorlevel% NEQ 0 goto errorexit
 exit /B 0
 
 :errorexit
-echo script failed with error: %errorlevel%
+echo script %0 failed with error: %errorlevel%
 pause
