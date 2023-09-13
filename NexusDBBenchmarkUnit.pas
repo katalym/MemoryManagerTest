@@ -112,7 +112,7 @@ type
 implementation
 
 uses
-  PrimeNumbers;
+  PrimeNumbers, bvDataTypes;
 
 const
   NexusIterationDivider = 1;
@@ -162,7 +162,7 @@ begin
     for i := 0 to FBenchmark.IterationCount + 1 do // RH replaced 1 * 1000 * 1000 by FBenchmark.IterationCount
     begin
       Inc(CurValue, Prime);
-      j := (CurValue mod (16 * 1024)) + 1;
+      j := bvInt64ToInt((CurValue mod (16 * 1024)) + 1);
 
       GetMem(p, j);
       k := 0;
@@ -175,7 +175,7 @@ begin
       L.Add(p);
       // PLR - Reduced the count from 4K to 2K to lower memory usage
       Inc(CurValue, Prime);
-      j := (CurValue mod (2 * 1024));
+      j := bvInt64ToInt((CurValue mod (2 * 1024)));
       if j < L.Count then begin
         p := L[j];
         L.Delete(j);
@@ -200,11 +200,11 @@ begin
     for i := 0 to FBenchmark.IterationCount + 1 do // RH replaced 1 * 1000 * 1000 by FBenchmark.IterationCount
     begin
       Inc(CurValue, Prime);
-      j := CurValue mod MaxItems;
+      j := bvInt64ToInt(CurValue mod MaxItems);
       L.Add(TestClass[j + 1].Create());
       // PLR - Reduced the count from 4K to 2K to lower memory usage
       Inc(CurValue, Prime);
-      j := CurValue mod (2 * 1024);
+      j := bvInt64ToInt(CurValue mod (2 * 1024));
       if j < L.Count then
       begin
         TComponent(L[j]).Free;
@@ -230,7 +230,7 @@ begin
     begin
       aString := '';
       Inc(CurValue, Prime);
-      jm := CurValue mod 250;
+      jm := bvInt64ToInt(CurValue mod 250);
       for j := 0 to jm do
       begin // Iterate
         aString := aString + 'A';
@@ -243,7 +243,7 @@ begin
 
       // PLR - Reduced the count from 4K to 2K to lower memory usage
       Inc(CurValue, Prime);
-      j := CurValue mod (2 * 1024);
+      j := bvInt64ToInt(CurValue mod (2 * 1024));
       if j < SL.Count then
       begin
         SL.Delete(j);
@@ -303,7 +303,7 @@ begin
     if FThreads = nil then
       FThreads := TList.Create;
     T := TTestThread.Create(Self);
-    T.Prime := VeryGoodPrimes[PrimeIndex];
+    T.Prime := bvCardinalToInt(VeryGoodPrimes[PrimeIndex]);
     Inc(PrimeIndex);
     if PrimeIndex > high(VeryGoodPrimes) then
       PrimeIndex := low(VeryGoodPrimes);

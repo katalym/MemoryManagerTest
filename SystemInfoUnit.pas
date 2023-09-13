@@ -12,10 +12,10 @@ uses Windows;
 
 type
   TVersion = record
-    Major: integer;
-    Minor: integer;
-    Release: integer;
-    Build: integer;
+    Major: Cardinal;
+    Minor: Cardinal;
+    Release: Cardinal;
+    Build: Cardinal;
   end;
 
   PVS_FIXEDFILEINFO = ^VS_FIXEDFILEINFO;
@@ -31,7 +31,7 @@ uses
 {$IFNDEF fpc}
   System.AnsiStrings,
 {$ENDIF}
-  SysUtils, System.Win.ComObj, System.Variants, Winapi.ActiveX;
+  SysUtils, System.Win.ComObj, System.Variants, Winapi.ActiveX, bvDataTypes;
 
 function GetModuleVersionDFL(ModuleFileName: string; var Ver: TVersion; Product: Boolean = False): string; forward;
 
@@ -59,8 +59,7 @@ function CheckHTEnabledThread(Param: Pointer): DWORD; stdcall; forward;
 function CountCPUsAMD: TCpuCount; forward;
 function CountCPUsIntel: TCpuCount; forward;
 procedure CpuId(InfoIndex: LongWord; out Res: TCpuIdRecord); forward;
-function GetCPUName(const VendorString: AnsiString;
-  CPUType, CPUFamily, CPUModel, CPUStepping: integer; const CPUMHz: Double): AnsiString; forward;
+function GetCPUName(const VendorString: AnsiString; CPUType, CPUFamily, CPUModel, CPUStepping: LongWord; const CPUMHz: Double): AnsiString; forward;
 function RdTsc: Int64; forward;
 
 function CalculateFrequencyCPU: Double;
@@ -107,11 +106,11 @@ begin
   SetLength(ApicIds, CpuCount.Log);
   SetLength(Threads, CpuCount.Log);
 {$WARN SYMBOL_PLATFORM OFF}
-  for I := low(Threads) to high(Threads) do
+  for I := bvNativeIntToInt(low(Threads)) to bvNativeIntToInt(high(Threads)) do
     Threads[I] := 0;
   try
 
-    for I := low(Threads) to high(Threads) do
+    for I := bvNativeIntToInt(low(Threads)) to bvNativeIntToInt(high(Threads)) do
     begin
       Threads[I] := CreateThread(nil, 0, @CheckHTEnabledThread, @ApicIds[I], CREATE_SUSPENDED, ThreadId);
       Win32Check(Threads[I] <> 0);
@@ -121,22 +120,22 @@ begin
 
     PP := @(Threads[0]);
     P := PP;
-    D := WaitForMultipleObjects(Length(Threads), P, True, 1000) - WAIT_OBJECT_0;
+    D := WaitForMultipleObjects(Cardinal(Length(Threads)), P, True, 1000) - WAIT_OBJECT_0;
     LT := low(Threads);
-    HT := high(Threads);
+    HT := Cardinal(high(Threads));
 {$WARN COMPARISON_TRUE OFF}
     B := (D >= LT) and (D <= HT);
 {$WARN COMPARISON_TRUE ON}
     Win32Check(B);
 
   finally
-    for I := low(Threads) to high(Threads) do
+    for I := bvNativeIntToInt(low(Threads)) to bvNativeIntToInt(high(Threads)) do
       if Threads[I] <> 0 then
         CloseHandle(Threads[I]);
   end;
 {$WARN SYMBOL_PLATFORM ON}
   Result := False;
-  for I := low(ApicIds) to high(ApicIds) do
+  for I := bvNativeIntToInt(low(ApicIds)) to bvNativeIntToInt(high(ApicIds)) do
     if ApicIds[I] and 1 <> 0 then
     begin
       Result := True;
@@ -259,7 +258,7 @@ asm
 end;
 {$ENDIF}
 
-function GetCPUName(const VendorString: AnsiString; CPUType, CPUFamily, CPUModel, CPUStepping: integer; const CPUMHz: Double): AnsiString;
+function GetCPUName(const VendorString: AnsiString; CPUType, CPUFamily, CPUModel, CPUStepping: LongWord; const CPUMHz: Double): AnsiString;
 begin
   Result := '';
   if VendorString = 'GenuineIntel' then
@@ -406,7 +405,7 @@ end;
 
 function GetModuleVersionDFL(ModuleFileName: string; var Ver: TVersion; Product: Boolean = False): string;
 var
-  VersionBufferLength: integer;
+  VersionBufferLength: Cardinal;
   PVersionBuffer: Pointer;
   Dummy: DWORD;
   PFixedFileInfo: PVS_FIXEDFILEINFO;
@@ -418,7 +417,7 @@ begin
   Ver.Release := 0;
   Ver.Build := 0;
   VersionBufferLength := GetFileVersionInfoSize(PChar(ModuleFileName), Dummy);
-  PVersionBuffer := AllocMem(VersionBufferLength);
+  PVersionBuffer := AllocMem(bvCardinalToNativeInt(VersionBufferLength));
   if (PVersionBuffer <> nil) then
   begin
     if (GetFileVersionInfo(PChar(ModuleFileName), VersionBufferLength,

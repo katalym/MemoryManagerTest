@@ -14,7 +14,7 @@ type
   protected
     // The operations
     FOperations: PMMOperationArray;
-    FPointers: TDictionary<integer, pointer>;
+    FPointers: TDictionary<Cardinal, pointer>;
   public
     class function GetBenchmarkDescription: string; override;
     class function GetBenchmarkName: string; override;
@@ -43,7 +43,7 @@ type
 implementation
 
 uses
-  BenchmarkUtilities, System.UITypes, CPU_Usage_Unit;
+  BenchmarkUtilities, System.UITypes, CPU_Usage_Unit, bvDataTypes;
 
 type
   // The replay thread used in multi-threaded replay benchmarks
@@ -180,7 +180,7 @@ procedure TReplayBenchmark.RunReplay;
     // Get a pointer to the first operation
     vOperation := pointer(FOperations);
     // Get the number of operations to perform
-    vOperations := aArraySize div SizeOf(TMMOperation);
+    vOperations := bvInt64ToCardinal(aArraySize div SizeOf(TMMOperation));
 
     // Perform all the operations
     for i := 0 to vOperations - 1 do
@@ -237,7 +237,7 @@ var
   p: pointer;
 begin
 
-  FPointers := TDictionary<integer, pointer>.Create(1024*1024);
+  FPointers := TDictionary<Cardinal, pointer>.Create(1024*1024);
   try
     FOperations := VirtualAlloc(nil, SizeOf(TMMOperationArray), MEM_COMMIT, PAGE_READWRITE);
     try
@@ -312,7 +312,7 @@ begin
   // Get a pointer to the first operation
   vOperation := pointer(FOperations);
   // Get the number of operations to perform
-  vOperations := length(FPointers);
+  vOperations := bvInt64ToCardinal(length(FPointers));
   // Perform all the operations
   for i := 0 to vOperations - 1 do
   begin
@@ -362,7 +362,7 @@ begin
       Sleep(0);
   end;
   // Make sure all memory is released to avoid memory leaks in benchmark
-  for i := 0 to high(FPointers) do
+  for i := 0 to bvInt64ToCardinal(high(FPointers)) do
     if FPointers[i] <> nil then
       FreeMem(FPointers[i]);
 end;

@@ -68,7 +68,6 @@ begin
   Result := string(PAnsiChar(@Buffer[0]));
 end;
 
-
 function GetMem(Size: NativeInt): Pointer;
 begin
   Result := tc_malloc(size);

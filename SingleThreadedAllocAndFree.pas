@@ -21,6 +21,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 class function TSingleThreadAllocateAndFreeBenchmark.GetBenchmarkDescription: string;
 begin
   Result := 'A single-threaded benchmark that allocates and frees memory blocks. '
@@ -79,7 +82,7 @@ begin
     else
       vMax := 256 * 1024;
     {Get the size, minimum 1}
-    vSize := (vValue mod vMax) + 1;
+    vSize := bvInt64ToInt((vValue mod vMax) + 1);
     Inc(vValue, Prime);
     {Get the pointer}
     GetMem(vPointers^[i], vSize);
@@ -106,12 +109,12 @@ begin
       else
         vMax := 256 * 1024;
       {Get the size, minimum 1}
-      vSize := (vValue mod vMax) + 1;
+      vSize := bvInt64ToInt((vValue mod vMax) + 1);
       Inc(vValue, Prime);
       {Get the pointer}
       GetMem(vPointers^[i], vSize);
       {Write the memory}
-      for vLoop := 0 to (vSize - 1) div 32 do
+      for vLoop := 0 to bvIntToCardinal((vSize - 1) div 32) do
       begin
         vCalc := vLoop;
         PByte(NativeUInt(vPointers^[i]) + vCalc * 32)^ := byte(i);
@@ -120,7 +123,7 @@ begin
       vSum := 0;
       if vSize > 15 then
       begin
-        for vLoop := 0 to (vSize - 16) div 32 do
+        for vLoop := 0 to bvIntToCardinal((vSize - 16) div 32) do
         begin
           vCalc := vLoop;
           Inc(vSum, PShortInt(NativeUInt(vPointers^[i]) + vCalc * 32 + 15)^);

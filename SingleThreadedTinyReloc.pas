@@ -18,6 +18,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 const
   IterationsCount = 120000;
 
@@ -73,7 +76,7 @@ begin
     else
       LMax := 521 {prime};
     {Get the size, minimum 1}
-    LSize := (CurValue mod LMax) + 1;
+    LSize := bvInt64ToInt((CurValue mod LMax) + 1);
     Inc(CurValue, Prime);
     {Get the pointer}
     GetMem(LPointers^[i], LSize);
@@ -97,13 +100,13 @@ begin
       else
         LMax := 521 {prime};
       {Get the size, minimum 1}
-      LSize := (CurValue mod LMax) + 1;
+      LSize := bvInt64ToInt((CurValue mod LMax) + 1);
       Inc(CurValue, Prime);
 
       {Reallocate the pointer}
       ReallocMem(LPointers^[i], LSize);
       {Write the memory}
-      for kloop := 0 to (LSize - 1) div 32 do
+      for kloop := 0 to bvIntToCardinal((LSize - 1) div 32) do
       begin
         kcalc := kloop;
         PByte(NativeUint(LPointers^[i]) + kcalc * 32)^ := byte(i);
@@ -112,7 +115,7 @@ begin
       LSum := 0;
       if LSize > 15 then
       begin
-        for kloop := 0 to (LSize - 16) div 32 do
+        for kloop := 0 to bvIntToCardinal((LSize - 16) div 32) do
         begin
           kcalc := kloop;
           Inc(LSum, PShortInt(NativeUint(LPointers^[i]) + kcalc * 32 + 15)^);

@@ -107,8 +107,8 @@ procedure TReallocBenchAbstract.RunBenchmark;
 const
   Prime = 10513;
 var
-  sz, i, LPointerNumber, FIterCount, NumPointers, BlockSizeDelta, MaxBlockSize, MinBlockSize: Integer;
-  CurValue: Int64;
+  sz, i, FIterCount, NumPointers, BlockSizeDelta, MaxBlockSize, MinBlockSize: Integer;
+  CurValue, LPointerNumber: Int64;
   P: PAnsiChar;
 begin
   {Call the inherited handler}
@@ -126,7 +126,7 @@ begin
     LPointerNumber := CurValue mod NumPointers;
     Inc(CurValue, Prime);
     {Adjust the current block size up or down by up to BlockSizeDelta}
-    BlockSizes^[LPointerNumber] := abs(BlockSizes^[LPointerNumber] + (CurValue mod BlockSizeDelta) - (BlockSizeDelta shr 1) - ((i and 7) mod BlockSizeDelta));
+    BlockSizes^[LPointerNumber] := Integer(abs(BlockSizes^[LPointerNumber] + (CurValue mod BlockSizeDelta) - (BlockSizeDelta shr 1) - ((i and 7) mod BlockSizeDelta)));
     Inc(CurValue, Prime);
     {Reallocate the pointer}
     if MaxBlockSize < BlockSizes^[LPointerNumber] then

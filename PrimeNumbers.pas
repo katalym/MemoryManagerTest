@@ -8,7 +8,7 @@ var
 implementation
 
 uses
-  Windows, BitOps, System.SysUtils;
+  Windows, BitOps, System.SysUtils, bvDataTypes;
 
 const
   PrimeNumberValuesWords: packed array [0 .. 6541] of Word = (
@@ -797,7 +797,7 @@ procedure FindGoodPrimes;
     end
     else
     begin
-      pc := Byte(PopCnt16(w));
+      pc := bvWordToByte(PopCnt16(bvCardinalToWord(w)));
     end;
     nb := Byte(NumBits(w));
     // PrimePopCnt[i] := pc;

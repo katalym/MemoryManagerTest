@@ -31,6 +31,9 @@ function TestNumbits: Boolean;
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 function NumBits(X: Cardinal): Cardinal; assembler;
 asm
   {$IFDEF Win64}
@@ -77,7 +80,7 @@ procedure LowerPrecDW(var A, B: Cardinal; Bits: Byte);
 var
   c: ShortInt;
 begin
-  c := MaxC(NumBits(A), NumBits(B));
+  c := bvCardinalToShortInt(MaxC(NumBits(A), NumBits(B)));
   Dec(c, Bits);
   if c <= 0 then
     Exit;
@@ -89,7 +92,7 @@ procedure LowerPrec64(var A, B: Int64; Bits: Byte);
 var
   c: ShortInt;
 begin
-  c := MaxC(NumBits64(A), NumBits64(B));
+  c := bvCardinalToShortInt(MaxC(NumBits64(A), NumBits64(B)));
   Dec(c, Bits);
   if c <= 0 then
     Exit;

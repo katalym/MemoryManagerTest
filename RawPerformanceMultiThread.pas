@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils, bvDataTypes;
 
 type
   TRawPerformanceThread = class(TThread)
@@ -82,7 +82,7 @@ var
   vToJ, i, j, n, vSize, vIndex: Cardinal;
   vStrings: array [0 .. POINTERS - 1] of string;
 begin
-  vToJ := (REPEATS div FThreadCount) + 1;
+  vToJ := bvIntToCardinal((REPEATS div FThreadCount) + 1);
   for j := 1 to vToJ do
   begin
     n := low(vStrings);

@@ -126,10 +126,10 @@ begin
     if CurPriority = (tpHigher) then
     begin
       CurPriority := tpLowest;
-    end
-    else
-    begin
-      CurPriority := Succ(CurPriority);
+    end else begin
+      {$WARN SYMBOL_PLATFORM OFF}
+      CurPriority := TThreadPriority(Ord(CurPriority) + 1);
+      {$WARN SYMBOL_PLATFORM ON}
     end;
     wild.e := e;
     wild.m := m;

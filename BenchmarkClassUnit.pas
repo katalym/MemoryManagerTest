@@ -20,7 +20,7 @@ type
       discovered, possibly during create}
     FCanRunBenchmark: Boolean;
     // The peak address space usage measured
-    FPeakAddressSpaceUsage: Int64;
+    FPeakAddressSpaceUsage: NativeUInt;
     // Gets the memory overhead of the benchmark that should be subtracted
     function GetBenchmarkOverhead: NativeUInt; virtual;
   public
@@ -48,7 +48,7 @@ type
       discovered, possibly during create}
     property CanRunBenchmark: Boolean read FCanRunBenchmark;
     // The peak usage measured since the last reset
-    property PeakAddressSpaceUsage: Int64 read FPeakAddressSpaceUsage;
+    property PeakAddressSpaceUsage: NativeUInt read FPeakAddressSpaceUsage;
   end;
 
   TMMBenchmarkClass = class of TMMBenchmark;

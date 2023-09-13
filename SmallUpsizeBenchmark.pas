@@ -34,6 +34,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 constructor TSmallUpsizeBench.CreateBenchmark;
 begin
   inherited;
@@ -81,7 +84,7 @@ begin
     for i := low(FPointers) to high(FPointers) do
     begin
       {Get the initial block size}
-      LSize := 1 + (CurValue mod MaxBlockSize);
+      LSize := bvInt64ToInt(1 + (CurValue mod MaxBlockSize));
       Inc(CurValue, Prime);
       ReallocMem(FPointers[i], LSize);
       FPointers[i][0] := #13;
@@ -92,7 +95,7 @@ begin
       {Reallocate it a few times}
       for j := 1 to 3 do
       begin
-        LSize := LSize + (CurValue mod MaxBlockSize);
+        LSize := bvInt64ToInt(LSize + (CurValue mod MaxBlockSize));
         Inc(CurValue, Prime);
         ReallocMem(FPointers[i], LSize);
         if LSize > 2 then

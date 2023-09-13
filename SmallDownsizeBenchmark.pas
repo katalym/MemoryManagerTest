@@ -40,6 +40,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 constructor TSmallDownsizeBenchAbstract.CreateBenchmark;
 begin
   inherited;
@@ -79,10 +82,10 @@ begin
   // vTotal := 0;
   for k := 1 to IterationsCount do
   begin
-    for i := low(FPointers) to high(FPointers) do
+    for i := bvNativeIntToInt(low(FPointers)) to bvNativeIntToInt(high(FPointers)) do
     begin
       {Get the initial block size}
-      LSize := MaxBlockSize + (CurValue mod (3 * MaxBlockSize));
+      LSize := bvInt64ToInt(MaxBlockSize + (CurValue mod (3 * MaxBlockSize)));
       // if vTotal + LSize > 1600000000 then
       // begin
       // vTotal := vTotal;
@@ -97,7 +100,7 @@ begin
       {Reallocate it a few times}
       for j := 1 to 5 do
       begin
-        LSize := Max(1, LSize - (CurValue mod MaxBlockSize));
+        LSize := bvInt64ToInt(Max(1, LSize - (CurValue mod MaxBlockSize)));
         Inc(CurValue, Prime);
         ReallocMem(FPointers[i], LSize);
         FPointers[i][0] := #13;
@@ -105,7 +108,7 @@ begin
           FPointers[i][LSize - 1] := #13;
       end;
     end;
-    for i := low(FPointers) to high(FPointers) do
+    for i := bvNativeIntToInt(low(FPointers)) to bvNativeIntToInt(high(FPointers)) do
     begin
       FreeMem(FPointers[i]);
       FPointers[i] := nil;

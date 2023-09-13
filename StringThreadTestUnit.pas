@@ -73,7 +73,7 @@ procedure NotifyValidationError;
 implementation
 
 uses
-  Math, StringThread, windows, sysutils, Classes, PrimeNumbers;
+  Math, StringThread, windows, sysutils, Classes, PrimeNumbers, bvDataTypes;
 
 var
   RunningThreads: Integer;
@@ -193,8 +193,8 @@ begin
     vThread.Suspended := False;
   end;
 
-  wr := WaitForMultipleObjects(vThreads.Count, vHandles, True, INFINITE);
-  wrc := WAIT_OBJECT_0 + vThreads.Count;
+  wr := WaitForMultipleObjects(bvIntToCardinal(vThreads.Count), vHandles, True, INFINITE);
+  wrc := bvIntToCardinal(WAIT_OBJECT_0 + vThreads.Count);
 {$WARN COMPARISON_FALSE OFF}
   if (wr < WAIT_OBJECT_0) or (wr > wrc) then
   begin

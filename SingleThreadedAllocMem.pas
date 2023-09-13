@@ -20,6 +20,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes;
+
 class function TSingleThreadAllocMemBenchmark.GetBenchmarkDescription: string;
 begin
   Result := 'A single-threaded benchmark that tests the speed and validity of AllocMem.  '
@@ -70,7 +73,7 @@ begin
       {Free the pointer}
       FreeMem(LPointers[i]);
       {Get the size, minimum 1}
-      LSize := (CurValue mod MaxBlockSize) + 1;
+      LSize := bvInt64ToInt((CurValue mod MaxBlockSize) + 1);
       Inc(CurValue, Prime);
       {Get the pointer}
       LPointers[i] := AllocMem(LSize);

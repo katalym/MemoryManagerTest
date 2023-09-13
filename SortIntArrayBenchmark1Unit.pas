@@ -20,7 +20,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils, bvDataTypes;
 
 type
 
@@ -51,7 +51,7 @@ begin
     // Fill array with arbitrary values
     for I1 := 0 to Size - 1 do
     begin
-      IntArray[I1] := FCurValue mod MaxValue;
+      IntArray[I1] := bvInt64ToInt(FCurValue mod MaxValue);
       Inc(FCurValue, FPrime);
     end;
     // Sort array just to create an acces pattern

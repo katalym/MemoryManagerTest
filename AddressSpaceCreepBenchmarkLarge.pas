@@ -34,6 +34,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 constructor TAddressSpaceCreepBenchLarge.CreateBenchmark;
 begin
   inherited;
@@ -65,7 +68,8 @@ procedure TAddressSpaceCreepBenchLarge.RunBenchmark;
 const
   Prime = 43;
 var
-  i, j, LSize, LOffset: integer;
+  i, j: integer;
+  LSize, LOffset: NativeInt;
   NextValue {, vTotal} : Int64;
 begin
   {Call the inherited handler}
@@ -75,7 +79,7 @@ begin
   {Allocate the pointers}
   for i := low(FPointers) to high(FPointers) do begin
     {Get an initial size}
-    LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
+    LSize := bvInt64ToNativeInt(1 + (MaxBlockSize + NextValue) mod MaxBlockSize);
     Inc(NextValue, Prime); // a prime number
     // if vTotal + LSize > 1600000000 then
     // begin
@@ -96,7 +100,7 @@ begin
       {Free the pointer}
       FreeMem(FPointers[i]);
       {Get the new size}
-      LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
+      LSize := bvInt64ToInt(1 + (MaxBlockSize + NextValue) mod MaxBlockSize);
       Inc(NextValue, Prime); // a prime number
       // if vTotal + LSize > 1600000000 then
       // begin

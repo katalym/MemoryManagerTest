@@ -34,6 +34,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 const
   IterationCount = 5;
 
@@ -80,7 +83,7 @@ begin
     for i := 0 to high(FPointers) do
     begin
       {Get the block}
-      LSize := (1 + (NextValue mod 3)) * BlockSize;
+      LSize := bvInt64ToInt((1 + (NextValue mod 3)) * BlockSize);
       Inc(NextValue, Prime);
       GetMem(FPointers[i], LSize);
       {Fill the memory}

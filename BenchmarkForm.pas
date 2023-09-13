@@ -73,7 +73,7 @@ type
     procedure AddResultsToDisplay(
       const aBenchName, aMMName: string;
       const aCpuUsage: Int64;
-      const aTicks, aPeak: Cardinal);
+      const aTicks, aPeak: NativeUInt);
     procedure DoActivateForm;
     procedure InitResultsDisplay;
     procedure LoadResultsToDisplay;
@@ -111,7 +111,7 @@ implementation
 
 uses
   BenchmarkUtilities, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit, System.StrUtils,
-  VCL.Dialogs, ReplayBenchmarkUnit;
+  VCL.Dialogs, ReplayBenchmarkUnit, bvDataTypes;
 
 {$R *.dfm}
 
@@ -263,7 +263,7 @@ end;
 procedure TBenchmarkFrm.AddResultsToDisplay(
   const aBenchName, aMMName: string;
   const aCpuUsage: Int64;
-  const aTicks, aPeak: Cardinal);
+  const aTicks, aPeak: NativeUInt);
 var
   Item: TListItem;
 begin
@@ -431,8 +431,8 @@ begin
 
         MMName := Bench[RESULTS_MM];
         vCPUUsage := Max(StrToIntDef(Bench[RESULTS_CPUUSAGE], 0), 0);
-        vTicks := Max(StrToIntDef(Bench[RESULTS_TICKS], 0), 0);
-        vPeak := Max(StrToIntDef(Bench[RESULTS_MEM], 0), 0);
+        vTicks := Cardinal(Max(StrToIntDef(Bench[RESULTS_TICKS], 0), 0));
+        vPeak := Cardinal(Max(StrToIntDef(Bench[RESULTS_MEM], 0), 0));
 
         AddResultsToDisplay(BenchName, MMName, vCPUUsage, vTicks, vPeak);
       end;
@@ -460,7 +460,7 @@ begin
   // Set the benchmark description
   if (Item <> nil) and Selected then
   begin
-    LBenchmarkClass := Benchmarks[NativeInt(Item.Data)];
+    LBenchmarkClass := Benchmarks[bvNativeIntToInt(NativeInt(Item.Data))];
     if Assigned(LBenchmarkClass) then
     begin
       mBenchmarkDescription.Text := LBenchmarkClass.GetBenchmarkDescription;

@@ -18,7 +18,7 @@ type
 
 implementation
 
-uses SysUtils;
+uses SysUtils, bvDataTypes;
 
 type
   TMemFreeThread1 = class(TThread)
@@ -51,14 +51,14 @@ begin
   for J := 1 to RUNS do
   begin
     AllocSizeFP := 1;
-    for I := 0 to Length(PointerArray) - 1 do
+    for I := 0 to bvInt64ToInt(Length(PointerArray) - 1) do
     begin
       AllocSizeFP := AllocSizeFP + ALLOCGROWSTEPSIZE;
-      AllocSize := Round(AllocSizeFP);
+      AllocSize := bvInt64ToInt(Round(AllocSizeFP));
       GetMem(PointerArray[I], AllocSize);
     end;
     // Free
-    for I := 0 to Length(PointerArray) - 1 do
+    for I := 0 to bvInt64ToInt(Length(PointerArray) - 1) do
       FreeMem(PointerArray[I]);
   end;
   SetLength(PointerArray, 0);

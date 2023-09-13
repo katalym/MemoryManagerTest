@@ -34,6 +34,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 const
   IterationsCount = 36;
 
@@ -78,7 +81,7 @@ begin
   for i := 0 to high(FPointers) do
   begin
     // Get an initial size
-    LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
+    LSize := bvInt64ToInt(1 + (MaxBlockSize + NextValue) mod MaxBlockSize);
     Inc(NextValue, Prime);
     // Allocate the pointer
     GetMem(FPointers[i], LSize);
@@ -98,7 +101,7 @@ begin
       FreeMem(FPointers[i]);
       FPointers[i] := nil;
       // Get the new size
-      LSize := 1 + (MaxBlockSize + NextValue) mod MaxBlockSize;
+      LSize := bvInt64ToInt(1 + (MaxBlockSize + NextValue) mod MaxBlockSize);
       Inc(NextValue, Prime);
       // Allocate the pointer
       GetMem(FPointers[i], LSize);

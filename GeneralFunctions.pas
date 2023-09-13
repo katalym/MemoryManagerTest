@@ -574,7 +574,7 @@ begin
   RDTSCTicks := RDTSCCountEnd - RDTSCCountStart;
   if RDTSCTicks < 0 then
     raise Exception.Create('Time stamp counter counter wrapped around');
-  Result := Round(RDTSCTicks / RunTimeSec / 1000000);
+  Result := Cardinal(Round(RDTSCTicks / RunTimeSec / 1000000));
 end;
 
 end.

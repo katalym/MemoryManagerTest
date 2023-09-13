@@ -116,6 +116,9 @@ var
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 type
   TRegisters = record
     EAX,
@@ -282,13 +285,13 @@ begin
   CPU.Signature := Registers.EAX;
 
   {extract effective processor family and model}
-  CPU.EffFamily := CPU.Signature and $00000F00 shr 8;
-  CPU.EffModel := CPU.Signature and $000000F0 shr 4;
+  CPU.EffFamily := bvNativeUIntToByte(CPU.Signature and $00000F00 shr 8);
+  CPU.EffModel := bvNativeUIntToByte(CPU.Signature and $000000F0 shr 4);
   CPU.EffModelBasic := CPU.EffModel;
   if CPU.EffFamily = $F then
   begin
-    CPU.EffFamily := CPU.EffFamily + (CPU.Signature and $0FF00000 shr 20);
-    CPU.EffModel := CPU.EffModel + (CPU.Signature and $000F0000 shr 12);
+    CPU.EffFamily := bvNativeUIntToByte(CPU.EffFamily + (CPU.Signature and $0FF00000 shr 20));
+    CPU.EffModel := bvNativeUIntToByte(CPU.EffModel + (CPU.Signature and $000F0000 shr 12));
   end;
 
   {get CPU features}
@@ -365,7 +368,7 @@ var
 begin
   {call CPUID function 2}
   GetCPUID($00000002, Registers);
-  QueryCount := Registers.EAX and $FF;
+  QueryCount := bvNativeUIntToByte(Registers.EAX and $FF);
   for i := 1 to QueryCount do
   begin
     for j := 1 to 15 do
@@ -479,8 +482,8 @@ begin
     Cyrix returns CPUID function 2 descriptors (already done), so ignore.}
   if not (CPU.Vendor in [cvIntel, cvCyrix]) then
   begin
-    CPU.CodeL1CacheSize := Registers.EDX shr 24;
-    CPU.DataL1CacheSize := Registers.ECX shr 24;
+    CPU.CodeL1CacheSize := bvCardinalToWord(Registers.EDX shr 24);
+    CPU.DataL1CacheSize := bvCardinalToWord(Registers.ECX shr 24);
   end;
 
   {call CPUID function $80000006}
@@ -494,9 +497,9 @@ begin
   else if (CPU.Vendor = cvCentaur) and (CPU.EffFamily = 6) and
     (CPU.EffModel in [C3Samuel2EffModel, C3EzraEffModel]) then
     {handle VIA (Centaur) C3 Samuel 2 and Ezra non-standard encoding}
-    CPU.L2CacheSize := Registers.ECX shr 24
+    CPU.L2CacheSize := bvCardinalToWord(Registers.ECX shr 24)
   else {standard encoding}
-    CPU.L2CacheSize := Registers.ECX shr 16;
+    CPU.L2CacheSize := bvCardinalToWord(Registers.ECX shr 16);
 end;
 
 procedure VerifyOSSupportForXMMRegisters;

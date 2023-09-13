@@ -21,6 +21,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 class function TSingleThreadReallocateVariousBlocksBenchmark.GetBenchmarkDescription: string;
 begin
   Result := 'A single-threaded benchmark that allocates and reallocates memory '
@@ -80,7 +83,7 @@ begin
     else
       LMax := 256 * 1024;
     {Get the size, minimum 1}
-    LSize := (CurValue mod LMax) + 1;
+    LSize := bvInt64ToInt((CurValue mod LMax) + 1);
     Inc(CurValue, Prime);
     {Get the pointer}
     GetMem(LPointers^[i], LSize);
@@ -104,13 +107,13 @@ begin
       else
         LMax := 256 * 1024;
       {Get the size, minimum 1}
-      LSize := (CurValue mod LMax) + 1;
+      LSize := bvInt64ToInt((CurValue mod LMax) + 1);
       Inc(CurValue, Prime);
 
       {Reallocate the pointer}
       ReallocMem(LPointers^[i], LSize);
       {Write the memory}
-      for kloop := 0 to (LSize - 1) div 32 do
+      for kloop := 0 to bvIntToCardinal((LSize - 1) div 32) do
       begin
         kcalc := kloop;
         PByte(NativeUint(LPointers^[i]) + kcalc * 32)^ := byte(i);
@@ -119,7 +122,7 @@ begin
       LSum := 0;
       if LSize > 15 then
       begin
-        for kloop := 0 to (LSize - 16) div 32 do
+        for kloop := 0 to bvIntToCardinal((LSize - 16) div 32) do
         begin
           kcalc := kloop;
           Inc(LSum, PShortInt(NativeUint(LPointers^[i]) + kcalc * 32 + 15)^);

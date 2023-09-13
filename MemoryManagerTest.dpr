@@ -54,6 +54,7 @@ uses
   BitOps in 'BitOps.pas',
   BlockSizeSpreadBenchmark in 'BlockSizeSpreadBenchmark.pas',
   CPU_Usage_Unit in 'CPU_Usage_Unit.pas',
+  bvDataTypes in 'bvDataTypes.pas',
   DoubleFPBenchmark1Unit in 'DoubleFPBenchmark1Unit.pas',
   DoubleFPBenchmark2Unit in 'DoubleFPBenchmark2Unit.pas',
   DoubleFPBenchmark3Unit in 'DoubleFPBenchmark3Unit.pas',

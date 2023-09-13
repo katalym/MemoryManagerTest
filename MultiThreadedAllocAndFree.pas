@@ -53,13 +53,14 @@ implementation
 
 uses
   SysUtils,
-  PrimeNumbers;
+  PrimeNumbers,
+  bvDataTypes;
 
 type
   TCreateAndFreeThread = class(TThread)
   public
     FCurValue: Int64;
-    FPrime: Integer;
+    FPrime: Cardinal;
     FRepeatCount: Integer;
     procedure Execute; override;
   end;
@@ -94,7 +95,7 @@ begin
       LMax := 256 * 1024;
     {Get the size, minimum 1}
     Inc(FCurValue, FPrime);
-    LSize := (FCurValue mod LMax) + 1;
+    LSize := bvInt64ToInt((FCurValue mod LMax) + 1);
     {Get the pointer}
     GetMem(LPointers[i], LSize);
   end;
@@ -118,11 +119,11 @@ begin
         LMax := 256 * 1024;
       {Get the size, minimum 1}
       Inc(FCurValue, FPrime);
-      LSize := (FCurValue mod LMax) + 1;
+      LSize := bvInt64ToInt((FCurValue mod LMax) + 1);
       {Get the pointer}
       GetMem(LPointers[i], LSize);
       {Write the memory}
-      for kloop := 0 to (LSize - 1) div 32 do
+      for kloop := 0 to bvIntToCardinal((LSize - 1) div 32) do
       begin
         kcalc := kloop;
         PByte(NativeUint(LPointers[i]) + kcalc * 32)^ := byte(i);
@@ -131,7 +132,7 @@ begin
       LSum := 0;
       if LSize > 15 then
       begin
-        for kloop := 0 to (LSize - 16) div 32 do
+        for kloop := 0 to bvIntToCardinal((LSize - 16) div 32) do
         begin
           kcalc := kloop;
           Inc(LSum, PShortInt(NativeUint(LPointers[i]) + kcalc * 32 + 15)^);

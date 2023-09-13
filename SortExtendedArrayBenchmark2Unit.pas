@@ -20,7 +20,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils, bvDataTypes;
 
 const
 {$IFDEF FullDebug}
@@ -62,7 +62,8 @@ end;
 procedure TQuickSortExtendedArrayThread.Execute;
 var
   ExtArray: PExtendedArray;
-  I, J, RunNo, Size: Integer;
+  I, J, RunNo: Integer;
+  Size: Integer;
   CurValue: Int64;
   List: TList;
 const
@@ -83,7 +84,7 @@ begin
     try
       for RunNo := 1 to MAXRUNNO do
       begin
-        Size := Min(high(ExtArray^), (CurValue mod (MAXSIZE - MINSIZE)) + MINSIZE);
+        Size := bvInt64ToInt(Min(high(ExtArray^), (CurValue mod (MAXSIZE - MINSIZE)) + MINSIZE));
         Inc(CurValue, Prime);
         ReallocMem(ExtArray, Size * SizeOf(TExtended));
         List := TList.Create;

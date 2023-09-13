@@ -38,6 +38,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 constructor TBlockSizeSpreadBench.CreateBenchmark;
 begin
   inherited;
@@ -81,7 +84,7 @@ begin
     for i := 0 to high(FPointers) do
     begin
       {Get the initial block size, assume object sizes are 4-byte aligned}
-      LSize := (1 + (MaxBlockSize + NextValue) mod NextValue) * 4;
+      LSize := bvInt64ToInt((1 + (MaxBlockSize + NextValue) mod NextValue) * 4);
       Inc(NextValue, Prime);
       GetMem(FPointers[i], LSize);
       FPointers[i][0] := #13;

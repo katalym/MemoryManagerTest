@@ -16,7 +16,7 @@ uses
 type
   TCPUUsageData = record
     FProcessID: cardinal;
-    FHandle: cardinal;
+    FHandle: NativeUint;
   end;
 
   PCPUUsageData = ^TCPUUsageData;
@@ -26,7 +26,8 @@ var
 
 function _CreateUsageCounter: Boolean;
 var
-  vHandle, vPID: cardinal;
+  vHandle: NativeUint;
+  vPID: Cardinal;
 begin
   vPID := GetCurrentProcessID;
 

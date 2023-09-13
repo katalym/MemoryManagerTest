@@ -20,7 +20,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils, bvDataTypes;
 
 const
 {$IFDEF FullDebug}
@@ -64,7 +64,7 @@ begin
   GetMem(ExtArray, MINSIZE * SizeOf(TExtended));
   for RunNo := 1 to MAXRUNNO do
   begin
-    Size := Min(high(ExtArray^), (CurValue mod (MAXSIZE - MINSIZE)) + MINSIZE);
+    Size := bvInt64ToInt(Min(high(ExtArray^), (CurValue mod (MAXSIZE - MINSIZE)) + MINSIZE));
     Inc(CurValue, Prime);
     // SetLength(ExtArray, Size);
     ReallocMem(ExtArray, Size * SizeOf(TExtended));

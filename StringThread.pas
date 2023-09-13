@@ -27,10 +27,9 @@ type
   protected
     procedure StringAction;
   public
-    FPrime: Integer;
+    FPrime: Cardinal;
     FEventHandle: THandle;
-    constructor Create(AIterations, AItems, AItemSize: Integer;
-      AValidate: Boolean); reintroduce;
+    constructor Create(AIterations, AItems, AItemSize: Integer; AValidate: Boolean); reintroduce;
     procedure Execute; override;
     function IsTerminated: Boolean;
   end;
@@ -44,7 +43,7 @@ function CheckPattern(const Dest: Pointer; const Size: Integer; const StartChar:
 implementation
 
 uses
-  StringThreadTestUnit;
+  StringThreadTestUnit, bvDataTypes;
 
 constructor TStringThreadEx.Create(AIterations, AItems, AItemSize: Integer;
   AValidate: Boolean);
@@ -97,9 +96,9 @@ begin
   SetLength(B, FStringItems);
   if cRandomSizes then
   begin
-    B1 := (FCurValue mod FSize) + 1;
+    B1 := bvInt64ToInt((FCurValue mod FSize) + 1);
     Inc(FCurValue, FPrime);
-    B2 := (FCurValue mod FSize) + 1;
+    B2 := bvInt64ToInt((FCurValue mod FSize) + 1);
     Inc(FCurValue, FPrime);
   end
   else
@@ -158,7 +157,7 @@ begin
   PC := 0;
   for I := 0 to Size - 1 do
   begin
-    TLargeByteArray(Dest^)[I] := StartChar + PC;
+    TLargeByteArray(Dest^)[I] := bvIntToByte(StartChar + PC);
     Inc(PC);
     if PC = 3 then
       PC := 0;

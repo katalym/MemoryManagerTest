@@ -22,6 +22,9 @@ type
 
 implementation
 
+uses
+  bvDataTypes, System.SysUtils;
+
 class function TDownsizeTest.GetBenchmarkDescription: string;
 begin
   Result := 'Allocates large blocks and immediately resizes them to a '
@@ -60,7 +63,7 @@ begin
   begin
     {Allocate a lot of strings}
     SetLength(FStrings, TotalStrings);
-    for i := low(FStrings) to high(FStrings) do begin
+    for i := bvNativeIntToInt(Low(FStrings)) to bvNativeIntToInt(high(FStrings)) do begin
       {Grab a 20K block}
       SetLength(FStrings[i], 20000);
       {Touch memory}

@@ -19,7 +19,7 @@ type
 
 implementation
 
-uses SysUtils;
+uses SysUtils, bvDataTypes;
 
 type
 
@@ -31,7 +31,7 @@ type
 
 function SortCompareInt(Item1, Item2: Pointer): Integer;
 begin
-  Result := NativeInt(Item1) - NativeInt(Item2);
+  Result := bvNativeIntToInt(NativeInt(Item1) - NativeInt(Item2));
 end;
 
 procedure TSortIntArrayThread.Execute;
@@ -60,7 +60,7 @@ begin
         List.Count := Size;
         for I := 0 to Size - 1 do
         begin
-          IntVal := FCurValue mod CMaxValue;
+          IntVal := bvInt64ToInt(FCurValue mod CMaxValue);
           Inc(FCurValue, FPrime);
           List[I] := Pointer(IntVal);
         end;
