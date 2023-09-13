@@ -1,6 +1,6 @@
 rem 64 bit
-rem BigBrain\Win64\MemoryManagerTest_BIGBRAIN_64.exe autorun - it is jjust to slow !!!
-rem BrainMM\Win64\MemoryManagerTest_BrainMM_64.exe autorun - it is jjust to slow !!!
+rem BigBrain\Win64\MemoryManagerTest_BIGBRAIN_64.exe autorun - it is just to slow !!!
+rem BrainMM\Win64\MemoryManagerTest_BrainMM_64.exe autorun - it is just to slow !!!
 Default\Win64\MemoryManagerTest_DEFAULT_64.exe autorun
 rem FastMM4\Win64\MemoryManagerTest_FASTMM4_64.exe autorun
 rem FastMM4_FullDebug\Win64\MemoryManagerTest_FASTMM4_FullDebug_64.exe autorun

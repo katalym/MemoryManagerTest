@@ -267,7 +267,7 @@ end;
 
 class function TMultiThreadReallocateBenchmark31.GetNumThreads: Integer;
 begin
-  Result := 31;
+  Result := 32;
 end;
 
 class function TMultiThreadReallocateBenchmark64.GetNumThreads: Integer;

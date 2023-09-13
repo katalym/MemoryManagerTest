@@ -271,7 +271,7 @@ end;
 
 class function TMultiThreadAllocateAndFreeBenchmark31.GetNumThreads: Integer;
 begin
-  Result := 31;
+  Result := 32;
 end;
 
 class function TMultiThreadAllocateAndFreeBenchmark64.GetNumThreads: Integer;

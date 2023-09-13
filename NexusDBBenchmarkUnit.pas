@@ -448,7 +448,7 @@ end;
 
 class function TNexusBenchmark31Threads.NumThreads: integer;
 begin
-  Result := 31;
+  Result := 32;
 end;
 
 class function TNexusBenchmark64Threads.IterationCount: integer;

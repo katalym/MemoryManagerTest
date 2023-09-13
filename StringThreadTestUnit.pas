@@ -352,7 +352,7 @@ end;
 
 class function TStringThreadTest31.NumThreads: Integer;
 begin
-  Result := 31;
+  Result := 32;
 end;
 
 class function TStringThreadTest64.NumThreads: Integer;
