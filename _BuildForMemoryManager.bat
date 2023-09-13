@@ -10,6 +10,7 @@ set DCC64="%DelphiBinPath%\dcc64.exe" -B -GD -$R+ -$Q+ -$O- -H+ -W+ -W-SYMBOL_PL
 rem for madexcept
 rem set DCC32="%DelphiBinPath%\dcc32.exe" -B -GD -$R+ -$Q+ -$O- -H+ -W+ -W-SYMBOL_PLATFORM -DMM_%1 -AGenerics.Collections=System.Generics.Collections;Generics.Defaults=System.Generics.Defaults;WinTypes=Winapi.Windows;WinProcs=Winapi.Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE -NSSystem.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell; -uMadExcept\Win32 -NU%1\Win32 MemoryManagerTest.dpr
 rem set DCC64="%DelphiBinPath%\dcc64.exe" -B -GD -$R+ -$Q+ -$O- -H+ -W+ -W-SYMBOL_PLATFORM -DMM_%1 -AGenerics.Collections=System.Generics.Collections;Generics.Defaults=System.Generics.Defaults;WinTypes=Winapi.Windows;WinProcs=Winapi.Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE -NSSystem.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;System;Xml;Data;Datasnap;Web;Soap;Winapi;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell; -uMadExcept\Win64 -NU%1\Win64 MemoryManagerTest.dpr
+echo --------------------------------------------------------- %FILENAME% -------------------------------------------------------
 echo Building %FILENAME% - 32 and 64 bit
 rem echo %DCC32%
 rem echo %DCC64%

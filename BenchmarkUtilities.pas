@@ -44,6 +44,9 @@ const
 {$IFDEF MM_BIGBRAIN}
   MemoryManager_Name = 'BigBrain';
 {$ENDIF}
+{$IFDEF MM_BrainMM}
+  MemoryManager_Name = 'BrainMM';
+{$ENDIF}
 {$IFDEF MM_FASTMM4}
   MemoryManager_Name = 'FastMM4';
 {$ENDIF}

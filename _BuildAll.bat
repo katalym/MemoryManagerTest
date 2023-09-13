@@ -38,6 +38,10 @@ echo Building for BIGBRAIN
 call _BuildForMemoryManager.bat BigBrain
 if %errorlevel% NEQ 0 goto errorexit
 
+echo Building for BrainMM
+call _BuildForMemoryManager.bat BrainMM
+if %errorlevel% NEQ 0 goto errorexit
+
 exit /B 0
 
 :errorexit

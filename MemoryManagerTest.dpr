@@ -43,6 +43,9 @@ uses
   BigBrainUltra in 'BigBrain/BigBrainUltra.pas',
   BrainWashUltra in 'BigBrain/BrainWashUltra.pas',
 {$ENDIF}
+{$IFDEF MM_BrainMM}
+  BrainMM in 'BrainMM/BrainMM.pas',
+{$ENDIF}
   {Other units}
   VCL.Forms,
   MMUsageLogger_MemotyOperationRecordUnit in 'UsageLogger/MMUsageLogger_MemotyOperationRecordUnit.pas',

@@ -8,6 +8,7 @@ Available Memory managers are (see MemoryManagerTest.inc)
 4. FastMM5
 5. ScaleMM2
 6. TCMalloc
+7. BrainMM
 
 It is modified version of FastCode memory manager challenge - you can find the original project here (not sure is any of them are supported):
 - http://fastcode.sourceforge.net/challenge_content/MemoryManager_v1.html
