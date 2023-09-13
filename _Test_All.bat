@@ -9,8 +9,6 @@ ScaleMM2\Win64\MemoryManagerTest_SCALEMM2_64.exe autorun
 TCMAlloc\Win64\MemoryManagerTest_TCMAlloc_64.exe autorun
 rem 32 bit
 
-exit
-
 rem BigBrain\Win32\MemoryManagerTest_BIGBRAIN_32.exe autorun - it is jjust to slow !!!
 Default\Win32\MemoryManagerTest_DEFAULT_32.exe autorun
 FastMM4\Win32\MemoryManagerTest_FASTMM4_32.exe autorun
