@@ -25,14 +25,14 @@ type
     lblCompareToThisResult: TLabel;
     lblComparisonFileName: TLabel;
     lstAvailableResults: TListBox;
-    lstBenchmarks: TDBGrid;
+    lstMemTests: TDBGrid;
     lstCompareResults: TListBox;
-    mniPopupCheckAllDefaultBenchmarks: TMenuItem;
-    mniPopupCheckAllThreadedBenchmarks: TMenuItem;
+    mniPopupCheckAllDefaultMemTests: TMenuItem;
+    mniPopupCheckAllThreadedMemTests: TMenuItem;
     mniPopupClearAllCheckMarks: TMenuItem;
     mniPopupSelectAllCheckMarks: TMenuItem;
     mniSep: TMenuItem;
-    mnuBenchmarks: TPopupMenu;
+    mnuMemTests: TPopupMenu;
     Panel1: TPanel;
     pnlCompareToThisResult: TPanel;
     pnlListActions: TPanel;

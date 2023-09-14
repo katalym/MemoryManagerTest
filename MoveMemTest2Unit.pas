@@ -1,17 +1,17 @@
-unit MoveBenchmark2Unit;
+unit MoveMemTest2Unit;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+uses Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TMoveThreads2 = class(TMMBenchmark)
+  TMoveThreads2 = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -36,7 +36,7 @@ end;
 type
 
   TMoveThread2 = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     procedure Execute; override;
   end;
 
@@ -112,36 +112,36 @@ begin
         MoveJOH_SSE_9(DestArray8[8], SrcArray8[8], BenchArraySize);
       end;
       BenchArraySize := BenchArraySize * STEPSIZE;
-      FBenchmark.UpdateUsageStatistics;
+      FMemTest.UpdateUsageStatistics;
     end;
   end;
 end;
 
-class function TMoveThreads2.GetBenchmarkDescription: string;
+class function TMoveThreads2.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that tests high speed Move with SSE. '
+  Result := 'A MemTest that tests high speed Move with SSE. '
     + 'Gives bonus for 16 byte aligned blocks. '
-    + 'Benchmark submitted by Dennis Kjaer Christensen.';
+    + 'MemTest submitted by Dennis Kjaer Christensen.';
 end;
 
-class function TMoveThreads2.GetBenchmarkName: string;
+class function TMoveThreads2.GetMemTestName: string;
 begin
   Result := 'Move 4 arrays at a time';
 end;
 
-class function TMoveThreads2.GetCategory: TBenchmarkCategory;
+class function TMoveThreads2.GetCategory: TMemTestCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
-procedure TMoveThreads2.RunBenchmark;
+procedure TMoveThreads2.RunMemTest;
 var
   MoveThread2: TMoveThread2;
 begin
   inherited;
   MoveThread2 := TMoveThread2.Create(True);
   MoveThread2.FreeOnTerminate := False;
-  MoveThread2.FBenchmark := Self;
+  MoveThread2.FMemTest := Self;
 {$WARN SYMBOL_DEPRECATED OFF}
   MoveThread2.Resume;
 {$WARN SYMBOL_DEPRECATED ON}

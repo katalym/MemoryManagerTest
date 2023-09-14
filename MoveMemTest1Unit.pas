@@ -1,17 +1,17 @@
-unit MoveBenchmark1Unit;
+unit MoveMemTest1Unit;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+uses Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TMoveThreads1 = class(TMMBenchmark)
+  TMoveThreads1 = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -36,7 +36,7 @@ end;
 type
 
   TMoveThread1 = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     procedure Execute; override;
   end;
 
@@ -109,36 +109,36 @@ begin
       for J8 := 1 to NOOFMOVESPERRUN do
         MoveJOH_SSE_9(DestArray8[8], SrcArray8[8], BenchArraySize);
       BenchArraySize := BenchArraySize * STEPSIZE;
-      FBenchmark.UpdateUsageStatistics;
+      FMemTest.UpdateUsageStatistics;
     end;
   end;
 end;
 
-class function TMoveThreads1.GetBenchmarkDescription: string;
+class function TMoveThreads1.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that tests high speed Move with SSE. '
+  Result := 'A MemTest that tests high speed Move with SSE. '
     + 'Gives bonus for 16 byte aligned blocks. '
-    + 'Benchmark submitted by Dennis Kjaer Christensen.';
+    + 'MemTest submitted by Dennis Kjaer Christensen.';
 end;
 
-class function TMoveThreads1.GetBenchmarkName: string;
+class function TMoveThreads1.GetMemTestName: string;
 begin
   Result := 'Move 2 arrays at a time';
 end;
 
-class function TMoveThreads1.GetCategory: TBenchmarkCategory;
+class function TMoveThreads1.GetCategory: TMemTestCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
-procedure TMoveThreads1.RunBenchmark;
+procedure TMoveThreads1.RunMemTest;
 var
   MoveThread1: TMoveThread1;
 begin
   inherited;
   MoveThread1 := TMoveThread1.Create(True);
   MoveThread1.FreeOnTerminate := False;
-  MoveThread1.FBenchmark := Self;
+  MoveThread1.FMemTest := Self;
   MoveThread1.Suspended := False;
   MoveThread1.WaitFor;
   FreeAndNil(MoveThread1);

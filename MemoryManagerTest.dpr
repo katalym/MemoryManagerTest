@@ -47,60 +47,64 @@ uses
   BrainMM in 'BrainMM/BrainMM.pas',
 {$ENDIF}
   {Other units}
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
   VCL.Forms,
-  MMUsageLogger_MemotyOperationRecordUnit in 'UsageLogger/MMUsageLogger_MemotyOperationRecordUnit.pas',
-  AddressSpaceCreepBenchmark in 'AddressSpaceCreepBenchmark.pas',
-  AddressSpaceCreepBenchmarkLarge in 'AddressSpaceCreepBenchmarkLarge.pas',
+  MMUsageLogger_MemotyOperationRecordUnit in 'UsageLogger\MMUsageLogger_MemotyOperationRecordUnit.pas',
+  AddressSpaceCreepMemTest in 'AddressSpaceCreepMemTest.pas',
+  AddressSpaceCreepMemTestLarge in 'AddressSpaceCreepMemTestLarge.pas',
   ArrayUpsizeSingleThread in 'ArrayUpsizeSingleThread.pas',
-  BenchmarkClassUnit in 'BenchmarkClassUnit.pas',
-  BenchmarkUtilities in 'BenchmarkUtilities.pas',
+  MemTestClassUnit in 'MemTestClassUnit.pas',
+  MemTestUtilities in 'MemTestUtilities.pas',
   BitOps in 'BitOps.pas',
-  BlockSizeSpreadBenchmark in 'BlockSizeSpreadBenchmark.pas',
+  BlockSizeSpreadMemTest in 'BlockSizeSpreadMemTest.pas',
   CPU_Usage_Unit in 'CPU_Usage_Unit.pas',
   bvDataTypes in 'bvDataTypes.pas',
-  DoubleFPBenchmark1Unit in 'DoubleFPBenchmark1Unit.pas',
-  DoubleFPBenchmark2Unit in 'DoubleFPBenchmark2Unit.pas',
-  DoubleFPBenchmark3Unit in 'DoubleFPBenchmark3Unit.pas',
+  DoubleFPMemTest1Unit in 'DoubleFPMemTest1Unit.pas',
+  DoubleFPMemTest2Unit in 'DoubleFPMemTest2Unit.pas',
+  DoubleFPMemTest3Unit in 'DoubleFPMemTest3Unit.pas',
   DownsizeTestUnit in 'DownsizeTestUnit.pas',
   FastcodeCPUID in 'FastcodeCPUID.pas',
-  FillCharMultiThreadBenchmark1Unit in 'FillCharMultiThreadBenchmark1Unit.pas',
+  FillCharMultiThreadMemTest1Unit in 'FillCharMultiThreadMemTest1Unit.pas',
   FragmentationTestUnit in 'FragmentationTestUnit.pas',
   GeneralFunctions in 'GeneralFunctions.pas',
-  LargeBlockSpreadBenchmark in 'LargeBlockSpreadBenchmark.pas',
-  LinkedListBenchmark in 'LinkedListBenchmark.pas',
-  MemFreeBenchmark1Unit in 'MemFreeBenchmark1Unit.pas',
-  MemFreeBenchmark2Unit in 'MemFreeBenchmark2Unit.pas',
-  MoveBenchmark1Unit in 'MoveBenchmark1Unit.pas',
-  MoveBenchmark2Unit in 'MoveBenchmark2Unit.pas',
-{$IFDEF WIN32}
+  LargeBlockSpreadMemTest in 'LargeBlockSpreadMemTest.pas',
+  LinkedListMemTest in 'LinkedListMemTest.pas',
+  MemFreeMemTest1Unit in 'MemFreeMemTest1Unit.pas',
+  MemFreeMemTest2Unit in 'MemFreeMemTest2Unit.pas',
+  MoveMemTest1Unit in 'MoveMemTest1Unit.pas',
+  MoveMemTest2Unit in 'MoveMemTest2Unit.pas',
+  {$IFDEF WIN32}
   MoveJOHUnit9 in 'MoveJOHUnit9.pas',
-{$ENDIF}
+  {$ENDIF }
   MultiThreadedAllocAndFree in 'MultiThreadedAllocAndFree.pas',
   MultiThreadedReallocate in 'MultiThreadedReallocate.pas',
-  NexusDBBenchmarkUnit in 'NexusDBBenchmarkUnit.pas',
+  NexusDBMemTestUnit in 'NexusDBMemTestUnit.pas',
   PrimeNumbers in 'PrimeNumbers.pas',
   RawPerformanceMultiThread in 'RawPerformanceMultiThread.pas',
   RawPerformanceSingleThread in 'RawPerformanceSingleThread.pas',
-  ReallocMemBenchmark in 'ReallocMemBenchmark.pas',
-  ReplayBenchmarkUnit in 'ReplayBenchmarkUnit.pas',
-  SingleFPBenchmark1Unit in 'SingleFPBenchmark1Unit.pas',
-  SingleFPBenchmark2Unit in 'SingleFPBenchmark2Unit.pas',
+  ReallocMemTest in 'ReallocMemTest.pas',
+  ReplayMemTestUnit in 'ReplayMemTestUnit.pas',
+  SingleFPMemTest1Unit in 'SingleFPMemTest1Unit.pas',
+  SingleFPMemTest2Unit in 'SingleFPMemTest2Unit.pas',
   SingleThreadedAllocAndFree in 'SingleThreadedAllocAndFree.pas',
   SingleThreadedAllocMem in 'SingleThreadedAllocMem.pas',
   SingleThreadedReallocate in 'SingleThreadedReallocate.pas',
   SingleThreadedTinyReloc in 'SingleThreadedTinyReloc.pas',
-  SmallDownsizeBenchmark in 'SmallDownsizeBenchmark.pas',
-  SmallUpsizeBenchmark in 'SmallUpsizeBenchmark.pas',
-  SortExtendedArrayBenchmark1Unit in 'SortExtendedArrayBenchmark1Unit.pas',
-  SortExtendedArrayBenchmark2Unit in 'SortExtendedArrayBenchmark2Unit.pas',
-  SortIntArrayBenchmark1Unit in 'SortIntArrayBenchmark1Unit.pas',
-  SortIntArrayBenchmark2Unit in 'SortIntArrayBenchmark2Unit.pas',
+  SmallDownsizeMemTest in 'SmallDownsizeMemTest.pas',
+  SmallUpsizeMemTest in 'SmallUpsizeMemTest.pas',
+  SortExtendedArrayMemTest1Unit in 'SortExtendedArrayMemTest1Unit.pas',
+  SortExtendedArrayMemTest2Unit in 'SortExtendedArrayMemTest2Unit.pas',
+  SortIntArrayMemTest1Unit in 'SortIntArrayMemTest1Unit.pas',
+  SortIntArrayMemTest2Unit in 'SortIntArrayMemTest2Unit.pas',
   StringThread in 'StringThread.pas',
   StringThreadTestUnit in 'StringThreadTestUnit.pas',
   SystemInfoUnit in 'SystemInfoUnit.pas',
-  WildThreadsBenchmarkUnit in 'WildThreadsBenchmarkUnit.pas',
-
-  BenchmarkForm in 'BenchmarkForm.pas' {BenchmarkFrm};
+  WildThreadsMemTestUnit in 'WildThreadsMemTestUnit.pas',
+  MemoryManagerForm in 'MemoryManagerForm.pas' {MemoryManagerFrm};
 
 {$IFDEF WIN32}
 const
@@ -111,7 +115,7 @@ const
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TBenchmarkFrm, BenchmarkFrm);
+  Application.CreateForm(TMemoryManagerFrm, MemoryManagerFrm);
   Application.Run;
 
 end.

@@ -1,4 +1,4 @@
-{A benchmark that allocates and frees many blocks in a multi-threaded environment.}
+{A MemTest that allocates and frees many blocks in a multi-threaded environment.}
 
 unit MultiThreadedAllocAndFree;
 
@@ -7,45 +7,45 @@ interface
 {$I MemoryManagerTest.inc}
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TMultiThreadAllocateAndFreeBenchmarkAbstract = class(TMMBenchmark)
+  TMultiThreadAllocateAndFreeMemTestAbstract = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
     class function GetNumThreads: Integer; virtual; abstract;
     class function IsThreadedSpecial: Boolean; override;
-    procedure RunBenchmark; override;
+    procedure RunMemTest; override;
   end;
 
-  TMultiThreadAllocateAndFreeBenchmark2 = class(TMultiThreadAllocateAndFreeBenchmarkAbstract)
+  TMultiThreadAllocateAndFreeMemTest2 = class(TMultiThreadAllocateAndFreeMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadAllocateAndFreeBenchmark4 = class(TMultiThreadAllocateAndFreeBenchmarkAbstract)
+  TMultiThreadAllocateAndFreeMemTest4 = class(TMultiThreadAllocateAndFreeMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadAllocateAndFreeBenchmark8 = class(TMultiThreadAllocateAndFreeBenchmarkAbstract)
+  TMultiThreadAllocateAndFreeMemTest8 = class(TMultiThreadAllocateAndFreeMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadAllocateAndFreeBenchmark12 = class(TMultiThreadAllocateAndFreeBenchmarkAbstract)
+  TMultiThreadAllocateAndFreeMemTest12 = class(TMultiThreadAllocateAndFreeMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadAllocateAndFreeBenchmark16 = class(TMultiThreadAllocateAndFreeBenchmarkAbstract)
+  TMultiThreadAllocateAndFreeMemTest16 = class(TMultiThreadAllocateAndFreeMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadAllocateAndFreeBenchmark31 = class(TMultiThreadAllocateAndFreeBenchmarkAbstract)
+  TMultiThreadAllocateAndFreeMemTest31 = class(TMultiThreadAllocateAndFreeMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadAllocateAndFreeBenchmark64 = class(TMultiThreadAllocateAndFreeBenchmarkAbstract)
+  TMultiThreadAllocateAndFreeMemTest64 = class(TMultiThreadAllocateAndFreeMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
@@ -149,31 +149,31 @@ begin
   ReturnValue := 1;
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmarkAbstract.GetBenchmarkDescription: string;
+class function TMultiThreadAllocateAndFreeMemTestAbstract.GetMemTestDescription: string;
 begin
-  Result := 'A ' + IntToStr(GetNumThreads) + '-threaded benchmark that allocates and frees memory blocks. '
+  Result := 'A ' + IntToStr(GetNumThreads) + '-threaded MemTest that allocates and frees memory blocks. '
     + 'The usage of different block sizes approximates real-world usage as seen '
     + 'in various replays. Allocated memory is actually "used", i.e. written to '
     + 'and read.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmarkAbstract.GetBenchmarkName: string;
+class function TMultiThreadAllocateAndFreeMemTestAbstract.GetMemTestName: string;
 begin
   Result := 'Multi-threaded ' + GetNumThreads.ToString.PadLeft(2, ' ') + ' allocate, use and free';
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmarkAbstract.GetCategory: TBenchmarkCategory;
+class function TMultiThreadAllocateAndFreeMemTestAbstract.GetCategory: TMemTestCategory;
 begin
   Result := bmMultiThreadAllocAndFree;
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmarkAbstract.IsThreadedSpecial: Boolean;
+class function TMultiThreadAllocateAndFreeMemTestAbstract.IsThreadedSpecial: Boolean;
 begin
   Result := True;
 end;
 
-procedure TMultiThreadAllocateAndFreeBenchmarkAbstract.RunBenchmark;
+procedure TMultiThreadAllocateAndFreeMemTestAbstract.RunMemTest;
 const
   CRepeatCountTotal = 5555;
 var
@@ -244,37 +244,37 @@ begin
   FreeAndNil(threads);
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmark2.GetNumThreads: Integer;
+class function TMultiThreadAllocateAndFreeMemTest2.GetNumThreads: Integer;
 begin
   Result := 2;
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmark4.GetNumThreads: Integer;
+class function TMultiThreadAllocateAndFreeMemTest4.GetNumThreads: Integer;
 begin
   Result := 4;
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmark8.GetNumThreads: Integer;
+class function TMultiThreadAllocateAndFreeMemTest8.GetNumThreads: Integer;
 begin
   Result := 8;
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmark12.GetNumThreads: Integer;
+class function TMultiThreadAllocateAndFreeMemTest12.GetNumThreads: Integer;
 begin
   Result := 12;
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmark16.GetNumThreads: Integer;
+class function TMultiThreadAllocateAndFreeMemTest16.GetNumThreads: Integer;
 begin
   Result := 16;
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmark31.GetNumThreads: Integer;
+class function TMultiThreadAllocateAndFreeMemTest31.GetNumThreads: Integer;
 begin
   Result := 32;
 end;
 
-class function TMultiThreadAllocateAndFreeBenchmark64.GetNumThreads: Integer;
+class function TMultiThreadAllocateAndFreeMemTest64.GetNumThreads: Integer;
 begin
   Result := 64;
 end;

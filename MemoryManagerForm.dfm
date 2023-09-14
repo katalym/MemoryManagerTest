@@ -1,9 +1,9 @@
-object BenchmarkFrm: TBenchmarkFrm
+object MemoryManagerFrm: TMemoryManagerFrm
   Left = 179
   Top = 89
   Caption = 'Memory Manager Test'
-  ClientHeight = 582
-  ClientWidth = 1192
+  ClientHeight = 580
+  ClientWidth = 1184
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,32 +18,32 @@ object BenchmarkFrm: TBenchmarkFrm
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 353
-    Width = 1192
+    Top = 351
+    Width = 1184
     Height = 3
     Cursor = crVSplit
     Align = alBottom
   end
-  object gbBenchmarks: TGroupBox
+  object gbMemTests: TGroupBox
     Left = 0
     Top = 0
-    Width = 1192
-    Height = 353
+    Width = 1184
+    Height = 351
     Align = alClient
-    Caption = ' Benchmarks '
+    Caption = ' MemTests '
     TabOrder = 0
-    object lvBenchmarkList: TListView
+    object lvMemTestList: TListView
       AlignWithMargins = True
       Left = 3
       Top = 18
-      Width = 1184
-      Height = 202
+      Width = 1176
+      Height = 200
       Margins.Left = 1
       Align = alClient
       Checkboxes = True
       Columns = <
         item
-          Caption = 'Benchmarks'
+          Caption = 'MemTests'
           Width = 300
         end
         item
@@ -54,16 +54,16 @@ object BenchmarkFrm: TBenchmarkFrm
       HideSelection = False
       ReadOnly = True
       RowSelect = True
-      PopupMenu = mnuBenchmarks
+      PopupMenu = mnuMemTests
       TabOrder = 0
       ViewStyle = vsReport
-      OnSelectItem = lvBenchmarkListSelectItem
+      OnSelectItem = lvMemTestListSelectItem
     end
-    object mBenchmarkDescription: TMemo
+    object mMemTestDescription: TMemo
       AlignWithMargins = True
       Left = 3
-      Top = 226
-      Width = 1186
+      Top = 224
+      Width = 1178
       Height = 91
       Margins.Left = 1
       Margins.Right = 1
@@ -74,8 +74,8 @@ object BenchmarkFrm: TBenchmarkFrm
     end
     object pnlUsage: TPanel
       Left = 2
-      Top = 320
-      Width = 1188
+      Top = 318
+      Width = 1180
       Height = 31
       Align = alBottom
       BevelOuter = bvNone
@@ -93,34 +93,34 @@ object BenchmarkFrm: TBenchmarkFrm
         Align = alLeft
         Caption = 'Usage Log file to Replay:'
       end
-      object btnRunAllCheckedBenchmarks: TBitBtn
+      object btnRunAllCheckedMemTests: TBitBtn
         AlignWithMargins = True
         Left = 3
         Top = 3
         Width = 220
         Height = 25
-        Action = actRunAllCheckedBenchmarks
+        Action = actRunAllCheckedMemTests
         Align = alLeft
-        Caption = 'Run All Checked Benchmarks'
+        Caption = 'Run All Checked MemTests'
         TabOrder = 0
       end
-      object btnRunSelectedBenchmark: TBitBtn
+      object btnRunSelectedMemTest: TBitBtn
         AlignWithMargins = True
         Left = 234
         Top = 3
         Width = 220
         Height = 25
         Margins.Left = 8
-        Action = actRunUsageReplayBenchmark
+        Action = actRunUsageReplayMemTest
         Align = alLeft
-        Caption = 'Run Usage Replay Benchmark'
+        Caption = 'Run Usage Replay MemTest'
         TabOrder = 1
       end
       object edtUsageReplay: TEdit
         AlignWithMargins = True
         Left = 585
         Top = 6
-        Width = 599
+        Width = 591
         Height = 21
         Margins.Top = 6
         Margins.Right = 4
@@ -131,26 +131,26 @@ object BenchmarkFrm: TBenchmarkFrm
       end
     end
   end
-  object pcBenchmarkResults: TPageControl
+  object pcMemTestResults: TPageControl
     Left = 0
-    Top = 356
-    Width = 1192
+    Top = 354
+    Width = 1184
     Height = 226
-    ActivePage = TabSheetBenchmarkResults
+    ActivePage = TabSheetMemTestResults
     Align = alBottom
     TabOrder = 1
-    object TabSheetBenchmarkResults: TTabSheet
-      Caption = 'Benchmark Results'
+    object TabSheetMemTestResults: TTabSheet
+      Caption = 'MemTest Results'
       ImageIndex = 1
       object ListViewResults: TListView
         Left = 0
         Top = 36
-        Width = 1184
+        Width = 1176
         Height = 162
         Align = alClient
         Columns = <
           item
-            Caption = 'Benchmark'
+            Caption = 'MemTest'
             Width = 220
           end
           item
@@ -182,7 +182,7 @@ object BenchmarkFrm: TBenchmarkFrm
       object ToolBar1: TToolBar
         Left = 0
         Top = 0
-        Width = 1184
+        Width = 1176
         Height = 36
         AutoSize = True
         ButtonHeight = 36
@@ -211,7 +211,7 @@ object BenchmarkFrm: TBenchmarkFrm
       object mResults: TMemo
         Left = 0
         Top = 0
-        Width = 1184
+        Width = 1176
         Height = 198
         Margins.Right = 1
         Align = alClient
@@ -231,7 +231,7 @@ object BenchmarkFrm: TBenchmarkFrm
       object MemoEnvironment: TMemo
         Left = 0
         Top = 0
-        Width = 1184
+        Width = 1176
         Height = 198
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -652,7 +652,7 @@ object BenchmarkFrm: TBenchmarkFrm
       01073FFFFFF8C40303FFFFFFFFFCEC0700000000000000000000000000000000
       000000000000}
   end
-  object mnuBenchmarks: TPopupMenu
+  object mnuMemTests: TPopupMenu
     Images = imlImages
     Left = 100
     Top = 76
@@ -665,20 +665,20 @@ object BenchmarkFrm: TBenchmarkFrm
     object mniSep: TMenuItem
       Caption = '-'
     end
-    object mniPopupCheckAllDefaultBenchmarks: TMenuItem
-      Action = actPopupCheckAllDefaultBenchmarks
+    object mniPopupCheckAllDefaultMemTests: TMenuItem
+      Action = actPopupCheckAllDefaultMemTests
     end
-    object mniPopupCheckAllThreadedBenchmarks: TMenuItem
-      Action = actPopupCheckAllThreadedBenchmarks
+    object mniPopupCheckAllThreadedMemTests: TMenuItem
+      Action = actPopupCheckAllThreadedMemTests
     end
     object N1: TMenuItem
       Caption = '-'
     end
-    object mniRunAllCheckedBenchmarks: TMenuItem
-      Action = actRunAllCheckedBenchmarks
+    object mniRunAllCheckedMemTests: TMenuItem
+      Action = actRunAllCheckedMemTests
     end
-    object mniRunUsageReplayBenchmark: TMenuItem
-      Action = actRunUsageReplayBenchmark
+    object mniRunUsageReplayMemTest: TMenuItem
+      Action = actRunUsageReplayMemTest
     end
   end
   object tmrAutoRun: TTimer
@@ -705,19 +705,19 @@ object BenchmarkFrm: TBenchmarkFrm
       ImageIndex = 1
       OnExecute = actDeletelTestResultsExecute
     end
-    object actRunAllCheckedBenchmarks: TAction
+    object actRunAllCheckedMemTests: TAction
       Category = 'Actions'
-      Caption = 'Run All Checked Benchmarks'
-      Hint = 'Run All Checked Benchmarks'
+      Caption = 'Run All Checked MemTests'
+      Hint = 'Run All Checked MemTests'
       ImageIndex = 7
-      OnExecute = actRunAllCheckedBenchmarksExecute
+      OnExecute = actRunAllCheckedMemTestsExecute
     end
-    object actRunUsageReplayBenchmark: TAction
+    object actRunUsageReplayMemTest: TAction
       Category = 'Actions'
-      Caption = 'Run Usage Replay Benchmark'
-      Hint = 'Run Usage Replay Benchmark'
+      Caption = 'Run Usage Replay MemTest'
+      Hint = 'Run Usage Replay MemTest'
       ImageIndex = 5
-      OnExecute = actRunUsageReplayBenchmarkExecute
+      OnExecute = actRunUsageReplayMemTestExecute
     end
     object actPopupClearAllCheckMarks: TAction
       Category = 'Popup'
@@ -728,23 +728,23 @@ object BenchmarkFrm: TBenchmarkFrm
     end
     object actPopupSelectAllCheckMarks: TAction
       Category = 'Popup'
-      Caption = 'Check All Benchmarks'
-      Hint = 'Check All Benchmarks'
+      Caption = 'Check All MemTests'
+      Hint = 'Check All MemTests'
       ImageIndex = 4
       OnExecute = actPopupSelectAllCheckMarksExecute
     end
-    object actPopupCheckAllDefaultBenchmarks: TAction
+    object actPopupCheckAllDefaultMemTests: TAction
       Category = 'Popup'
-      Caption = 'Check All Default Benchmarks'
-      Hint = 'Check All Default Benchmarks'
+      Caption = 'Check All Default MemTests'
+      Hint = 'Check All Default MemTests'
       ImageIndex = 4
-      OnExecute = actPopupCheckAllDefaultBenchmarksExecute
+      OnExecute = actPopupCheckAllDefaultMemTestsExecute
     end
-    object actPopupCheckAllThreadedBenchmarks: TAction
+    object actPopupCheckAllThreadedMemTests: TAction
       Category = 'Popup'
-      Caption = 'Check Special Thread Benchmarks'
-      Hint = 'Check Special Thread Benchmarks'
-      OnExecute = actPopupCheckAllThreadedBenchmarksExecute
+      Caption = 'Check Special Thread MemTests'
+      Hint = 'Check Special Thread MemTests'
+      OnExecute = actPopupCheckAllThreadedMemTestsExecute
     end
   end
 end

@@ -1,17 +1,17 @@
-unit SingleFPBenchmark2Unit;
+unit SingleFPMemTest2Unit;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+uses Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TSingleFPThreads2 = class(TMMBenchmark)
+  TSingleFPThreads2 = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -21,7 +21,7 @@ uses SysUtils;
 type
 
   TSingleFPThread2 = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     procedure Execute; override;
   end;
 
@@ -70,7 +70,7 @@ begin
     SetLength(Src1Array1, BenchArraySize);
     SetLength(Src2Array1, BenchArraySize);
     SetLength(ResultArray1, BenchArraySize);
-    FBenchmark.UpdateUsageStatistics;
+    FMemTest.UpdateUsageStatistics;
     // Fill source arrays
     for I1 := PrevArraySize to BenchArraySize - 1 do
     begin
@@ -92,32 +92,32 @@ begin
   end;
 end;
 
-class function TSingleFPThreads2.GetBenchmarkDescription: string;
+class function TSingleFPThreads2.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that tests access to Single FP variables '
+  Result := 'A MemTest that tests access to Single FP variables '
     + 'in a dynamic array. '
     + 'Reveals set associativity related issues.'
-    + 'Benchmark submitted by Dennis Kjaer Christensen.';
+    + 'MemTest submitted by Dennis Kjaer Christensen.';
 end;
 
-class function TSingleFPThreads2.GetBenchmarkName: string;
+class function TSingleFPThreads2.GetMemTestName: string;
 begin
   Result := 'Single Variables Access  3 arrays at a time';
 end;
 
-class function TSingleFPThreads2.GetCategory: TBenchmarkCategory;
+class function TSingleFPThreads2.GetCategory: TMemTestCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
-procedure TSingleFPThreads2.RunBenchmark;
+procedure TSingleFPThreads2.RunMemTest;
 var
   SingleFPThread: TSingleFPThread2;
 begin
   inherited;
   SingleFPThread := TSingleFPThread2.Create(True);
   SingleFPThread.FreeOnTerminate := False;
-  SingleFPThread.FBenchmark := Self;
+  SingleFPThread.FMemTest := Self;
 {$WARN SYMBOL_DEPRECATED OFF}
   SingleFPThread.Resume;
 {$WARN SYMBOL_DEPRECATED ON}

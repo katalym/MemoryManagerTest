@@ -1,11 +1,11 @@
-unit LinkedListBenchmark;
+unit LinkedListMemTest;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  Classes, BenchmarkClassUnit, Math;
+  Classes, MemTestClassUnit, Math;
 
 const
   // full debug mode is used to detect memory leaks - not for actual performance test
@@ -18,14 +18,14 @@ const
 
 type
 
-  TLinkedListBench = class(TMMBenchmark)
+  TLinkedListBench = class(TMemTest)
   public
-    constructor CreateBenchmark; override;
+    constructor CreateMemTest; override;
     destructor Destroy; override;
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -61,7 +61,7 @@ type
 
 procedure Dummy; forward;
 
-constructor TLinkedListBench.CreateBenchmark;
+constructor TLinkedListBench.CreateMemTest;
 begin
   inherited;
 end;
@@ -71,23 +71,23 @@ begin
   inherited;
 end;
 
-class function TLinkedListBench.GetBenchmarkDescription: string;
+class function TLinkedListBench.GetMemTestDescription: string;
 begin
   Result := 'Allocates a linked list containers and then navigates back and '
     + 'forth through it multiple times.';
 end;
 
-class function TLinkedListBench.GetBenchmarkName: string;
+class function TLinkedListBench.GetMemTestName: string;
 begin
   Result := 'Linked-list container';
 end;
 
-class function TLinkedListBench.GetCategory: TBenchmarkCategory;
+class function TLinkedListBench.GetCategory: TMemTestCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
-procedure TLinkedListBench.RunBenchmark;
+procedure TLinkedListBench.RunMemTest;
 var
   i: Integer;
   List: TLinkedList;

@@ -1,11 +1,11 @@
-unit BlockSizeSpreadBenchmark;
+unit BlockSizeSpreadMemTest;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  BenchmarkClassUnit, Math;
+  MemTestClassUnit, Math;
 
 const
   {The maximum block size}
@@ -24,16 +24,16 @@ const
 
 type
 
-  TBlockSizeSpreadBench = class(TMMBenchmark)
+  TBlockSizeSpreadBench = class(TMemTest)
   protected
     FPointers: array [0 .. NumPointers - 1] of PAnsiChar;
   public
-    constructor CreateBenchmark; override;
+    constructor CreateMemTest; override;
     destructor Destroy; override;
-    procedure RunBenchmark; override;
-    class function GetBenchmarkName: string; override;
-    class function GetBenchmarkDescription: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    procedure RunMemTest; override;
+    class function GetMemTestName: string; override;
+    class function GetMemTestDescription: string; override;
+    class function GetCategory: TMemTestCategory; override;
   end;
 
 implementation
@@ -41,7 +41,7 @@ implementation
 uses
   bvDataTypes, System.SysUtils;
 
-constructor TBlockSizeSpreadBench.CreateBenchmark;
+constructor TBlockSizeSpreadBench.CreateMemTest;
 begin
   inherited;
 end;
@@ -51,24 +51,24 @@ begin
   inherited;
 end;
 
-class function TBlockSizeSpreadBench.GetBenchmarkDescription: string;
+class function TBlockSizeSpreadBench.GetMemTestDescription: string;
 begin
   Result := 'Allocates millions of small objects, checking that the MM '
     + 'has a decent block size spread.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TBlockSizeSpreadBench.GetBenchmarkName: string;
+class function TBlockSizeSpreadBench.GetMemTestName: string;
 begin
   Result := 'Block size spread';
 end;
 
-class function TBlockSizeSpreadBench.GetCategory: TBenchmarkCategory;
+class function TBlockSizeSpreadBench.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadAllocAndFree;
 end;
 
-procedure TBlockSizeSpreadBench.RunBenchmark;
+procedure TBlockSizeSpreadBench.RunMemTest;
 const
   Prime = 17;
 var
@@ -78,9 +78,9 @@ begin
   {Call the inherited handler}
   inherited;
   NextValue := Prime;
-  for n := 1 to IterationsCount do // loop added to have more than 1000 MTicks for this benchmark
+  for n := 1 to IterationsCount do // loop added to have more than 1000 MTicks for this MemTest
   begin
-    {Do the benchmark}
+    {Do the MemTest}
     for i := 0 to high(FPointers) do
     begin
       {Get the initial block size, assume object sizes are 4-byte aligned}

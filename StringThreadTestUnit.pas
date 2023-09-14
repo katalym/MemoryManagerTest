@@ -1,8 +1,8 @@
 {****************************************************************************************
 
-  StringTestBenchMark & ManyThreadsTestBenchMark v1.0
+  StringTestMemTest & ManyThreadsTestMemTest v1.0
 
-  By Ivo Tops for FastCode Memory Manager BenchMark & Validation
+  By Ivo Tops for FastCode Memory Manager MemTest & Validation
 
   ****************************************************************************************}
 unit StringThreadTestUnit;
@@ -11,18 +11,18 @@ interface
 
 {$I MemoryManagerTest.inc}
 
-uses BenchmarkClassUnit;
+uses MemTestClassUnit;
 
 type
 
-  TStringThreadTestAbstract = class(TMMBenchmark)
+  TStringThreadTestAbstract = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
     class function IsThreadedSpecial: Boolean; override;
     class function NumThreads: Integer; virtual; abstract;
-    procedure RunBenchmark; override;
+    procedure RunMemTest; override;
   end;
 
   TStringThreadTest2 = class(TStringThreadTestAbstract)
@@ -53,12 +53,12 @@ type
     class function NumThreads: Integer; override;
   end;
 
-  TManyThreadsTest = class(TMMBenchmark)
+  TManyThreadsTest = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 procedure DecRunningThreads;
@@ -125,17 +125,17 @@ begin
   ValidationError := True;
 end;
 
-class function TStringThreadTestAbstract.GetBenchmarkDescription: string;
+class function TStringThreadTestAbstract.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that does string manipulations concurrently in ' + IntToStr(NumThreads) + ' different threads';
+  Result := 'A MemTest that does string manipulations concurrently in ' + IntToStr(NumThreads) + ' different threads';
 end;
 
-class function TStringThreadTestAbstract.GetBenchmarkName: string;
+class function TStringThreadTestAbstract.GetMemTestName: string;
 begin
   Result := 'String ' + NumThreads.ToString.PadLeft(2, ' ') + ' Thread Test';;
 end;
 
-class function TStringThreadTestAbstract.GetCategory: TBenchmarkCategory;
+class function TStringThreadTestAbstract.GetCategory: TMemTestCategory;
 begin
   Result := bmMultiThreadRealloc;
 end;
@@ -145,7 +145,7 @@ begin
   Result := True;
 end;
 
-procedure TStringThreadTestAbstract.RunBenchmark;
+procedure TStringThreadTestAbstract.RunMemTest;
 const
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -198,7 +198,7 @@ begin
 {$WARN COMPARISON_FALSE OFF}
   if (wr < WAIT_OBJECT_0) or (wr > wrc) then
   begin
-    raise Exception.Create('WaitForMultipleObjects failed on TStringThreadTestAbstract.RunBenchmark');
+    raise Exception.Create('WaitForMultipleObjects failed on TStringThreadTestAbstract.RunMemTest');
   end;
 {$WARN COMPARISON_FALSE ON}
   {Update the peak address space usage}
@@ -229,24 +229,24 @@ begin
   ExitTest;
 end;
 
-class function TManyThreadsTest.GetBenchmarkDescription: string;
+class function TManyThreadsTest.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that has many temporary threads, each doing a little string processing. ';
+  Result := 'A MemTest that has many temporary threads, each doing a little string processing. ';
   Result := Result + 'This test exposes possible multithreading issues in a memory manager and large per-thread ';
   Result := Result + 'memory requirements.';
 end;
 
-class function TManyThreadsTest.GetBenchmarkName: string;
+class function TManyThreadsTest.GetMemTestName: string;
 begin
   Result := 'Many Short Lived Threads';
 end;
 
-class function TManyThreadsTest.GetCategory: TBenchmarkCategory;
+class function TManyThreadsTest.GetCategory: TMemTestCategory;
 begin
   Result := bmMultiThreadRealloc;
 end;
 
-procedure TManyThreadsTest.RunBenchmark;
+procedure TManyThreadsTest.RunMemTest;
 var
   i, vPrimeIdx: Integer;
   vHandle: THandle;
@@ -311,7 +311,7 @@ begin
       end
       else
       begin
-        // raise Exception.Create('TManyThreadsTest.RunBenchmark -- failed');
+        // raise Exception.Create('TManyThreadsTest.RunMemTest -- failed');
       end;
     until vThreadList.Count = 0;
     CloseHandle(vHandle);

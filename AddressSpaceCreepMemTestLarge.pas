@@ -1,11 +1,11 @@
-unit AddressSpaceCreepBenchmarkLarge;
+unit AddressSpaceCreepMemTestLarge;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  BenchmarkClassUnit, Math;
+  MemTestClassUnit, Math;
 
 const
   // full debug mode is used to detect memory leaks - not for actual performance test
@@ -20,16 +20,16 @@ const
 
 type
 
-  TAddressSpaceCreepBenchLarge = class(TMMBenchmark)
+  TAddressSpaceCreepBenchLarge = class(TMemTest)
   protected
     FPointers: array [0 .. NumPointers - 1] of PAnsiChar;
   public
-    constructor CreateBenchmark; override;
+    constructor CreateMemTest; override;
     destructor Destroy; override;
-    procedure RunBenchmark; override;
-    class function GetBenchmarkName: string; override;
-    class function GetBenchmarkDescription: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    procedure RunMemTest; override;
+    class function GetMemTestName: string; override;
+    class function GetMemTestDescription: string; override;
+    class function GetCategory: TMemTestCategory; override;
   end;
 
 implementation
@@ -37,7 +37,7 @@ implementation
 uses
   bvDataTypes, System.SysUtils;
 
-constructor TAddressSpaceCreepBenchLarge.CreateBenchmark;
+constructor TAddressSpaceCreepBenchLarge.CreateMemTest;
 begin
   inherited;
 end;
@@ -47,24 +47,24 @@ begin
   inherited;
 end;
 
-class function TAddressSpaceCreepBenchLarge.GetBenchmarkDescription: string;
+class function TAddressSpaceCreepBenchLarge.GetMemTestDescription: string;
 begin
   Result := 'Allocates and deallocates thousands of large pointers in a loop, '
     + 'checking that the MM address space usage does not grow unbounded.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TAddressSpaceCreepBenchLarge.GetBenchmarkName: string;
+class function TAddressSpaceCreepBenchLarge.GetMemTestName: string;
 begin
   Result := 'Address space creep (larger blocks)';
 end;
 
-class function TAddressSpaceCreepBenchLarge.GetCategory: TBenchmarkCategory;
+class function TAddressSpaceCreepBenchLarge.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadAllocAndFree;
 end;
 
-procedure TAddressSpaceCreepBenchLarge.RunBenchmark;
+procedure TAddressSpaceCreepBenchLarge.RunMemTest;
 const
   Prime = 43;
 var

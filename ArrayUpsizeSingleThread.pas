@@ -5,17 +5,17 @@ interface
 {$I MemoryManagerTest.inc}
 
 uses
-  BenchmarkClassUnit, Classes;
+  MemTestClassUnit, Classes;
 
 type
-  TArrayUpsizeSingleThread = class(TMMBenchmark)
+  TArrayUpsizeSingleThread = class(TMemTest)
   private
     procedure Execute;
   public
-    procedure RunBenchmark; override;
-    class function GetBenchmarkName: string; override;
-    class function GetBenchmarkDescription: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    procedure RunMemTest; override;
+    class function GetMemTestName: string; override;
+    class function GetMemTestDescription: string; override;
+    class function GetCategory: TMemTestCategory; override;
   end;
 
 implementation
@@ -44,24 +44,24 @@ begin
   UpdateUsageStatistics;
 end;
 
-class function TArrayUpsizeSingleThread.GetBenchmarkDescription: string;
+class function TArrayUpsizeSingleThread.GetMemTestDescription: string;
 begin
   Result := 'Constantly resize a dynamic array in 8 byte steps upward to '
     + 'reproduce JclDebug behaviour when loading debug information'
     + 'Start size is 16 bytes.  Stop size is 8 * 10 * 1024 * 1024 + 8 bytes';
 end;
 
-class function TArrayUpsizeSingleThread.GetBenchmarkName: string;
+class function TArrayUpsizeSingleThread.GetMemTestName: string;
 begin
   Result := 'Array Upsize 1 thread';
 end;
 
-class function TArrayUpsizeSingleThread.GetCategory: TBenchmarkCategory;
+class function TArrayUpsizeSingleThread.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadRealloc;
 end;
 
-procedure TArrayUpsizeSingleThread.RunBenchmark;
+procedure TArrayUpsizeSingleThread.RunMemTest;
 begin
   inherited;
   Execute;

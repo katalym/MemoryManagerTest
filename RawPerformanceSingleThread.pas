@@ -1,6 +1,6 @@
-// A benchmark to measure raw performance and fragmentation resistance.
+// A MemTest to measure raw performance and fragmentation resistance.
 // Alternates large number of small string and small number of large string allocations.
-// Pure GetMem / FreeMem benchmark without reallocations, similar to WildThreads Benchmark.
+// Pure GetMem / FreeMem MemTest without reallocations, similar to WildThreads MemTest.
 // Single-thread version.
 
 unit RawPerformanceSingleThread;
@@ -10,17 +10,17 @@ unit RawPerformanceSingleThread;
 interface
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
-  TRawPerformanceSingleThread = class(TMMBenchmark)
+  TRawPerformanceSingleThread = class(TMemTest)
   private
     procedure Execute;
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -77,24 +77,24 @@ begin
   UpdateUsageStatistics;
 end;
 
-class function TRawPerformanceSingleThread.GetBenchmarkDescription: string;
+class function TRawPerformanceSingleThread.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark to measure raw performance and fragmentation resistance. ' +
+  Result := 'A MemTest to measure raw performance and fragmentation resistance. ' +
     'Allocates large number of small strings (< 1 kB) and small number of larger ' +
     '(< 32 kB) to very large (< 256 kB) strings. Single-thread version.';
 end;
 
-class function TRawPerformanceSingleThread.GetBenchmarkName: string;
+class function TRawPerformanceSingleThread.GetMemTestName: string;
 begin
   Result := 'Raw Performance  1 thread';
 end;
 
-class function TRawPerformanceSingleThread.GetCategory: TBenchmarkCategory;
+class function TRawPerformanceSingleThread.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadAllocAndFree;
 end;
 
-procedure TRawPerformanceSingleThread.RunBenchmark;
+procedure TRawPerformanceSingleThread.RunMemTest;
 begin
   inherited;
   Execute;

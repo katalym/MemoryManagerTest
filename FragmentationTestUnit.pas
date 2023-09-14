@@ -1,4 +1,4 @@
-{A benchmark demonstrating how the RTL Delphi MM fragments the virtual address
+{A MemTest demonstrating how the RTL Delphi MM fragments the virtual address
   space}
 
 unit FragmentationTestUnit;
@@ -8,18 +8,18 @@ interface
 {$I MemoryManagerTest.inc}
 
 uses
-  BenchmarkClassUnit;
+  MemTestClassUnit;
 
 type
 
-  TFragmentationTest = class(TMMBenchmark)
+  TFragmentationTest = class(TMemTest)
   protected
     FStrings: array of string;
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -33,32 +33,32 @@ const
   IterationCount = 120;
 {$ENDIF}
 
-class function TFragmentationTest.GetBenchmarkDescription: string;
+class function TFragmentationTest.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that intersperses large block allocations with the '
+  Result := 'A MemTest that intersperses large block allocations with the '
     + 'allocation of smaller blocks to test how resistant the memory manager '
     + 'is to address space fragmentation that may eventually lead to '
     + '"out of memory" errors.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TFragmentationTest.GetBenchmarkName: string;
+class function TFragmentationTest.GetMemTestName: string;
 begin
   Result := 'Fragmentation Test';
 end;
 
-class function TFragmentationTest.GetCategory: TBenchmarkCategory;
+class function TFragmentationTest.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadRealloc;
 end;
 
-procedure TFragmentationTest.RunBenchmark;
+procedure TFragmentationTest.RunMemTest;
 var
   i, n: integer;
 begin
   inherited;
 
-  for n := 1 to IterationCount do // loop added to have more than 1000 MTicks for this benchmark
+  for n := 1 to IterationCount do // loop added to have more than 1000 MTicks for this MemTest
   begin
     SetLength(FStrings, 0);
     for i := 1 to 90 do

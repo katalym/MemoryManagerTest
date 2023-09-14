@@ -1,52 +1,52 @@
-{A simple benchmark with lots of reallocmem calls}
+{A simple MemTest with lots of reallocmem calls}
 
-unit ReallocMemBenchmark;
+unit ReallocMemTest;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  BenchmarkClassUnit;
+  MemTestClassUnit;
 
 type
-  PReallocMemBenchmarkBlockSizesArray = ^TReallocMemBenchmarkBlockSizesArray;
-  PReallocMemBenchmarkPointerArray = ^TReallocMemBenchmarkPointerArray;
+  PReallocMemMemTestBlockSizesArray = ^TReallocMemMemTestBlockSizesArray;
+  PReallocMemMemTestPointerArray = ^TReallocMemMemTestPointerArray;
 
-  TReallocMemBenchmarkPointerArray = packed array [0 .. MaxInt div SizeOf(Pointer) - 1] of Pointer;
-  TReallocMemBenchmarkBlockSizesArray = packed array [0 .. MaxInt div SizeOf(Pointer) - 1] of Integer;
+  TReallocMemMemTestPointerArray = packed array [0 .. MaxInt div SizeOf(Pointer) - 1] of Pointer;
+  TReallocMemMemTestBlockSizesArray = packed array [0 .. MaxInt div SizeOf(Pointer) - 1] of Integer;
 
-  TReallocBenchAbstract = class(TMMBenchmark)
+  TReallocBenchAbstract = class(TMemTest)
   protected
-    BlockSizes: PReallocMemBenchmarkBlockSizesArray;
-    Pointers: PReallocMemBenchmarkPointerArray;
+    BlockSizes: PReallocMemMemTestBlockSizesArray;
+    Pointers: PReallocMemMemTestPointerArray;
   public
-    constructor CreateBenchmark; override;
+    constructor CreateMemTest; override;
     destructor Destroy; override;
-    class function GetBenchmarkDescription: string; override;
+    class function GetMemTestDescription: string; override;
     class function GetBlockSizeDelta: Integer; virtual; abstract;
-    class function GetCategory: TBenchmarkCategory; override;
+    class function GetCategory: TMemTestCategory; override;
     class function GetIterationCount: Integer; virtual; abstract;
     class function GetNumPointers: Integer; virtual; abstract;
-    procedure RunBenchmark; override;
+    procedure RunMemTest; override;
   end;
 
   TReallocBenchLarge = class(TReallocBenchAbstract)
-    class function GetBenchmarkName: string; override;
+    class function GetMemTestName: string; override;
     class function GetBlockSizeDelta: Integer; override;
     class function GetIterationCount: Integer; override;
     class function GetNumPointers: Integer; override;
   end;
 
   TReallocBenchMedium = class(TReallocBenchAbstract)
-    class function GetBenchmarkName: string; override;
+    class function GetMemTestName: string; override;
     class function GetBlockSizeDelta: Integer; override;
     class function GetIterationCount: Integer; override;
     class function GetNumPointers: Integer; override;
   end;
 
   TReallocBenchTiny = class(TReallocBenchAbstract)
-    class function GetBenchmarkName: string; override;
+    class function GetMemTestName: string; override;
     class function GetBlockSizeDelta: Integer; override;
     class function GetIterationCount: Integer; override;
     class function GetNumPointers: Integer; override;
@@ -54,7 +54,10 @@ type
 
 implementation
 
-constructor TReallocBenchAbstract.CreateBenchmark;
+uses
+  bvDataTypes, System.SysUtils;
+
+constructor TReallocBenchAbstract.CreateMemTest;
 var
   np: Integer;
 begin
@@ -91,19 +94,19 @@ begin
   inherited;
 end;
 
-class function TReallocBenchAbstract.GetBenchmarkDescription: string;
+class function TReallocBenchAbstract.GetMemTestDescription: string;
 begin
   Result := 'Allocates lots of pointers of arbitrary sizes and continues to '
     + 'grow/shrink them arbitrarily in a loop.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TReallocBenchAbstract.GetCategory: TBenchmarkCategory;
+class function TReallocBenchAbstract.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadRealloc;
 end;
 
-procedure TReallocBenchAbstract.RunBenchmark;
+procedure TReallocBenchAbstract.RunMemTest;
 const
   Prime = 10513;
 var
@@ -118,7 +121,7 @@ begin
   CurValue := Prime;
   NumPointers := GetNumPointers;
   BlockSizeDelta := GetBlockSizeDelta;
-  {Do the benchmark}
+  {Do the MemTest}
   FIterCount := GetIterationCount;
   for i := 1 to FIterCount do
   begin
@@ -126,7 +129,7 @@ begin
     LPointerNumber := CurValue mod NumPointers;
     Inc(CurValue, Prime);
     {Adjust the current block size up or down by up to BlockSizeDelta}
-    BlockSizes^[LPointerNumber] := Integer(abs(BlockSizes^[LPointerNumber] + (CurValue mod BlockSizeDelta) - (BlockSizeDelta shr 1) - ((i and 7) mod BlockSizeDelta)));
+    BlockSizes^[LPointerNumber] := bvInt64ToInt(abs(BlockSizes^[LPointerNumber] + (CurValue mod BlockSizeDelta) - (BlockSizeDelta shr 1) - ((i and 7) mod BlockSizeDelta)));
     Inc(CurValue, Prime);
     {Reallocate the pointer}
     if MaxBlockSize < BlockSizes^[LPointerNumber] then
@@ -150,7 +153,7 @@ begin
   UpdateUsageStatistics;
 end;
 
-class function TReallocBenchMedium.GetBenchmarkName: string;
+class function TReallocBenchMedium.GetMemTestName: string;
 begin
   Result := 'ReallocMem Medium (1-4039b)';
 end;
@@ -183,7 +186,7 @@ begin
 {$ENDIF}
 end;
 
-class function TReallocBenchTiny.GetBenchmarkName: string;
+class function TReallocBenchTiny.GetMemTestName: string;
 begin
   Result := 'ReallocMem Small (1-555b)';
 end;
@@ -216,7 +219,7 @@ begin
 {$ENDIF}
 end;
 
-class function TReallocBenchLarge.GetBenchmarkName: string;
+class function TReallocBenchLarge.GetMemTestName: string;
 begin
   Result := 'ReallocMem Large (1-952224b)';
 end;

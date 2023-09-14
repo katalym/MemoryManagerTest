@@ -1,18 +1,18 @@
-unit MemFreeBenchmark2Unit;
+unit MemFreeMemTest2Unit;
 
 interface
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TMemFreeThreads2 = class(TMMBenchmark)
+  TMemFreeThreads2 = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
     class function RunByDefault: Boolean; override;
   end;
 
@@ -22,40 +22,40 @@ uses SysUtils;
 
 type
   TMemFreeThread2 = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     procedure Execute; override;
   end;
 
 procedure TMemFreeThread2.Execute;
 begin
   Sleep(100); // Do not run in zero ticks !!!!!
-  FBenchmark.UpdateUsageStatistics;
+  FMemTest.UpdateUsageStatistics;
 end;
 
-class function TMemFreeThreads2.GetBenchmarkDescription: string;
+class function TMemFreeThreads2.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that measures how much memory the MM allocates when doing close to nothing'
-    + ' Benchmark submitted by Dennis Kjaer Christensen.';
+  Result := 'A MemTest that measures how much memory the MM allocates when doing close to nothing'
+    + ' MemTest submitted by Dennis Kjaer Christensen.';
 end;
 
-class function TMemFreeThreads2.GetBenchmarkName: string;
+class function TMemFreeThreads2.GetMemTestName: string;
 begin
   Result := 'Mem Free 2';
 end;
 
-class function TMemFreeThreads2.GetCategory: TBenchmarkCategory;
+class function TMemFreeThreads2.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadAllocAndFree;
 end;
 
-procedure TMemFreeThreads2.RunBenchmark;
+procedure TMemFreeThreads2.RunMemTest;
 var
   MemFreeThread2: TMemFreeThread2;
 begin
   inherited;
   MemFreeThread2 := TMemFreeThread2.Create(True);
   MemFreeThread2.FreeOnTerminate := False;
-  MemFreeThread2.FBenchmark := Self;
+  MemFreeThread2.FMemTest := Self;
   MemFreeThread2.Suspended := False;
   MemFreeThread2.WaitFor;
   FreeAndNil(MemFreeThread2);

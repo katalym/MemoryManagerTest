@@ -1,19 +1,19 @@
-{A single-threaded benchmark that reallocates and uses memory blocks.}
+{A single-threaded MemTest that reallocates and uses memory blocks.}
 
 unit SingleThreadedTinyReloc;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+uses Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TSingleThreadedTinyRelocBenchmark = class(TMMBenchmark)
+  TSingleThreadedTinyRelocMemTest = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -24,25 +24,25 @@ uses
 const
   IterationsCount = 120000;
 
-class function TSingleThreadedTinyRelocBenchmark.GetBenchmarkDescription: string;
+class function TSingleThreadedTinyRelocMemTest.GetMemTestDescription: string;
 begin
-  Result := 'A single-threaded benchmark for tiny memory blocs. It allocates and reallocates tiny memory '
+  Result := 'A single-threaded MemTest for tiny memory blocs. It allocates and reallocates tiny memory '
     + 'blocks. Allocated memory is actually "used", i.e. written to and read. '
     + 'Rough breakdown: 50% of pointers are <=64 bytes, 95% < 128 bytes, 99% < 256 bytes, rest < 512 bytes. '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TSingleThreadedTinyRelocBenchmark.GetBenchmarkName: string;
+class function TSingleThreadedTinyRelocMemTest.GetMemTestName: string;
 begin
   Result := 'Single-threaded tiny reallocate and use';
 end;
 
-class function TSingleThreadedTinyRelocBenchmark.GetCategory: TBenchmarkCategory;
+class function TSingleThreadedTinyRelocMemTest.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadRealloc;
 end;
 
-procedure TSingleThreadedTinyRelocBenchmark.RunBenchmark;
+procedure TSingleThreadedTinyRelocMemTest.RunMemTest;
 const
   Prime        = 83;
   PointerCount = 500; {small number to fit the cache}

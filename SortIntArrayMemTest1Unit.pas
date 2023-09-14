@@ -1,20 +1,20 @@
-unit SortIntArrayBenchmark1Unit;
+unit SortIntArrayMemTest1Unit;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TSortIntArrayThreads = class(TMMBenchmark)
+  TSortIntArrayThreads = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -25,7 +25,7 @@ uses
 type
 
   TSortIntArrayThread = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     FCurValue: Int64;
     FPrime: Integer;
     procedure Execute; override;
@@ -76,35 +76,35 @@ begin
   end;
   // "Free" array
   SetLength(IntArray, 0);
-  FBenchmark.UpdateUsageStatistics;
+  FMemTest.UpdateUsageStatistics;
 end;
 
-class function TSortIntArrayThreads.GetBenchmarkDescription: string;
+class function TSortIntArrayThreads.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that measures read and write speed to an array of Integer. '
+  Result := 'A MemTest that measures read and write speed to an array of Integer. '
     + 'Access pattern is created by  selection sorting array of arbitrary values. '
     + 'Measures memory usage after all blocks have been freed. '
-    + 'Benchmark submitted by Dennis Kjaer Christensen.';
+    + 'MemTest submitted by Dennis Kjaer Christensen.';
 end;
 
-class function TSortIntArrayThreads.GetBenchmarkName: string;
+class function TSortIntArrayThreads.GetMemTestName: string;
 begin
   Result := 'Sort Integer Array';
 end;
 
-class function TSortIntArrayThreads.GetCategory: TBenchmarkCategory;
+class function TSortIntArrayThreads.GetCategory: TMemTestCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
-procedure TSortIntArrayThreads.RunBenchmark;
+procedure TSortIntArrayThreads.RunMemTest;
 var
   SortIntArrayThread: TSortIntArrayThread;
 begin
   inherited;
   SortIntArrayThread := TSortIntArrayThread.Create(True);
   SortIntArrayThread.FreeOnTerminate := False;
-  SortIntArrayThread.FBenchmark := Self;
+  SortIntArrayThread.FMemTest := Self;
   SortIntArrayThread.FPrime := 1153;
   SortIntArrayThread.Suspended := False;
   SortIntArrayThread.WaitFor;

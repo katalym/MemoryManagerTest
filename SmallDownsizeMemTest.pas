@@ -1,38 +1,38 @@
-unit SmallDownsizeBenchmark;
+unit SmallDownsizeMemTest;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  BenchmarkClassUnit, Math;
+  MemTestClassUnit, Math;
 
 type
 
-  TSmallDownsizeBenchAbstract = class(TMMBenchmark)
+  TSmallDownsizeBenchAbstract = class(TMemTest)
   protected
     FPointers: array of PAnsiChar;
   public
-    constructor CreateBenchmark; override;
+    constructor CreateMemTest; override;
     destructor Destroy; override;
     class function GetBlockSizeBytes: Integer; virtual; abstract;
-    class function GetCategory: TBenchmarkCategory; override;
+    class function GetCategory: TMemTestCategory; override;
     class function GetIterationsCount: Integer; virtual; abstract;
     function GetNumPointers: Integer; virtual;
-    procedure RunBenchmark; override;
+    procedure RunMemTest; override;
   end;
 
   TTinyDownsizeBench = class(TSmallDownsizeBenchAbstract)
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
     class function GetBlockSizeBytes: Integer; override;
     class function GetIterationsCount: Integer; override;
     function GetNumPointers: Integer; override;
   end;
 
   TVerySmallDownsizeBench = class(TSmallDownsizeBenchAbstract)
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
     class function GetBlockSizeBytes: Integer; override;
     class function GetIterationsCount: Integer; override;
     function GetNumPointers: Integer; override;
@@ -43,7 +43,7 @@ implementation
 uses
   bvDataTypes, System.SysUtils;
 
-constructor TSmallDownsizeBenchAbstract.CreateBenchmark;
+constructor TSmallDownsizeBenchAbstract.CreateMemTest;
 begin
   inherited;
   SetLength(FPointers, GetNumPointers);
@@ -55,7 +55,7 @@ begin
   inherited;
 end;
 
-class function TSmallDownsizeBenchAbstract.GetCategory: TBenchmarkCategory;
+class function TSmallDownsizeBenchAbstract.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadRealloc;
 end;
@@ -65,7 +65,7 @@ begin
   Result := 900000; // OK
 end;
 
-procedure TSmallDownsizeBenchAbstract.RunBenchmark;
+procedure TSmallDownsizeBenchAbstract.RunMemTest;
 const
   Prime = 41;
 var
@@ -76,7 +76,7 @@ begin
   {Call the inherited handler}
   inherited;
   CurValue := Prime;
-  {Do the benchmark}
+  {Do the MemTest}
   IterationsCount := GetIterationsCount;
   MaxBlockSize := GetBlockSizeBytes;
   // vTotal := 0;
@@ -119,14 +119,14 @@ begin
   {Free the pointers}
 end;
 
-class function TTinyDownsizeBench.GetBenchmarkDescription: string;
+class function TTinyDownsizeBench.GetMemTestDescription: string;
 begin
   Result := 'Allocates a tiny block (up to 64 bytes) and immediately resizes it to a smaller size. This checks '
     + ' that the block downsizing behaviour of the MM is acceptable.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TTinyDownsizeBench.GetBenchmarkName: string;
+class function TTinyDownsizeBench.GetMemTestName: string;
 begin
   Result := 'Tiny downsize';
 end;
@@ -154,14 +154,14 @@ begin
 {$ENDIF}
 end;
 
-class function TVerySmallDownsizeBench.GetBenchmarkDescription: string;
+class function TVerySmallDownsizeBench.GetMemTestDescription: string;
 begin
   Result := 'Allocates a very small block (up to 200 bytes) and immediately resizes it to a smaller size. This checks '
     + ' that the block downsizing behaviour of the MM is acceptable.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TVerySmallDownsizeBench.GetBenchmarkName: string;
+class function TVerySmallDownsizeBench.GetMemTestName: string;
 begin
   Result := 'VerySmall downsize';
 end;

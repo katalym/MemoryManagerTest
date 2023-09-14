@@ -1,4 +1,4 @@
-{A single-threaded benchmark that reallocates and uses memory blocks.}
+{A single-threaded MemTest that reallocates and uses memory blocks.}
 
 unit SingleThreadedReallocate;
 
@@ -7,16 +7,16 @@ interface
 {$I MemoryManagerTest.inc}
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TSingleThreadReallocateVariousBlocksBenchmark = class(TMMBenchmark)
+  TSingleThreadReallocateVariousBlocksMemTest = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -24,26 +24,26 @@ implementation
 uses
   bvDataTypes, System.SysUtils;
 
-class function TSingleThreadReallocateVariousBlocksBenchmark.GetBenchmarkDescription: string;
+class function TSingleThreadReallocateVariousBlocksMemTest.GetMemTestDescription: string;
 begin
-  Result := 'A single-threaded benchmark that allocates and reallocates memory '
+  Result := 'A single-threaded MemTest that allocates and reallocates memory '
     + 'blocks. The usage of different block sizes approximates real-world usage '
     + 'as seen in various replays. Allocated memory is actually "used", i.e. '
     + 'written to and read.  Rough breakdown: 50% of pointers are <=64 bytes, 95% < 1K, 99% < 4K, rest < 256K'
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TSingleThreadReallocateVariousBlocksBenchmark.GetBenchmarkName: string;
+class function TSingleThreadReallocateVariousBlocksMemTest.GetMemTestName: string;
 begin
   Result := 'Single-threaded reallocate and use';
 end;
 
-class function TSingleThreadReallocateVariousBlocksBenchmark.GetCategory: TBenchmarkCategory;
+class function TSingleThreadReallocateVariousBlocksMemTest.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadRealloc;
 end;
 
-procedure TSingleThreadReallocateVariousBlocksBenchmark.RunBenchmark;
+procedure TSingleThreadReallocateVariousBlocksMemTest.RunMemTest;
 const
   Prime = 29;
 {$IFDEF FullDebug}

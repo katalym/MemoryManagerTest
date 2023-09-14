@@ -1,17 +1,17 @@
-unit DoubleFPBenchmark1Unit;
+unit DoubleFPMemTest1Unit;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+uses Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TDoubleFPThreads1 = class(TMMBenchmark)
+  TDoubleFPThreads1 = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -25,7 +25,7 @@ const
 type
 
   TDoubleFPThread1 = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     procedure Execute; override;
   end;
 
@@ -93,7 +93,7 @@ begin
     SetLength(Src1Array6, BenchArraySize);
     SetLength(Src2Array6, BenchArraySize);
     SetLength(ResultArray6, BenchArraySize);
-    FBenchmark.UpdateUsageStatistics;
+    FMemTest.UpdateUsageStatistics;
     // Fill source arrays
     for I1 := 0 to BenchArraySize - 1 do
     begin
@@ -125,32 +125,32 @@ begin
   end;
 end;
 
-class function TDoubleFPThreads1.GetBenchmarkDescription: string;
+class function TDoubleFPThreads1.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that tests access to Double FP variables ' +
+  Result := 'A MemTest that tests access to Double FP variables ' +
     'in a dynamic array. ' +
     'Gives bonus for 8 byte aligned blocks. Also reveals set associativity related issues.'
-    + 'Benchmark submitted by Dennis Kjaer Christensen.';
+    + 'MemTest submitted by Dennis Kjaer Christensen.';
 end;
 
-class function TDoubleFPThreads1.GetBenchmarkName: string;
+class function TDoubleFPThreads1.GetMemTestName: string;
 begin
   Result := 'Double Variables Access  3 arrays at a time';
 end;
 
-class function TDoubleFPThreads1.GetCategory: TBenchmarkCategory;
+class function TDoubleFPThreads1.GetCategory: TMemTestCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
-procedure TDoubleFPThreads1.RunBenchmark;
+procedure TDoubleFPThreads1.RunMemTest;
 var
   DoubleFPThread1: TDoubleFPThread1;
 begin
   inherited;
   DoubleFPThread1 := TDoubleFPThread1.Create(True);
   DoubleFPThread1.FreeOnTerminate := False;
-  DoubleFPThread1.FBenchmark := Self;
+  DoubleFPThread1.FMemTest := Self;
   DoubleFPThread1.Suspended := False;
   DoubleFPThread1.WaitFor;
   FreeAndNil(DoubleFPThread1);

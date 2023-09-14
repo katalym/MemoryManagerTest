@@ -1,4 +1,4 @@
-unit BenchmarkUtilities;
+unit MemTestUtilities;
 
 interface
 

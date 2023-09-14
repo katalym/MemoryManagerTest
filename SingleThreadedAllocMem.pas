@@ -1,4 +1,4 @@
-{A benchmark that tests the speed and validity of allocmem}
+{A MemTest that tests the speed and validity of allocmem}
 
 unit SingleThreadedAllocMem;
 
@@ -6,16 +6,16 @@ unit SingleThreadedAllocMem;
 
 interface
 
-uses Windows, SysUtils, BenchmarkClassUnit, Classes, Math;
+uses Windows, SysUtils, MemTestClassUnit, Classes, Math;
 
 type
 
-  TSingleThreadAllocMemBenchmark = class(TMMBenchmark)
+  TSingleThreadAllocMemMemTest = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -23,23 +23,23 @@ implementation
 uses
   bvDataTypes;
 
-class function TSingleThreadAllocMemBenchmark.GetBenchmarkDescription: string;
+class function TSingleThreadAllocMemMemTest.GetMemTestDescription: string;
 begin
-  Result := 'A single-threaded benchmark that tests the speed and validity of AllocMem.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+  Result := 'A single-threaded MemTest that tests the speed and validity of AllocMem.  '
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TSingleThreadAllocMemBenchmark.GetBenchmarkName: string;
+class function TSingleThreadAllocMemMemTest.GetMemTestName: string;
 begin
   Result := 'Single-threaded AllocMem';
 end;
 
-class function TSingleThreadAllocMemBenchmark.GetCategory: TBenchmarkCategory;
+class function TSingleThreadAllocMemMemTest.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadAllocAndFree;
 end;
 
-procedure TSingleThreadAllocMemBenchmark.RunBenchmark;
+procedure TSingleThreadAllocMemMemTest.RunMemTest;
 const
   Prime = 17;
 {$IFDEF FullDebug}

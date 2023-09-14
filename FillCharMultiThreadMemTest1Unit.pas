@@ -3,23 +3,23 @@
 {$ASMMODE intel}
 {$ENDIF}
 
-unit FillCharMultiThreadBenchmark1Unit;
+unit FillCharMultiThreadMemTest1Unit;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TFillCharThreads = class(TMMBenchmark)
+  TFillCharThreads = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -30,7 +30,7 @@ uses
 type
 
   TFillCharThread = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     procedure Execute; override;
   end;
 
@@ -274,27 +274,27 @@ begin
     FreeMem(P4);
     FreeMem(P5);
   end;
-  FBenchmark.UpdateUsageStatistics;
+  FMemTest.UpdateUsageStatistics;
 end;
 
-class function TFillCharThreads.GetBenchmarkDescription: string;
+class function TFillCharThreads.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that uses 2 threads to measure write speed to allocated block - gives bonus for 16 byte alignment '
+  Result := 'A MemTest that uses 2 threads to measure write speed to allocated block - gives bonus for 16 byte alignment '
     + 'Measures memory usage after all blocks have been freed. Fill data blocks of sizes from 300 kB to 2.5 MB '
-    + 'Benchmark submitted by Dennis Kjaer Christensen.';
+    + 'MemTest submitted by Dennis Kjaer Christensen.';
 end;
 
-class function TFillCharThreads.GetBenchmarkName: string;
+class function TFillCharThreads.GetMemTestName: string;
 begin
   Result := 'Fill Char using 2 threads';
 end;
 
-class function TFillCharThreads.GetCategory: TBenchmarkCategory;
+class function TFillCharThreads.GetCategory: TMemTestCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
-procedure TFillCharThreads.RunBenchmark;
+procedure TFillCharThreads.RunMemTest;
 var
   FillCharThread1: TFillCharThread;
   FillCharThread2: TFillCharThread;
@@ -304,8 +304,8 @@ begin
   FillCharThread2 := TFillCharThread.Create(True);
   FillCharThread1.FreeOnTerminate := False;
   FillCharThread2.FreeOnTerminate := False;
-  FillCharThread1.FBenchmark := Self;
-  FillCharThread2.FBenchmark := Self;
+  FillCharThread1.FMemTest := Self;
+  FillCharThread2.FMemTest := Self;
   FillCharThread1.Suspended := False;
   FillCharThread2.Suspended := False;
   FillCharThread1.WaitFor;

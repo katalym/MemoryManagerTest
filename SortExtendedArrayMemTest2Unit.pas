@@ -1,20 +1,20 @@
-unit SortExtendedArrayBenchmark2Unit;
+unit SortExtendedArrayMemTest2Unit;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TQuickSortExtendedArrayThreads = class(TMMBenchmark)
+  TQuickSortExtendedArrayThreads = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -32,7 +32,7 @@ const
 type
 
   TQuickSortExtendedArrayThread = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     Prime: Integer;
     procedure Execute; override;
   end;
@@ -104,34 +104,34 @@ begin
     finally
       FreeMem(ExtArray);
     end;
-    FBenchmark.UpdateUsageStatistics;
+    FMemTest.UpdateUsageStatistics;
   end;
 end;
 
-class function TQuickSortExtendedArrayThreads.GetBenchmarkDescription:
+class function TQuickSortExtendedArrayThreads.GetMemTestDescription:
   string;
 begin
-  Result := 'A benchmark that measures read and write speed to an array of Extendeds. '
+  Result := 'A MemTest that measures read and write speed to an array of Extendeds. '
     + 'The Extended type is padded to be 16 byte. '
     + 'Bonus is given for 16 byte alignment of array '
     + 'Will also reveil cache set associativity related issues. '
     + 'Access pattern is created by X sorting array of arbitrary values using the QuickSort algorithm implemented in TList. '
     + 'Measures memory usage after all blocks have been freed. '
-    + 'Benchmark submitted by Avatar Zondertau, based on a benchmark by Dennis Kjaer Christensen.';
+    + 'MemTest submitted by Avatar Zondertau, based on a MemTest by Dennis Kjaer Christensen.';
 end;
 
-class function TQuickSortExtendedArrayThreads.GetBenchmarkName: string;
+class function TQuickSortExtendedArrayThreads.GetMemTestName: string;
 begin
   Result := 'Quick Sort Extended Array';
 end;
 
 class function TQuickSortExtendedArrayThreads.GetCategory:
-  TBenchmarkCategory;
+  TMemTestCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
-procedure TQuickSortExtendedArrayThreads.RunBenchmark;
+procedure TQuickSortExtendedArrayThreads.RunMemTest;
 var
   SortExtendedArrayThread1,
     SortExtendedArrayThread2,
@@ -179,14 +179,14 @@ begin
   SortExtendedArrayThread7.Priority := tpTimeCritical;
   SortExtendedArrayThread8.Priority := tpTimeCritical;
 
-  SortExtendedArrayThread1.FBenchmark := Self;
-  SortExtendedArrayThread2.FBenchmark := Self;
-  SortExtendedArrayThread3.FBenchmark := Self;
-  SortExtendedArrayThread4.FBenchmark := Self;
-  SortExtendedArrayThread5.FBenchmark := Self;
-  SortExtendedArrayThread6.FBenchmark := Self;
-  SortExtendedArrayThread7.FBenchmark := Self;
-  SortExtendedArrayThread8.FBenchmark := Self;
+  SortExtendedArrayThread1.FMemTest := Self;
+  SortExtendedArrayThread2.FMemTest := Self;
+  SortExtendedArrayThread3.FMemTest := Self;
+  SortExtendedArrayThread4.FMemTest := Self;
+  SortExtendedArrayThread5.FMemTest := Self;
+  SortExtendedArrayThread6.FMemTest := Self;
+  SortExtendedArrayThread7.FMemTest := Self;
+  SortExtendedArrayThread8.FMemTest := Self;
 
   SortExtendedArrayThread1.Suspended := False;
   SortExtendedArrayThread2.Suspended := False;

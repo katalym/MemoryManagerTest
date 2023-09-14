@@ -1,21 +1,21 @@
-{A benchmark that tests many short-lived threads with many transient small objects.}
+{A MemTest that tests many short-lived threads with many transient small objects.}
 
-unit WildThreadsBenchmarkUnit;
+unit WildThreadsMemTestUnit;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+uses Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TWildThreads = class(TMMBenchmark)
+  TWildThreads = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -80,24 +80,24 @@ begin
   SetEvent(m);
 end;
 
-class function TWildThreads.GetBenchmarkDescription: string;
+class function TWildThreads.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that tests many short-lived threads (' + IntToStr(cNumThreads) + ') with many '
+  Result := 'A MemTest that tests many short-lived threads (' + IntToStr(cNumThreads) + ') with many '
     + 'transient small objects. For meaningful results, do not run this '
-    + 'benchmark in the Delphi IDE. Benchmark submitted by Eric Grange.';
+    + 'MemTest in the Delphi IDE. MemTest submitted by Eric Grange.';
 end;
 
-class function TWildThreads.GetBenchmarkName: string;
+class function TWildThreads.GetMemTestName: string;
 begin
   Result := 'Transient threaded objects (' + IntToStr(cNumThreads) + ' threads)';
 end;
 
-class function TWildThreads.GetCategory: TBenchmarkCategory;
+class function TWildThreads.GetCategory: TMemTestCategory;
 begin
   Result := bmMultiThreadAllocAndFree;
 end;
 
-procedure TWildThreads.RunBenchmark;
+procedure TWildThreads.RunMemTest;
 const
   LowestPriority = tpLowest;
 var

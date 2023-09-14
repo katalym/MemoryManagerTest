@@ -1,8 +1,8 @@
 {****************************************************************************************
 
-  StringThread usede by StringTestBenchMark & ManyThreadsTestBenchMark
+  StringThread usede by StringTestMemTest & ManyThreadsTestMemTest
 
-  By Ivo Tops for FastCode Memory Manager BenchMark & Validation
+  By Ivo Tops for FastCode Memory Manager MemTest & Validation
 
   ****************************************************************************************}
 unit StringThread;

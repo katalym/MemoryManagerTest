@@ -3,33 +3,31 @@ object PerformanceForm: TPerformanceForm
   Top = 89
   BorderWidth = 4
   Caption = 'Compare Performance for Memory Managers'#39' tests'
-  ClientHeight = 574
-  ClientWidth = 1184
+  ClientHeight = 573
+  ClientWidth = 1180
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 1184
-    Height = 574
+    Width = 1180
+    Height = 573
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object pnlUsage: TPanel
       Left = 0
-      Top = 543
-      Width = 1184
+      Top = 542
+      Width = 1180
       Height = 31
       Align = alBottom
       BevelOuter = bvNone
@@ -74,7 +72,7 @@ object PerformanceForm: TPerformanceForm
         AlignWithMargins = True
         Left = 396
         Top = 6
-        Width = 784
+        Width = 780
         Height = 21
         Margins.Top = 6
         Margins.Right = 4
@@ -87,7 +85,7 @@ object PerformanceForm: TPerformanceForm
     object pnlResults: TGridPanel
       Left = 0
       Top = 0
-      Width = 1184
+      Width = 1180
       Height = 161
       Align = alTop
       BevelOuter = bvNone
@@ -125,7 +123,7 @@ object PerformanceForm: TPerformanceForm
       object lstAvailableResults: TListBox
         Left = 0
         Top = 0
-        Width = 544
+        Width = 542
         Height = 161
         Align = alClient
         ItemHeight = 13
@@ -133,7 +131,7 @@ object PerformanceForm: TPerformanceForm
         TabOrder = 0
       end
       object pnlListActions: TPanel
-        Left = 544
+        Left = 542
         Top = 0
         Width = 95
         Height = 161
@@ -181,9 +179,9 @@ object PerformanceForm: TPerformanceForm
         end
       end
       object lstCompareResults: TListBox
-        Left = 639
+        Left = 637
         Top = 0
-        Width = 545
+        Width = 543
         Height = 161
         Align = alClient
         ItemHeight = 13
@@ -194,15 +192,15 @@ object PerformanceForm: TPerformanceForm
     object Panel1: TPanel
       Left = 0
       Top = 161
-      Width = 1184
-      Height = 382
+      Width = 1180
+      Height = 381
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 2
       object pnlCompareToThisResult: TPanel
         Left = 0
         Top = 0
-        Width = 1184
+        Width = 1180
         Height = 21
         Align = alTop
         BevelOuter = bvNone
@@ -211,7 +209,7 @@ object PerformanceForm: TPerformanceForm
           AlignWithMargins = True
           Left = 3
           Top = 4
-          Width = 1178
+          Width = 1174
           Height = 13
           Margins.Top = 4
           Margins.Bottom = 4
@@ -226,11 +224,11 @@ object PerformanceForm: TPerformanceForm
           ParentFont = False
         end
       end
-      object lstBenchmarks: TDBGrid
+      object lstMemTests: TDBGrid
         Left = 0
         Top = 21
-        Width = 1184
-        Height = 361
+        Width = 1180
+        Height = 360
         Align = alClient
         DataSource = dscCompareTo
         TabOrder = 1
@@ -242,7 +240,7 @@ object PerformanceForm: TPerformanceForm
       end
     end
   end
-  object mnuBenchmarks: TPopupMenu
+  object mnuMemTests: TPopupMenu
     Left = 100
     Top = 76
     object mniPopupClearAllCheckMarks: TMenuItem
@@ -251,21 +249,21 @@ object PerformanceForm: TPerformanceForm
       ImageIndex = 6
     end
     object mniPopupSelectAllCheckMarks: TMenuItem
-      Caption = 'Check All Benchmarks'
-      Hint = 'Check All Benchmarks'
+      Caption = 'Check All MemTests'
+      Hint = 'Check All MemTests'
       ImageIndex = 4
     end
     object mniSep: TMenuItem
       Caption = '-'
     end
-    object mniPopupCheckAllDefaultBenchmarks: TMenuItem
-      Caption = 'Check All Default Benchmarks'
-      Hint = 'Check All Default Benchmarks'
+    object mniPopupCheckAllDefaultMemTests: TMenuItem
+      Caption = 'Check All Default MemTests'
+      Hint = 'Check All Default MemTests'
       ImageIndex = 4
     end
-    object mniPopupCheckAllThreadedBenchmarks: TMenuItem
-      Caption = 'Check Special Thread Benchmarks'
-      Hint = 'Check Special Thread Benchmarks'
+    object mniPopupCheckAllThreadedMemTests: TMenuItem
+      Caption = 'Check Special Thread MemTests'
+      Hint = 'Check Special Thread MemTests'
     end
   end
   object alActions: TActionList

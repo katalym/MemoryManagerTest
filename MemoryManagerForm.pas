@@ -1,73 +1,73 @@
-unit BenchmarkForm;
+unit MemoryManagerForm;
 
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, VCL.Controls, VCL.Forms,
-  VCL.StdCtrls, BenchmarkClassUnit, Math, VCL.Buttons,
+  VCL.StdCtrls, MemTestClassUnit, Math, VCL.Buttons,
   VCL.ExtCtrls, VCL.ComCtrls, VCL.Clipbrd, VCL.Menus, System.Actions,
   VCL.ActnList, System.ImageList, VCL.ImgList, VCL.ToolWin;
 
 type
-  TBenchmarkFrm = class(TForm)
+  TMemoryManagerFrm = class(TForm)
     actCopyResultsToClipboard: TAction;
     actDeletelTestResults: TAction;
-    actPopupCheckAllDefaultBenchmarks: TAction;
-    actPopupCheckAllThreadedBenchmarks: TAction;
+    actPopupCheckAllDefaultMemTests: TAction;
+    actPopupCheckAllThreadedMemTests: TAction;
     actPopupClearAllCheckMarks: TAction;
     actPopupSelectAllCheckMarks: TAction;
-    actRunAllCheckedBenchmarks: TAction;
-    actRunUsageReplayBenchmark: TAction;
+    actRunAllCheckedMemTests: TAction;
+    actRunUsageReplayMemTest: TAction;
     alActions: TActionList;
     btnCopyResultsToClipboard: TToolButton;
     btnDeleteTestResults: TToolButton;
-    btnRunAllCheckedBenchmarks: TBitBtn;
-    btnRunSelectedBenchmark: TBitBtn;
+    btnRunAllCheckedMemTests: TBitBtn;
+    btnRunSelectedMemTest: TBitBtn;
     edtUsageReplay: TEdit;
-    gbBenchmarks: TGroupBox;
+    gbMemTests: TGroupBox;
     imlImages: TImageList;
     lblUsageReplay: TLabel;
     ListViewResults: TListView;
-    lvBenchmarkList: TListView;
-    mBenchmarkDescription: TMemo;
+    lvMemTestList: TListView;
+    mMemTestDescription: TMemo;
     MemoEnvironment: TMemo;
-    mniPopupCheckAllDefaultBenchmarks: TMenuItem;
-    mniPopupCheckAllThreadedBenchmarks: TMenuItem;
+    mniPopupCheckAllDefaultMemTests: TMenuItem;
+    mniPopupCheckAllThreadedMemTests: TMenuItem;
     mniPopupClearAllCheckMarks: TMenuItem;
     mniPopupSelectAllCheckMarks: TMenuItem;
     mniSep: TMenuItem;
-    mnuBenchmarks: TPopupMenu;
+    mnuMemTests: TPopupMenu;
     mResults: TMemo;
-    pcBenchmarkResults: TPageControl;
+    pcMemTestResults: TPageControl;
     pnlUsage: TPanel;
     Splitter2: TSplitter;
-    TabSheetBenchmarkResults: TTabSheet;
+    TabSheetMemTestResults: TTabSheet;
     TabSheetCPU: TTabSheet;
     TabSheetProgress: TTabSheet;
     tmrAutoRun: TTimer;
     ToolBar1: TToolBar;
     N1: TMenuItem;
-    mniRunAllCheckedBenchmarks: TMenuItem;
-    mniRunUsageReplayBenchmark: TMenuItem;
+    mniRunAllCheckedMemTests: TMenuItem;
+    mniRunUsageReplayMemTest: TMenuItem;
     procedure actCopyResultsToClipboardExecute(Sender: TObject);
     procedure actDeletelTestResultsExecute(Sender: TObject);
-    procedure actPopupCheckAllDefaultBenchmarksExecute(Sender: TObject);
-    procedure actPopupCheckAllThreadedBenchmarksExecute(Sender: TObject);
+    procedure actPopupCheckAllDefaultMemTestsExecute(Sender: TObject);
+    procedure actPopupCheckAllThreadedMemTestsExecute(Sender: TObject);
     procedure actPopupClearAllCheckMarksExecute(Sender: TObject);
     procedure actPopupSelectAllCheckMarksExecute(Sender: TObject);
-    procedure actRunAllCheckedBenchmarksExecute(Sender: TObject);
-    procedure actRunUsageReplayBenchmarkExecute(Sender: TObject);
+    procedure actRunAllCheckedMemTestsExecute(Sender: TObject);
+    procedure actRunUsageReplayMemTestExecute(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure lvBenchmarkListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
+    procedure lvMemTestListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure tmrAutoRunTimer(Sender: TObject);
   private
     FApplicationIniFileName: string;
-    FBenchmarkHasBeenRun: Boolean;
+    FMemTestHasBeenRun: Boolean;
     FFormActivated: Boolean;
-    FRanBenchmarkCount: Integer;
+    FRanMemTestCount: Integer;
     FTestDescriptionMaxSize: integer;
     FTestResultsFileName: string;
     procedure AddResultsToDisplay(
@@ -78,13 +78,13 @@ type
     procedure InitResultsDisplay;
     procedure LoadResultsToDisplay;
     procedure ReadIniFile;
-    procedure RunBenchmarks(ABenchmarkClass: TMMBenchmarkClass);
+    procedure RunMemTests(const aMemTestClass: TMemTestClass);
     procedure SaveResults;
     procedure WriteIniFile;
   end;
 
 var
-  BenchmarkFrm: TBenchmarkFrm;
+  MemoryManagerFrm: TMemoryManagerFrm;
 
 const
   // Column indices for the ListView
@@ -110,12 +110,12 @@ const
 implementation
 
 uses
-  BenchmarkUtilities, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit, System.StrUtils,
-  VCL.Dialogs, ReplayBenchmarkUnit, bvDataTypes;
+  MemTestUtilities, SystemInfoUnit, System.IniFiles, CPU_Usage_Unit, System.StrUtils,
+  VCL.Dialogs, ReplayMemTestUnit, bvDataTypes;
 
 {$R *.dfm}
 
-procedure TBenchmarkFrm.actCopyResultsToClipboardExecute(Sender: TObject);
+procedure TMemoryManagerFrm.actCopyResultsToClipboardExecute(Sender: TObject);
 var
   iRow: Integer;
   iCol: Integer;
@@ -149,7 +149,7 @@ begin
   end;
 end;
 
-procedure TBenchmarkFrm.actDeletelTestResultsExecute(Sender: TObject);
+procedure TMemoryManagerFrm.actDeletelTestResultsExecute(Sender: TObject);
 begin
   begin
     ListViewResults.Items.BeginUpdate;
@@ -159,87 +159,87 @@ begin
       ListViewResults.Items.EndUpdate;
     end;
     DeleteFile(FTestResultsFileName);
-    FRanBenchmarkCount := 0;
+    FRanMemTestCount := 0;
   end;
 end;
 
-procedure TBenchmarkFrm.actPopupCheckAllDefaultBenchmarksExecute(Sender: TObject);
+procedure TMemoryManagerFrm.actPopupCheckAllDefaultMemTestsExecute(Sender: TObject);
 var
   i: Integer;
 begin
-  for i := 0 to lvBenchmarkList.Items.Count - 1 do
-    lvBenchmarkList.Items[i].Checked := Benchmarks[i].RunByDefault;
+  for i := 0 to lvMemTestList.Items.Count - 1 do
+    lvMemTestList.Items[i].Checked := MemTests[i].RunByDefault;
 end;
 
-procedure TBenchmarkFrm.actPopupCheckAllThreadedBenchmarksExecute(Sender: TObject);
+procedure TMemoryManagerFrm.actPopupCheckAllThreadedMemTestsExecute(Sender: TObject);
 var
   i: Integer;
 begin
-  for i := 0 to lvBenchmarkList.Items.Count - 1 do
-    lvBenchmarkList.Items[i].Checked := Benchmarks[i].IsThreadedSpecial;
+  for i := 0 to lvMemTestList.Items.Count - 1 do
+    lvMemTestList.Items[i].Checked := MemTests[i].IsThreadedSpecial;
 end;
 
-procedure TBenchmarkFrm.actPopupClearAllCheckMarksExecute(Sender: TObject);
+procedure TMemoryManagerFrm.actPopupClearAllCheckMarksExecute(Sender: TObject);
 var
   i: Integer;
 begin
-  for i := 0 to lvBenchmarkList.Items.Count - 1 do
-    lvBenchmarkList.Items[i].Checked := False;
+  for i := 0 to lvMemTestList.Items.Count - 1 do
+    lvMemTestList.Items[i].Checked := False;
 end;
 
-procedure TBenchmarkFrm.actPopupSelectAllCheckMarksExecute(Sender: TObject);
+procedure TMemoryManagerFrm.actPopupSelectAllCheckMarksExecute(Sender: TObject);
 var
   i: Integer;
 begin
-  for i := 0 to lvBenchmarkList.Items.Count - 1 do
-    lvBenchmarkList.Items[i].Checked := True;
+  for i := 0 to lvMemTestList.Items.Count - 1 do
+    lvMemTestList.Items[i].Checked := True;
 end;
 
-procedure TBenchmarkFrm.actRunAllCheckedBenchmarksExecute(Sender: TObject);
+procedure TMemoryManagerFrm.actRunAllCheckedMemTestsExecute(Sender: TObject);
 var
   i: Integer;
 begin
   Screen.Cursor := crHourglass;
-  actRunAllCheckedBenchmarks.Caption := 'Running';
+  actRunAllCheckedMemTests.Caption := 'Running';
   Enabled := False;
   Application.ProcessMessages;
   Enabled := True;
-  mResults.Lines.Add('***Running All Checked Benchmarks***');
+  mResults.Lines.Add('***Running All Checked MemTests***');
   try
 
-    for i := 0 to Benchmarks.Count - 1 do begin
-      // Must this benchmark be run?
-      if lvBenchmarkList.Items[i].Checked then
+    for i := 0 to MemTests.Count - 1 do begin
+      // Must this MemTest be run?
+      if lvMemTestList.Items[i].Checked then
       begin
         // Show progress in checkboxlist
-        lvBenchmarkList.Items[i].Selected := True;
-        lvBenchmarkList.Items[i].Focused := True;
-        lvBenchmarkList.Selected.MakeVisible(False);
-        lvBenchmarkListSelectItem(nil, lvBenchmarkList.Selected, lvBenchmarkList.Selected <> nil);
+        lvMemTestList.Items[i].Selected := True;
+        lvMemTestList.Items[i].Focused := True;
+        lvMemTestList.Selected.MakeVisible(False);
+        lvMemTestListSelectItem(nil, lvMemTestList.Selected, lvMemTestList.Selected <> nil);
         Enabled := False;
         Application.ProcessMessages;
         Enabled := True;
-        // Run the benchmark
-        RunBenchmarks(Benchmarks[i]);
+        // Run the MemTest
+        RunMemTests(MemTests[i]);
         // Wait one second
         Sleep(1000);
       end;
     end;
-    mResults.Lines.Add('***All Checked Benchmarks Done***');
+    mResults.Lines.Add('***All Checked MemTests Done***');
 
   finally
-    actRunAllCheckedBenchmarks.Caption := 'Run All Checked Benchmarks';
+    actRunAllCheckedMemTests.Caption := 'Run All Checked MemTests';
     Screen.Cursor := crDefault;
   end;
-  if FRanBenchmarkCount > 0 then
+  if FRanMemTestCount > 0 then
     SaveResults;
 end;
 
-procedure TBenchmarkFrm.actRunUsageReplayBenchmarkExecute(Sender: TObject);
+procedure TMemoryManagerFrm.actRunUsageReplayMemTestExecute(Sender: TObject);
 begin
   Screen.Cursor := crHourglass;
 
-  if lvBenchmarkList.Selected = nil then
+  if lvMemTestList.Selected = nil then
     Exit;
 
   Enabled := False;
@@ -247,9 +247,9 @@ begin
   Enabled := True;
   try
 
-    RunBenchmarks(TReplayBenchmark);
+    RunMemTests(TReplayMemTest);
 
-    if FRanBenchmarkCount > 0 then
+    if FRanMemTestCount > 0 then
       SaveResults;
 
   finally
@@ -260,14 +260,14 @@ begin
   end;
 end;
 
-procedure TBenchmarkFrm.AddResultsToDisplay(
+procedure TMemoryManagerFrm.AddResultsToDisplay(
   const aBenchName, aMMName: string;
   const aCpuUsage: Int64;
   const aTicks, aPeak: NativeUInt);
 var
   Item: TListItem;
 begin
-  Inc(FRanBenchmarkCount);
+  Inc(FRanMemTestCount);
 
   Item := ListViewResults.Items.Add;
   Item.Caption := aBenchName;
@@ -280,11 +280,11 @@ begin
   // ListViewResults.AlphaSort;
 end;
 
-procedure TBenchmarkFrm.DoActivateForm;
+procedure TMemoryManagerFrm.DoActivateForm;
 var
   i: Integer;
   vItem: TListItem;
-  vBenchmark: TMMBenchmarkClass;
+  vMemTest: TMemTestClass;
 begin
   FFormActivated := True;
 
@@ -293,48 +293,48 @@ begin
   MemoEnvironment.Lines.Add('****************');
   MemoEnvironment.Lines.Add(SystemInfoWindows);
 
-  FBenchmarkHasBeenRun := False;
+  FMemTestHasBeenRun := False;
   FTestDescriptionMaxSize := 0;
 
-  lvBenchmarkList.SortType := stNone; // Do not perform extra sort - already sorted
-  // List the benchmarks
-  for i := 0 to Benchmarks.Count - 1 do begin
-    vBenchmark := Benchmarks[i];
-    vItem := lvBenchmarkList.Items.Add;
+  lvMemTestList.SortType := stNone; // Do not perform extra sort - already sorted
+  // List the MemTests
+  for i := 0 to MemTests.Count - 1 do begin
+    vMemTest := MemTests[i];
+    vItem := lvMemTestList.Items.Add;
     vItem.Data := Pointer(i);
-    if Assigned(vBenchmark) then
+    if Assigned(vMemTest) then
     begin
-      vItem.Checked := vBenchmark.RunByDefault;
-      vItem.Caption := vBenchmark.GetBenchmarkName;
-      FTestDescriptionMaxSize := Max(FTestDescriptionMaxSize, Length(vBenchmark.GetBenchmarkName));
-      vItem.SubItems.Add(BenchmarkCategoryNames[vBenchmark.GetCategory]);
+      vItem.Checked := vMemTest.RunByDefault;
+      vItem.Caption := vMemTest.GetMemTestName;
+      FTestDescriptionMaxSize := Max(FTestDescriptionMaxSize, Length(vMemTest.GetMemTestName));
+      vItem.SubItems.Add(MemTestCategoryNames[vMemTest.GetCategory]);
     end;
   end;
 
-  if lvBenchmarkList.Items.Count > 0 then
+  if lvMemTestList.Items.Count > 0 then
   begin
-    // Select the first benchmark
-    lvBenchmarkList.Items[0].Selected := True;
-    lvBenchmarkList.Items[0].Focused := True;
-    // Set the benchmark description.
-    lvBenchmarkListSelectItem(nil, lvBenchmarkList.Selected, lvBenchmarkList.Selected <> nil);
+    // Select the first MemTest
+    lvMemTestList.Items[0].Selected := True;
+    lvMemTestList.Items[0].Focused := True;
+    // Set the MemTest description.
+    lvMemTestListSelectItem(nil, lvMemTestList.Selected, lvMemTestList.Selected <> nil);
   end;
 
   InitResultsDisplay;
 
-  pcBenchmarkResults.ActivePage := TabSheetBenchmarkResults;
+  pcMemTestResults.ActivePage := TabSheetMemTestResults;
 
   tmrAutoRun.Enabled := ParamCount > 0;
 
 end;
 
-procedure TBenchmarkFrm.FormActivate(Sender: TObject);
+procedure TMemoryManagerFrm.FormActivate(Sender: TObject);
 begin
   if not FFormActivated then
     DoActivateForm;
 end;
 
-procedure TBenchmarkFrm.FormCreate(Sender: TObject);
+procedure TMemoryManagerFrm.FormCreate(Sender: TObject);
 var
   vCustomExeName: string;
 begin
@@ -358,17 +358,17 @@ begin
 
 end;
 
-procedure TBenchmarkFrm.FormDestroy(Sender: TObject);
+procedure TMemoryManagerFrm.FormDestroy(Sender: TObject);
 begin
 
   WriteIniFile;
 
-  if FRanBenchmarkCount > 0 then
+  if FRanMemTestCount > 0 then
     SaveResults;
 
 end;
 
-procedure TBenchmarkFrm.FormShow(Sender: TObject);
+procedure TMemoryManagerFrm.FormShow(Sender: TObject);
 begin
   if not FFormActivated then
   begin
@@ -379,7 +379,7 @@ begin
   end;
 end;
 
-procedure TBenchmarkFrm.InitResultsDisplay;
+procedure TMemoryManagerFrm.InitResultsDisplay;
 begin
   ListViewResults.Items.BeginUpdate;
   try
@@ -388,7 +388,7 @@ begin
     ListViewResults.Items.EndUpdate;
   end;
 
-  FRanBenchmarkCount := 0;
+  FRanMemTestCount := 0;
   LoadResultsToDisplay;
 
   ListViewResults.Column[LVCOL_BENCH].Width := 240;
@@ -399,7 +399,7 @@ begin
 
 end;
 
-procedure TBenchmarkFrm.LoadResultsToDisplay;
+procedure TMemoryManagerFrm.LoadResultsToDisplay;
 var
   CSV, Bench: TStringList;
   l: Integer;
@@ -431,8 +431,8 @@ begin
 
         MMName := Bench[RESULTS_MM];
         vCPUUsage := Max(StrToIntDef(Bench[RESULTS_CPUUSAGE], 0), 0);
-        vTicks := Cardinal(Max(StrToIntDef(Bench[RESULTS_TICKS], 0), 0));
-        vPeak := Cardinal(Max(StrToIntDef(Bench[RESULTS_MEM], 0), 0));
+        vTicks := bvIntToCardinal(Max(StrToIntDef(Bench[RESULTS_TICKS], 0), 0));
+        vPeak := bvIntToCardinal(Max(StrToIntDef(Bench[RESULTS_MEM], 0), 0));
 
         AddResultsToDisplay(BenchName, MMName, vCPUUsage, vTicks, vPeak);
       end;
@@ -453,22 +453,22 @@ begin
   end;
 end;
 
-procedure TBenchmarkFrm.lvBenchmarkListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
+procedure TMemoryManagerFrm.lvMemTestListSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 var
-  LBenchmarkClass: TMMBenchmarkClass;
+  LMemTestClass: TMemTestClass;
 begin
-  // Set the benchmark description
+  // Set the MemTest description
   if (Item <> nil) and Selected then
   begin
-    LBenchmarkClass := Benchmarks[bvNativeIntToInt(NativeInt(Item.Data))];
-    if Assigned(LBenchmarkClass) then
+    LMemTestClass := MemTests[bvNativeIntToInt(NativeInt(Item.Data))];
+    if Assigned(LMemTestClass) then
     begin
-      mBenchmarkDescription.Text := LBenchmarkClass.GetBenchmarkDescription;
+      mMemTestDescription.Text := LMemTestClass.GetMemTestDescription;
     end;
   end;
 end;
 
-procedure TBenchmarkFrm.ReadIniFile;
+procedure TMemoryManagerFrm.ReadIniFile;
 
   function _GetFormMonitorByPosition: Integer;
   var
@@ -527,7 +527,7 @@ begin
     Height := vIniFile.ReadInteger('FormSettings', 'Height', Height);
     Width := vIniFile.ReadInteger('FormSettings', 'Width', Width);
     edtUsageReplay.Text := vIniFile.ReadString('FormSettings', edtUsageReplay.Name, edtUsageReplay.Text);
-    BenchmarkClassUnit.gUsageReplayFileName := edtUsageReplay.Text;
+    MemTestClassUnit.gUsageReplayFileName := edtUsageReplay.Text;
 
   finally
     vIniFile.Free;
@@ -537,70 +537,70 @@ begin
 
 end;
 
-procedure TBenchmarkFrm.RunBenchmarks(ABenchmarkClass: TMMBenchmarkClass);
+procedure TMemoryManagerFrm.RunMemTests(const aMemTestClass: TMemTestClass);
 var
-  vBenchmark: TMMBenchmark;
+  vMemTest: TMemTest;
   vStartCPUUsage, vCurrentCPUUsage: Int64;
   vStartTicks, vCurrentTicks: Cardinal;
   s: string;
 begin
   try
-    pcBenchmarkResults.ActivePage := TabSheetProgress;
+    pcMemTestResults.ActivePage := TabSheetProgress;
 
-    s := Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' Running : ' + ABenchmarkClass.GetBenchmarkName + '...');
+    s := Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' Running : ' + aMemTestClass.GetMemTestName + '...');
     mResults.Lines.Add(s);
-    // Create the benchmark
-    vBenchmark := ABenchmarkClass.CreateBenchmark;
+    // Create the MemTest
+    vMemTest := aMemTestClass.CreateMemTest;
     try
-      if vBenchmark.CanRunBenchmark then
+      if vMemTest.CanRunMemTest then
       begin
         // performance data
-        vBenchmark.PrepareBenchmarkForRun(edtUsageReplay.Text);
+        vMemTest.PrepareMemTestForRun(edtUsageReplay.Text);
         vStartCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total;
         vStartTicks := GetTickCount;
-        vBenchmark.RunBenchmark;
-        vCurrentCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total - vStartCPUUsage - vBenchmark.FExcludeThisCPUUsage;
-        vCurrentTicks := GetTickCount - vStartTicks - vBenchmark.FExcludeThisTicks;
+        vMemTest.RunMemTest;
+        vCurrentCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total - vStartCPUUsage - vMemTest.FExcludeThisCPUUsage;
+        vCurrentTicks := GetTickCount - vStartTicks - vMemTest.FExcludeThisTicks;
 
         // Add a line
         mResults.Lines[mResults.Lines.Count - 1] := // Trim(Trim(FormatDateTime('HH:nn:ss', time)) + ' '
           Format('%-' + FTestDescriptionMaxSize.ToString + 's | CPU Usage(ms) = %7d | Ticks(ms)=%7d | Peak Address Space Usage(Kb) = %7d',
-          [ABenchmarkClass.GetBenchmarkName.Trim, vCurrentCPUUsage, vCurrentTicks, vBenchmark.PeakAddressSpaceUsage]);
+          [aMemTestClass.GetMemTestName.Trim, vCurrentCPUUsage, vCurrentTicks, vMemTest.PeakAddressSpaceUsage]);
         Enabled := False;
         Application.ProcessMessages;
         Enabled := True;
 
-        AddResultsToDisplay(ABenchmarkClass.GetBenchmarkName,
+        AddResultsToDisplay(aMemTestClass.GetMemTestName,
           MemoryManager_Name,
           vCurrentCPUUsage,
           vCurrentTicks,
-          vBenchmark.PeakAddressSpaceUsage);
-        if not FBenchmarkHasBeenRun then
+          vMemTest.PeakAddressSpaceUsage);
+        if not FMemTestHasBeenRun then
         begin
-          FBenchmarkHasBeenRun := True;
+          FMemTestHasBeenRun := True;
         end;
       end
       else
       begin
-        mResults.Lines[mResults.Lines.Count - 1] := Trim(ABenchmarkClass.GetBenchmarkName) + ': Skipped';
+        mResults.Lines[mResults.Lines.Count - 1] := Trim(aMemTestClass.GetMemTestName) + ': Skipped';
         Enabled := False;
         Application.ProcessMessages;
         Enabled := True;
       end;
     finally
-      // Free the benchmark
-      FreeAndNil(vBenchmark);
+      // Free the MemTest
+      FreeAndNil(vMemTest);
     end;
 
   except
     on E: Exception do begin
-      ShowMessage('Test for ' + ABenchmarkClass.GetBenchmarkName + ' failed with error:'#13 + E.Message);
+      ShowMessage('Test for ' + aMemTestClass.GetMemTestName + ' failed with error:'#13 + E.Message);
       Abort;
     end;
   end;
 end;
 
-procedure TBenchmarkFrm.SaveResults;
+procedure TMemoryManagerFrm.SaveResults;
 var
   CSV, Bench: TStringList;
   i: Integer;
@@ -631,17 +631,17 @@ begin
   end;
 end;
 
-procedure TBenchmarkFrm.tmrAutoRunTimer(Sender: TObject);
+procedure TMemoryManagerFrm.tmrAutoRunTimer(Sender: TObject);
 begin
   tmrAutoRun.Enabled := False;
   actDeletelTestResults.Execute;
   Application.ProcessMessages;
-  actRunAllCheckedBenchmarks.Execute;
+  actRunAllCheckedMemTests.Execute;
   Application.ProcessMessages;
   Close;
 end;
 
-procedure TBenchmarkFrm.WriteIniFile;
+procedure TMemoryManagerFrm.WriteIniFile;
 var
   vIniFile: TIniFile;
 begin

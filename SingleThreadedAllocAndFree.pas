@@ -1,4 +1,4 @@
-{A benchmark that creates and frees many objects in a multi-threaded environment}
+{A MemTest that creates and frees many objects in a multi-threaded environment}
 
 unit SingleThreadedAllocAndFree;
 
@@ -7,16 +7,16 @@ interface
 {$I MemoryManagerTest.inc}
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TSingleThreadAllocateAndFreeBenchmark = class(TMMBenchmark)
+  TSingleThreadAllocateAndFreeMemTest = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -24,26 +24,26 @@ implementation
 uses
   bvDataTypes, System.SysUtils;
 
-class function TSingleThreadAllocateAndFreeBenchmark.GetBenchmarkDescription: string;
+class function TSingleThreadAllocateAndFreeMemTest.GetMemTestDescription: string;
 begin
-  Result := 'A single-threaded benchmark that allocates and frees memory blocks. '
+  Result := 'A single-threaded MemTest that allocates and frees memory blocks. '
     + 'The usage of different block sizes approximates real-world usage as seen '
     + 'in various replays. Allocated memory is actually "used", i.e. written to '
     + 'and read.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TSingleThreadAllocateAndFreeBenchmark.GetBenchmarkName: string;
+class function TSingleThreadAllocateAndFreeMemTest.GetMemTestName: string;
 begin
   Result := 'Single-threaded allocate, use and free';
 end;
 
-class function TSingleThreadAllocateAndFreeBenchmark.GetCategory: TBenchmarkCategory;
+class function TSingleThreadAllocateAndFreeMemTest.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadAllocAndFree;
 end;
 
-procedure TSingleThreadAllocateAndFreeBenchmark.RunBenchmark;
+procedure TSingleThreadAllocateAndFreeMemTest.RunMemTest;
 const
   Prime = 13;
 {$IFDEF FullDebug}

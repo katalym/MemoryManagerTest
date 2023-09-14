@@ -1,6 +1,6 @@
-// A benchmark to measure raw performance and fragmentation resistance.
+// A MemTest to measure raw performance and fragmentation resistance.
 // Alternates large number of small string and small number of large string allocations.
-// Pure GetMem / FreeMem benchmark without reallocations, similar to WildThreads Benchmark.
+// Pure GetMem / FreeMem MemTest without reallocations, similar to WildThreads MemTest.
 // 8-thread version that has approx. same memory footprint and CPU load as single-thread version.
 
 unit RawPerformanceMultiThread;
@@ -10,15 +10,15 @@ unit RawPerformanceMultiThread;
 interface
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
-  TRawPerformanceMultiThreadAbstract = class(TMMBenchmark)
+  TRawPerformanceMultiThreadAbstract = class(TMemTest)
   public
-    procedure RunBenchmark; override;
-    class function GetBenchmarkName: string; override;
-    class function GetBenchmarkDescription: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    procedure RunMemTest; override;
+    class function GetMemTestName: string; override;
+    class function GetMemTestDescription: string; override;
+    class function GetCategory: TMemTestCategory; override;
     class function IsThreadedSpecial: Boolean; override;
     class function NumThreads: Integer; virtual; abstract;
   end;
@@ -60,7 +60,7 @@ type
   TRawPerformanceThread = class(TThread)
   public
     FThreadCount: Integer;
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     procedure Execute; override;
   end;
 
@@ -106,25 +106,25 @@ begin
       if n > high(vStrings) then
         n := low(vStrings);
     end;
-    FBenchmark.UpdateUsageStatistics;
+    FMemTest.UpdateUsageStatistics;
     for n := low(vStrings) to high(vStrings) do
       vStrings[n] := '';
   end;
 end;
 
-class function TRawPerformanceMultiThreadAbstract.GetBenchmarkDescription: string;
+class function TRawPerformanceMultiThreadAbstract.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark to measure raw performance and fragmentation resistance. ' +
+  Result := 'A MemTest to measure raw performance and fragmentation resistance. ' +
     'Allocates large number of small strings (< 1 kB) and small number of larger ' +
     '(< 32 kB) to very large (< 256 kB) strings. ' + IntToStr(NumThreads) + '-thread version.';
 end;
 
-class function TRawPerformanceMultiThreadAbstract.GetBenchmarkName: string;
+class function TRawPerformanceMultiThreadAbstract.GetMemTestName: string;
 begin
   Result := 'Raw Performance ' + NumThreads.ToString.PadLeft(2, ' ') + ' threads';
 end;
 
-class function TRawPerformanceMultiThreadAbstract.GetCategory: TBenchmarkCategory;
+class function TRawPerformanceMultiThreadAbstract.GetCategory: TMemTestCategory;
 begin
   Result := bmMultiThreadAllocAndFree;
 end;
@@ -134,7 +134,7 @@ begin
   Result := True;
 end;
 
-procedure TRawPerformanceMultiThreadAbstract.RunBenchmark;
+procedure TRawPerformanceMultiThreadAbstract.RunMemTest;
 var
   vThreadsCount: Integer;
   vThreads: array of TRawPerformanceThread;
@@ -147,7 +147,7 @@ begin
   begin
     vThreads[i] := TRawPerformanceThread.Create(True);
     vThreads[i].FreeOnTerminate := False;
-    vThreads[i].FBenchmark := Self;
+    vThreads[i].FMemTest := Self;
     vThreads[i].FThreadCount := vThreadsCount;
     vThreads[i].Priority := tpLower;
   end;

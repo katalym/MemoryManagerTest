@@ -1,8 +1,8 @@
 unit GeneralFunctions;
 
 // Minor modifications:
-// Added DetectCPUType from original MainUnit in FastCodeBenchmarkTool091
-// Added GetCPUFrequence from original MainUnit in FastCodeBenchmarkTool091
+// Added DetectCPUType from original MainUnit in FastCodeMemTestTool091
+// Added GetCPUFrequence from original MainUnit in FastCodeMemTestTool091
 
 interface
 

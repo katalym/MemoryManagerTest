@@ -24,16 +24,16 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_COMBINING_SIGNED_UNSIGNED64>true</DCC_COMBINING_SIGNED_UNSIGNED64>
-        <DCC_IMPLICIT_CONVERSION_LOSS>true</DCC_IMPLICIT_CONVERSION_LOSS>
-        <DCC_IMPLICIT_INTEGER_CAST_LOSS>true</DCC_IMPLICIT_INTEGER_CAST_LOSS>
-        <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
-        <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <DCC_CVT_ACHAR_TO_WCHAR>true</DCC_CVT_ACHAR_TO_WCHAR>
-        <DCC_CVT_WIDENING_STRING_LOST>true</DCC_CVT_WIDENING_STRING_LOST>
         <DCC_EXPLICIT_STRING_CAST>true</DCC_EXPLICIT_STRING_CAST>
-        <DCC_EXPLICIT_STRING_CAST_LOSS>true</DCC_EXPLICIT_STRING_CAST_LOSS>
+        <DCC_CVT_WIDENING_STRING_LOST>true</DCC_CVT_WIDENING_STRING_LOST>
+        <DCC_IMPLICIT_INTEGER_CAST_LOSS>true</DCC_IMPLICIT_INTEGER_CAST_LOSS>
         <DCC_E>false</DCC_E>
+        <DCC_CVT_ACHAR_TO_WCHAR>true</DCC_CVT_ACHAR_TO_WCHAR>
+        <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
+        <DCC_IMPLICIT_CONVERSION_LOSS>true</DCC_IMPLICIT_CONVERSION_LOSS>
+        <DCC_EXPLICIT_STRING_CAST_LOSS>true</DCC_EXPLICIT_STRING_CAST_LOSS>
+        <DCC_COMBINING_SIGNED_UNSIGNED64>true</DCC_COMBINING_SIGNED_UNSIGNED64>
+        <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
         <DCC_N>false</DCC_N>
@@ -46,19 +46,21 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <DCC_RangeChecking>true</DCC_RangeChecking>
-        <DCC_Optimize>false</DCC_Optimize>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_UnitSearchPath>ScaleMM2;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=2.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_Optimize>false</DCC_Optimize>
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
+        <DCC_Define>madExcept;$(DCC_Define)</DCC_Define>
         <DCC_UnitSearchPath>MadExcept\Win32;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
@@ -68,6 +70,7 @@
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_UnitSearchPath>MadExcept\Win64;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
+        <DCC_Define>madExcept;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -81,57 +84,58 @@
         <DCCReference Include="FastMM5\FastMM5.pas"/>
         <DCCReference Include="FastMM5_FullDebug\FastMM5.pas"/>
         <DCCReference Include="BigBrain\BigBrainUltra.pas"/>
+        <DCCReference Include="BrainMM\BrainMM.pas"/>
         <DCCReference Include="UsageLogger\MMUsageLogger_MemotyOperationRecordUnit.pas"/>
-        <DCCReference Include="AddressSpaceCreepBenchmark.pas"/>
-        <DCCReference Include="AddressSpaceCreepBenchmarkLarge.pas"/>
+        <DCCReference Include="AddressSpaceCreepMemTest.pas"/>
+        <DCCReference Include="AddressSpaceCreepMemTestLarge.pas"/>
         <DCCReference Include="ArrayUpsizeSingleThread.pas"/>
-        <DCCReference Include="BenchmarkClassUnit.pas"/>
-        <DCCReference Include="BenchmarkUtilities.pas"/>
+        <DCCReference Include="MemTestClassUnit.pas"/>
+        <DCCReference Include="MemTestUtilities.pas"/>
         <DCCReference Include="BitOps.pas"/>
-        <DCCReference Include="BlockSizeSpreadBenchmark.pas"/>
+        <DCCReference Include="BlockSizeSpreadMemTest.pas"/>
         <DCCReference Include="CPU_Usage_Unit.pas"/>
         <DCCReference Include="bvDataTypes.pas"/>
-        <DCCReference Include="DoubleFPBenchmark1Unit.pas"/>
-        <DCCReference Include="DoubleFPBenchmark2Unit.pas"/>
-        <DCCReference Include="DoubleFPBenchmark3Unit.pas"/>
+        <DCCReference Include="DoubleFPMemTest1Unit.pas"/>
+        <DCCReference Include="DoubleFPMemTest2Unit.pas"/>
+        <DCCReference Include="DoubleFPMemTest3Unit.pas"/>
         <DCCReference Include="DownsizeTestUnit.pas"/>
         <DCCReference Include="FastcodeCPUID.pas"/>
-        <DCCReference Include="FillCharMultiThreadBenchmark1Unit.pas"/>
+        <DCCReference Include="FillCharMultiThreadMemTest1Unit.pas"/>
         <DCCReference Include="FragmentationTestUnit.pas"/>
         <DCCReference Include="GeneralFunctions.pas"/>
-        <DCCReference Include="LargeBlockSpreadBenchmark.pas"/>
-        <DCCReference Include="LinkedListBenchmark.pas"/>
-        <DCCReference Include="MemFreeBenchmark1Unit.pas"/>
-        <DCCReference Include="MemFreeBenchmark2Unit.pas"/>
-        <DCCReference Include="MoveBenchmark1Unit.pas"/>
-        <DCCReference Include="MoveBenchmark2Unit.pas"/>
+        <DCCReference Include="LargeBlockSpreadMemTest.pas"/>
+        <DCCReference Include="LinkedListMemTest.pas"/>
+        <DCCReference Include="MemFreeMemTest1Unit.pas"/>
+        <DCCReference Include="MemFreeMemTest2Unit.pas"/>
+        <DCCReference Include="MoveMemTest1Unit.pas"/>
+        <DCCReference Include="MoveMemTest2Unit.pas"/>
         <DCCReference Include="MoveJOHUnit9.pas"/>
         <DCCReference Include="MultiThreadedAllocAndFree.pas"/>
         <DCCReference Include="MultiThreadedReallocate.pas"/>
-        <DCCReference Include="NexusDBBenchmarkUnit.pas"/>
+        <DCCReference Include="NexusDBMemTestUnit.pas"/>
         <DCCReference Include="PrimeNumbers.pas"/>
         <DCCReference Include="RawPerformanceMultiThread.pas"/>
         <DCCReference Include="RawPerformanceSingleThread.pas"/>
-        <DCCReference Include="ReallocMemBenchmark.pas"/>
-        <DCCReference Include="ReplayBenchmarkUnit.pas"/>
-        <DCCReference Include="SingleFPBenchmark1Unit.pas"/>
-        <DCCReference Include="SingleFPBenchmark2Unit.pas"/>
+        <DCCReference Include="ReallocMemTest.pas"/>
+        <DCCReference Include="ReplayMemTestUnit.pas"/>
+        <DCCReference Include="SingleFPMemTest1Unit.pas"/>
+        <DCCReference Include="SingleFPMemTest2Unit.pas"/>
         <DCCReference Include="SingleThreadedAllocAndFree.pas"/>
         <DCCReference Include="SingleThreadedAllocMem.pas"/>
         <DCCReference Include="SingleThreadedReallocate.pas"/>
         <DCCReference Include="SingleThreadedTinyReloc.pas"/>
-        <DCCReference Include="SmallDownsizeBenchmark.pas"/>
-        <DCCReference Include="SmallUpsizeBenchmark.pas"/>
-        <DCCReference Include="SortExtendedArrayBenchmark1Unit.pas"/>
-        <DCCReference Include="SortExtendedArrayBenchmark2Unit.pas"/>
-        <DCCReference Include="SortIntArrayBenchmark1Unit.pas"/>
-        <DCCReference Include="SortIntArrayBenchmark2Unit.pas"/>
+        <DCCReference Include="SmallDownsizeMemTest.pas"/>
+        <DCCReference Include="SmallUpsizeMemTest.pas"/>
+        <DCCReference Include="SortExtendedArrayMemTest1Unit.pas"/>
+        <DCCReference Include="SortExtendedArrayMemTest2Unit.pas"/>
+        <DCCReference Include="SortIntArrayMemTest1Unit.pas"/>
+        <DCCReference Include="SortIntArrayMemTest2Unit.pas"/>
         <DCCReference Include="StringThread.pas"/>
         <DCCReference Include="StringThreadTestUnit.pas"/>
         <DCCReference Include="SystemInfoUnit.pas"/>
-        <DCCReference Include="WildThreadsBenchmarkUnit.pas"/>
-        <DCCReference Include="BenchmarkForm.pas">
-            <Form>BenchmarkFrm</Form>
+        <DCCReference Include="WildThreadsMemTestUnit.pas"/>
+        <DCCReference Include="MemoryManagerForm.pas">
+            <Form>MemoryManagerFrm</Form>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -146,8 +150,10 @@
                     <Source Name="MainSource">MemoryManagerTest.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k280.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp280.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="D:\git\bvs_feature_madexcept5\TVSThirdPartyD6\madCollection\madBasic\BDS22\win32\madHelp_.bpl">File D:\git\bvs_feature_madexcept5\TVSThirdPartyD6\madCollection\madBasic\BDS22\win32\madHelp_.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="D:\git\bvs_feature_madexcept5\TVSThirdPartyD6\madCollection\madExcept\BDS22\win32\madExceptVcl_.bpl">File D:\git\bvs_feature_madexcept5\TVSThirdPartyD6\madCollection\madExcept\BDS22\win32\madExceptVcl_.bpl not found</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>

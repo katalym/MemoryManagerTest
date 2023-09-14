@@ -1,19 +1,19 @@
-unit MemFreeBenchmark1Unit;
+unit MemFreeMemTest1Unit;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+uses Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TMemFreeThreads1 = class(TMMBenchmark)
+  TMemFreeThreads1 = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -22,7 +22,7 @@ uses SysUtils, bvDataTypes;
 
 type
   TMemFreeThread1 = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     procedure Execute; override;
   end;
 
@@ -66,33 +66,33 @@ begin
   // Give a little time to free
   Sleep(SLEEPTIMEAFTERFREE);
 {$ENDIF}
-  FBenchmark.UpdateUsageStatistics;
+  FMemTest.UpdateUsageStatistics;
 end;
 
-class function TMemFreeThreads1.GetBenchmarkDescription: string;
+class function TMemFreeThreads1.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that measures how much memory is left unfreed after heavy work '
-    + 'Benchmark submitted by Dennis Kjaer Christensen.';
+  Result := 'A MemTest that measures how much memory is left unfreed after heavy work '
+    + 'MemTest submitted by Dennis Kjaer Christensen.';
 end;
 
-class function TMemFreeThreads1.GetBenchmarkName: string;
+class function TMemFreeThreads1.GetMemTestName: string;
 begin
   Result := 'Mem Free 1';
 end;
 
-class function TMemFreeThreads1.GetCategory: TBenchmarkCategory;
+class function TMemFreeThreads1.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadAllocAndFree;
 end;
 
-procedure TMemFreeThreads1.RunBenchmark;
+procedure TMemFreeThreads1.RunMemTest;
 var
   MemFreeThread1: TMemFreeThread1;
 begin
   inherited;
   MemFreeThread1 := TMemFreeThread1.Create(True);
   MemFreeThread1.FreeOnTerminate := False;
-  MemFreeThread1.FBenchmark := Self;
+  MemFreeThread1.FMemTest := Self;
   MemFreeThread1.Suspended := False;
   MemFreeThread1.WaitFor;
   FreeAndNil(MemFreeThread1);

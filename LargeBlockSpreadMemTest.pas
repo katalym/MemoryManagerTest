@@ -1,11 +1,11 @@
-unit LargeBlockSpreadBenchmark;
+unit LargeBlockSpreadMemTest;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  BenchmarkClassUnit, Math;
+  MemTestClassUnit, Math;
 
 const
   // full debug mode is used to detect memory leaks - not for actual performance test
@@ -20,16 +20,16 @@ const
 
 type
 
-  TLargeBlockSpreadBench = class(TMMBenchmark)
+  TLargeBlockSpreadBench = class(TMemTest)
   protected
     FPointers: array [0 .. NumPointers - 1] of PAnsiChar;
   public
-    constructor CreateBenchmark; override;
+    constructor CreateMemTest; override;
     destructor Destroy; override;
-    procedure RunBenchmark; override;
-    class function GetBenchmarkName: string; override;
-    class function GetBenchmarkDescription: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    procedure RunMemTest; override;
+    class function GetMemTestName: string; override;
+    class function GetMemTestDescription: string; override;
+    class function GetCategory: TMemTestCategory; override;
   end;
 
 implementation
@@ -40,7 +40,7 @@ uses
 const
   IterationCount = 5;
 
-constructor TLargeBlockSpreadBench.CreateBenchmark;
+constructor TLargeBlockSpreadBench.CreateMemTest;
 begin
   inherited;
 end;
@@ -50,24 +50,24 @@ begin
   inherited;
 end;
 
-class function TLargeBlockSpreadBench.GetBenchmarkDescription: string;
+class function TLargeBlockSpreadBench.GetMemTestDescription: string;
 begin
   Result := 'Allocates a few large blocks (>64K), checking that '
     + 'the MM manages large blocks efficiently.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TLargeBlockSpreadBench.GetBenchmarkName: string;
+class function TLargeBlockSpreadBench.GetMemTestName: string;
 begin
   Result := 'Large block spread';
 end;
 
-class function TLargeBlockSpreadBench.GetCategory: TBenchmarkCategory;
+class function TLargeBlockSpreadBench.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadAllocAndFree;
 end;
 
-procedure TLargeBlockSpreadBench.RunBenchmark;
+procedure TLargeBlockSpreadBench.RunMemTest;
 const
   Prime = 7;
 var
@@ -77,7 +77,7 @@ begin
   {Call the inherited handler}
   inherited;
   NextValue := Prime;
-  {Do the benchmark}
+  {Do the MemTest}
   for j := 1 to IterationCount do
   begin
     for i := 0 to high(FPointers) do

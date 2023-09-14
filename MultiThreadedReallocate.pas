@@ -1,4 +1,4 @@
-{A multi-threaded benchmark that reallocates memory blocks and uses them.}
+{A multi-threaded MemTest that reallocates memory blocks and uses them.}
 
 unit MultiThreadedReallocate;
 
@@ -7,45 +7,45 @@ interface
 {$I MemoryManagerTest.inc}
 
 uses
-  Windows, BenchmarkClassUnit, Classes, Math;
+  Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TMultiThreadReallocateBenchmarkAbstract = class(TMMBenchmark)
+  TMultiThreadReallocateMemTestAbstract = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
     class function GetNumThreads: Integer; virtual; abstract;
     class function IsThreadedSpecial: Boolean; override;
-    procedure RunBenchmark; override;
+    procedure RunMemTest; override;
   end;
 
-  TMultiThreadReallocateBenchmark2 = class(TMultiThreadReallocateBenchmarkAbstract)
+  TMultiThreadReallocateMemTest2 = class(TMultiThreadReallocateMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadReallocateBenchmark4 = class(TMultiThreadReallocateBenchmarkAbstract)
+  TMultiThreadReallocateMemTest4 = class(TMultiThreadReallocateMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadReallocateBenchmark8 = class(TMultiThreadReallocateBenchmarkAbstract)
+  TMultiThreadReallocateMemTest8 = class(TMultiThreadReallocateMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadReallocateBenchmark12 = class(TMultiThreadReallocateBenchmarkAbstract)
+  TMultiThreadReallocateMemTest12 = class(TMultiThreadReallocateMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadReallocateBenchmark16 = class(TMultiThreadReallocateBenchmarkAbstract)
+  TMultiThreadReallocateMemTest16 = class(TMultiThreadReallocateMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadReallocateBenchmark31 = class(TMultiThreadReallocateBenchmarkAbstract)
+  TMultiThreadReallocateMemTest31 = class(TMultiThreadReallocateMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
-  TMultiThreadReallocateBenchmark64 = class(TMultiThreadReallocateBenchmarkAbstract)
+  TMultiThreadReallocateMemTest64 = class(TMultiThreadReallocateMemTestAbstract)
     class function GetNumThreads: Integer; override;
   end;
 
@@ -147,31 +147,31 @@ begin
   ReturnValue := 1;
 end;
 
-class function TMultiThreadReallocateBenchmarkAbstract.GetBenchmarkDescription: string;
+class function TMultiThreadReallocateMemTestAbstract.GetMemTestDescription: string;
 begin
-  Result := 'A ' + IntToStr(GetNumThreads) + '-threaded benchmark that allocates and reallocates memory '
+  Result := 'A ' + IntToStr(GetNumThreads) + '-threaded MemTest that allocates and reallocates memory '
     + 'blocks. The usage of different block sizes approximates real-world usage '
     + 'as seen in various replays. Allocated memory is actually "used", i.e. '
     + 'written to and read.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TMultiThreadReallocateBenchmarkAbstract.GetBenchmarkName: string;
+class function TMultiThreadReallocateMemTestAbstract.GetMemTestName: string;
 begin
   Result := 'Multi-threaded ' + GetNumThreads.ToString.PadLeft(2, ' ') + ' reallocate and use';
 end;
 
-class function TMultiThreadReallocateBenchmarkAbstract.GetCategory: TBenchmarkCategory;
+class function TMultiThreadReallocateMemTestAbstract.GetCategory: TMemTestCategory;
 begin
   Result := bmMultiThreadRealloc;
 end;
 
-class function TMultiThreadReallocateBenchmarkAbstract.IsThreadedSpecial: Boolean;
+class function TMultiThreadReallocateMemTestAbstract.IsThreadedSpecial: Boolean;
 begin
   Result := True;
 end;
 
-procedure TMultiThreadReallocateBenchmarkAbstract.RunBenchmark;
+procedure TMultiThreadReallocateMemTestAbstract.RunMemTest;
 const
   CRepeatCountTotal = 5555;
 var
@@ -240,37 +240,37 @@ begin
   threads.Free;
 end;
 
-class function TMultiThreadReallocateBenchmark2.GetNumThreads: Integer;
+class function TMultiThreadReallocateMemTest2.GetNumThreads: Integer;
 begin
   Result := 2;
 end;
 
-class function TMultiThreadReallocateBenchmark4.GetNumThreads: Integer;
+class function TMultiThreadReallocateMemTest4.GetNumThreads: Integer;
 begin
   Result := 4;
 end;
 
-class function TMultiThreadReallocateBenchmark8.GetNumThreads: Integer;
+class function TMultiThreadReallocateMemTest8.GetNumThreads: Integer;
 begin
   Result := 8;
 end;
 
-class function TMultiThreadReallocateBenchmark12.GetNumThreads: Integer;
+class function TMultiThreadReallocateMemTest12.GetNumThreads: Integer;
 begin
   Result := 12;
 end;
 
-class function TMultiThreadReallocateBenchmark16.GetNumThreads: Integer;
+class function TMultiThreadReallocateMemTest16.GetNumThreads: Integer;
 begin
   Result := 16;
 end;
 
-class function TMultiThreadReallocateBenchmark31.GetNumThreads: Integer;
+class function TMultiThreadReallocateMemTest31.GetNumThreads: Integer;
 begin
   Result := 32;
 end;
 
-class function TMultiThreadReallocateBenchmark64.GetNumThreads: Integer;
+class function TMultiThreadReallocateMemTest64.GetNumThreads: Integer;
 begin
   Result := 64;
 end;

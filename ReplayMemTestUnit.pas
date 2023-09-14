@@ -1,37 +1,37 @@
-// A benchmark replaying the allocations/deallocations performed by a user's application
+// A MemTest replaying the allocations/deallocations performed by a user's application
 
-unit ReplayBenchmarkUnit;
+unit ReplayMemTestUnit;
 
 interface
 
 uses
-  Windows, SysUtils, Classes, VCL.Dialogs, BenchmarkClassUnit, Math, MMUsageLogger_MemotyOperationRecordUnit, System.Generics.Defaults,
+  Windows, SysUtils, Classes, VCL.Dialogs, MemTestClassUnit, Math, MMUsageLogger_MemotyOperationRecordUnit, System.Generics.Defaults,
   System.Generics.Collections;
 
 type
-  // The single-thread replay benchmark ancestor
-  TReplayBenchmark = class(TMMBenchmark)
+  // The single-thread replay MemTest ancestor
+  TReplayMemTest = class(TMemTest)
   protected
     // The operations
     FOperations: PMMOperationArray;
     FPointers: TDictionary<Cardinal, pointer>;
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure PrepareBenchmarkForRun(const aUsageFileToReplay: string =''); override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure PrepareMemTestForRun(const aUsageFileToReplay: string =''); override;
     // repeat count for replay log
     class function RepeatCount: Integer; virtual;
-    procedure RunBenchmark; override;
+    procedure RunMemTest; override;
     class function RunByDefault: boolean; override;
     procedure RunReplay; virtual;
   end;
 
-  // The multi-threaded replay benchmark ancestor
-  TMultiThreadReplayBenchmark = class(TReplayBenchmark)
+  // The multi-threaded replay MemTest ancestor
+  TMultiThreadReplayMemTest = class(TReplayMemTest)
   public
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
     class function RunByDefault: boolean; override;
     // number of simultaneously running threads
     class function RunningThreads: Integer;
@@ -43,24 +43,24 @@ type
 implementation
 
 uses
-  BenchmarkUtilities, System.UITypes, CPU_Usage_Unit, bvDataTypes;
+  MemTestUtilities, System.UITypes, CPU_Usage_Unit, bvDataTypes;
 
 type
-  // The replay thread used in multi-threaded replay benchmarks
+  // The replay thread used in multi-threaded replay MemTests
   TReplayThread = class(TThread)
   private
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     FOperations: string;
     FRepeatCount: Integer;
     procedure ExecuteReplay;
   public
-    constructor Create(ASuspended: boolean; ABenchmark: TMMBenchmark; RepeatCount: Integer);
+    constructor Create(ASuspended: boolean; AMemTest: TMemTest; RepeatCount: Integer);
     procedure Execute; override;
     property Operations: string read FOperations write FOperations;
   end;
 
 //// Reads a file in its entirety and returns the contents as a string. Returns a blank string on error.
-//function TReplayBenchmark.LoadFile_Full(const AFileName: string): string;
+//function TReplayMemTest.LoadFile_Full(const AFileName: string): string;
 //const
 //  INVALID_SET_FILE_POINTER = DWORD( - 1);
 //var
@@ -101,7 +101,7 @@ type
 //  end;
 //end;
 
-class function TReplayBenchmark.GetBenchmarkDescription: string;
+class function TReplayMemTest.GetMemTestDescription: string;
 begin
   Result := 'Plays back the memory operations of another application as '
     + 'recorded by the MMUsageLogger utility. To record and replay the '
@@ -110,23 +110,23 @@ begin
     + '2. In MMUsageLogger.pas specidy LogFileName = ... to file where memory operations to be stored'#13#10
     + '3. Run the application (a file <LogFileName> with all memory operations performed will be created)'#13#10
     + '4. Specify this <LogFileName> file in the Usage file to replay'#13#10
-    + '5. Select this benchmark and run it'#13#10
+    + '5. Select this MemTest and run it'#13#10
     + '6. The Application tool will replay the exact sequence of '
     + 'allocations/deallocations/reallocations of your application, giving you a '
     + 'good idea of how your app will perform with the given memory manager.';
 end;
 
-class function TReplayBenchmark.GetBenchmarkName: string;
+class function TReplayMemTest.GetMemTestName: string;
 begin
   Result := 'Usage Replay';
 end;
 
-class function TReplayBenchmark.GetCategory: TBenchmarkCategory;
+class function TReplayMemTest.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadReplay;
 end;
 
-procedure TReplayBenchmark.PrepareBenchmarkForRun(const aUsageFileToReplay: string);
+procedure TReplayMemTest.PrepareMemTestForRun(const aUsageFileToReplay: string);
 begin
   inherited;
   gUsageReplayFileName := aUsageFileToReplay;
@@ -137,7 +137,7 @@ begin
 //    // descendant has specified usage log file
 //    FOperations := LoadFile_Full(gUsageReplayFileName);
 //    if FOperations = '' then
-//      FCanRunBenchmark := False;
+//      FCanRunMemTest := False;
 //  end else
 //    raise Exception.CreateFmt('Usage Ffile to replay "%s" not exists', [gUsageReplayFileName]);
 //  // Set the list of pointers
@@ -145,30 +145,30 @@ begin
 //  Sleep(20); // RH let system relax after big file load... seems to be useful to get consistent results
 end;
 
-class function TReplayBenchmark.RepeatCount: Integer;
+class function TReplayMemTest.RepeatCount: Integer;
 begin
   Result := 1;
 end;
 
-procedure TReplayBenchmark.RunBenchmark;
+procedure TReplayMemTest.RunMemTest;
 var
   i: Integer;
 begin
   inherited;
 
-  if FileExists(BenchmarkClassUnit.gUsageReplayFileName) then
+  if FileExists(MemTestClassUnit.gUsageReplayFileName) then
   begin
     for i := 1 to RepeatCount do
       RunReplay;
   end;
 end;
 
-class function TReplayBenchmark.RunByDefault: boolean;
+class function TReplayMemTest.RunByDefault: boolean;
 begin
-  Result := FileExists(BenchmarkClassUnit.gUsageReplayFileName);
+  Result := FileExists(MemTestClassUnit.gUsageReplayFileName);
 end;
 
-procedure TReplayBenchmark.RunReplay;
+procedure TReplayMemTest.RunReplay;
 
   procedure DoRunReplay(aArraySize: int64);
   var
@@ -242,7 +242,7 @@ begin
     FOperations := VirtualAlloc(nil, SizeOf(TMMOperationArray), MEM_COMMIT, PAGE_READWRITE);
     try
 
-      AssignFile(UsageFile, BenchmarkClassUnit.gUsageReplayFileName);
+      AssignFile(UsageFile, MemTestClassUnit.gUsageReplayFileName);
       Reset(UsageFile, 1);
       repeat
         vStartCPUUsage := CPU_Usage_Unit.GetCpuUsage_Total;
@@ -270,7 +270,7 @@ begin
     end;
 
   finally
-    // Make sure all memory is released to avoid memory leaks in benchmark
+    // Make sure all memory is released to avoid memory leaks in MemTest
     for p in FPointers.Values do begin
       if p <> nil then
         FreeMem(p);
@@ -282,12 +282,12 @@ begin
 
 end;
 
-constructor TReplayThread.Create(ASuspended: boolean; ABenchmark: TMMBenchmark; RepeatCount: Integer);
+constructor TReplayThread.Create(ASuspended: boolean; AMemTest: TMemTest; RepeatCount: Integer);
 begin
   inherited Create(ASuspended);
   FreeOnTerminate := False;
   Priority := tpNormal;
-  FBenchmark := ABenchmark;
+  FMemTest := AMemTest;
   FRepeatCount := RepeatCount;
 end;
 
@@ -355,41 +355,41 @@ begin
     Inc(vOperation);
     // Log peak usage every 1024 operations
     if i and $3FF = 0 then
-      FBenchmark.UpdateUsageStatistics;
+      FMemTest.UpdateUsageStatistics;
     // the replay is probably running about 10 to 50 times faster than reality
-    // force thread switch every 8192 operations to prevent whole benchmark from running in a single time-slice
+    // force thread switch every 8192 operations to prevent whole MemTest from running in a single time-slice
     if i and $1FFF = 0 then
       Sleep(0);
   end;
-  // Make sure all memory is released to avoid memory leaks in benchmark
+  // Make sure all memory is released to avoid memory leaks in MemTest
   for i := 0 to bvInt64ToCardinal(high(FPointers)) do
     if FPointers[i] <> nil then
       FreeMem(FPointers[i]);
 end;
 
-// add your replay benchmarks below...
+// add your replay MemTests below...
 
-class function TMultiThreadReplayBenchmark.GetBenchmarkName: string;
+class function TMultiThreadReplayMemTest.GetMemTestName: string;
 begin
   Result := 'Usage Replay ' + RunningThreads.ToString + ' threads';
 end;
 
-class function TMultiThreadReplayBenchmark.GetCategory: TBenchmarkCategory;
+class function TMultiThreadReplayMemTest.GetCategory: TMemTestCategory;
 begin
   Result := bmMultiThreadReplay;
 end;
 
-class function TMultiThreadReplayBenchmark.RunByDefault: boolean;
+class function TMultiThreadReplayMemTest.RunByDefault: boolean;
 begin
   Result := False;
 end;
 
-class function TMultiThreadReplayBenchmark.RunningThreads: Integer;
+class function TMultiThreadReplayMemTest.RunningThreads: Integer;
 begin
   Result := 4;
 end;
 
-procedure TMultiThreadReplayBenchmark.RunReplay;
+procedure TMultiThreadReplayMemTest.RunReplay;
 //var
 //  i, rc, slot: Integer;
 //  WT: TReplayThread;
@@ -398,7 +398,7 @@ procedure TMultiThreadReplayBenchmark.RunReplay;
 begin
   inherited;
 
-//  Assert(RunningThreads <= 64, 'Maximum 64 simultaneously running threads in TMultiThreadReplayBenchmark');
+//  Assert(RunningThreads <= 64, 'Maximum 64 simultaneously running threads in TMultiThreadReplayMemTest');
 //  // create threads to start with
 //  for i := 0 to RunningThreads - 1 do
 //  begin
@@ -436,7 +436,7 @@ begin
 //    MessageDlg(SysErrorMessage(GetLastError), mtError, [mbOK], 0);
 end;
 
-class function TMultiThreadReplayBenchmark.ThreadCount: Integer;
+class function TMultiThreadReplayMemTest.ThreadCount: Integer;
 begin
   Result := 100;
 end;

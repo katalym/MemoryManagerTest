@@ -1,107 +1,107 @@
-{The memory manager benchmark taken from the NexusDB website (www.nexusdb.com).
+{The memory manager MemTest taken from the NexusDB website (www.nexusdb.com).
   Two changes: (1) Monitoring of memory usage was added (shouldn't impact scores
   much) and (2) lowered max items from 4K to 2K to lower memory consumption so
   that the higher thread count tests can be run on computers with 256M RAM.
-  Changes from the original benchmark are indicated by a "PLR" in the comment}
+  Changes from the original MemTest are indicated by a "PLR" in the comment}
 
 // RH 17/04/2005
-// class function IterationCount in order to have reasonable benchmark execution times
-// IterationCount can be defined in each individual benchmark
+// class function IterationCount in order to have reasonable MemTest execution times
+// IterationCount can be defined in each individual MemTest
 
-unit NexusDBBenchmarkUnit;
+unit NexusDBMemTestUnit;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  Windows, SysUtils, Classes, BenchmarkClassUnit, Math;
+  Windows, SysUtils, Classes, MemTestClassUnit, Math;
 
 type
 
-  TNexusBenchmark = class(TMMBenchmark)
+  TNexusMemTest = class(TMemTest)
   protected
     FSemaphore: THandle;
     FThreads: TList;
   public
-    constructor CreateBenchmark; override;
+    constructor CreateMemTest; override;
     destructor Destroy; override;
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
     class function IterationCount: integer; virtual;
     class function NumThreads: integer; virtual; abstract;
-    procedure RunBenchmark; override;
+    procedure RunMemTest; override;
   end;
 
-  TNexusBenchmarkThread = class(TNexusBenchmark)
+  TNexusMemTestThread = class(TNexusMemTest)
     class function IsThreadedSpecial: Boolean; override;
   end;
 
-  TNexusBenchmark1Thread = class(TNexusBenchmarkThread)
+  TNexusMemTest1Thread = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
   end;
 
-  TNexusBenchmark2Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest2Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
   end;
 
-  TNexusBenchmark4Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest4Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
   end;
 
-  TNexusBenchmark8Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest8Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
   end;
 
-  TNexusBenchmark12Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest12Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
   end;
 
-  TNexusBenchmark16Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest16Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
   end;
 
-  TNexusBenchmark31Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest31Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
   end;
 
-  TNexusBenchmark64Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest64Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
   end;
 
 {$IFDEF NEXUS_UP_TO_512}
-  TNexusBenchmark128Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest128Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
     class function RunByDefault: Boolean; override;
   end;
 
-  TNexusBenchmark256Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest256Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
     class function RunByDefault: Boolean; override;
   end;
 
-  TNexusBenchmark512Threads = class(TNexusBenchmarkThread)
+  TNexusMemTest512Threads = class(TNexusMemTestThread)
   public
     class function IterationCount: integer; override;
     class function NumThreads: integer; override;
@@ -131,19 +131,19 @@ type
   TTestThread = class(TThread)
   protected
     CurValue: Int64;
-    FBenchmark: TNexusBenchmark;
+    FMemTest: TNexusMemTest;
     Prime: integer;
   public
-    constructor Create(ABenchmark: TNexusBenchmark);
+    constructor Create(AMemTest: TNexusMemTest);
     procedure Execute; override;
   end;
 
-constructor TTestThread.Create(ABenchmark: TNexusBenchmark);
+constructor TTestThread.Create(AMemTest: TNexusMemTest);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
   Priority := tpLower;
-  FBenchmark := ABenchmark;
+  FMemTest := AMemTest;
 end;
 
 procedure TTestThread.Execute;
@@ -159,7 +159,7 @@ begin
   L := TList.Create;
 
   try
-    for i := 0 to FBenchmark.IterationCount + 1 do // RH replaced 1 * 1000 * 1000 by FBenchmark.IterationCount
+    for i := 0 to FMemTest.IterationCount + 1 do // RH replaced 1 * 1000 * 1000 by FMemTest.IterationCount
     begin
       Inc(CurValue, Prime);
       j := bvInt64ToInt((CurValue mod (16 * 1024)) + 1);
@@ -184,7 +184,7 @@ begin
 
       // PLR - Added to measure usage every 64K iterations
       if i and $FFFF = 0 then
-        FBenchmark.UpdateUsageStatistics;
+        FMemTest.UpdateUsageStatistics;
 
     end;
     for i := Pred(L.Count) downto 0 do
@@ -197,7 +197,7 @@ begin
   // component creation
   L := TList.Create;
   try
-    for i := 0 to FBenchmark.IterationCount + 1 do // RH replaced 1 * 1000 * 1000 by FBenchmark.IterationCount
+    for i := 0 to FMemTest.IterationCount + 1 do // RH replaced 1 * 1000 * 1000 by FMemTest.IterationCount
     begin
       Inc(CurValue, Prime);
       j := bvInt64ToInt(CurValue mod MaxItems);
@@ -213,7 +213,7 @@ begin
 
       // PLR - Added to measure usage every 64K iterations
       if i and $FFFF = 0 then
-        FBenchmark.UpdateUsageStatistics;
+        FMemTest.UpdateUsageStatistics;
 
     end;
     for i := Pred(L.Count) downto 0 do
@@ -226,7 +226,7 @@ begin
   // strings and stringlist
   SL := TStringlist.Create;
   try
-    for i := 0 to FBenchmark.IterationCount + 1 do // RH replaced 1 * 1000 * 1000 by FBenchmark.IterationCount
+    for i := 0 to FMemTest.IterationCount + 1 do // RH replaced 1 * 1000 * 1000 by FMemTest.IterationCount
     begin
       aString := '';
       Inc(CurValue, Prime);
@@ -239,7 +239,7 @@ begin
 
       // PLR - Added to measure usage every 4K iterations
       if i and $FFF = 0 then
-        FBenchmark.UpdateUsageStatistics;
+        FMemTest.UpdateUsageStatistics;
 
       // PLR - Reduced the count from 4K to 2K to lower memory usage
       Inc(CurValue, Prime);
@@ -253,43 +253,43 @@ begin
     FreeAndNil(SL);
   end;
   {Notify that the thread is done}
-  ReleaseSemaphore(FBenchmark.FSemaphore, 1, nil);
+  ReleaseSemaphore(FMemTest.FSemaphore, 1, nil);
 end;
 
-constructor TNexusBenchmark.CreateBenchmark;
+constructor TNexusMemTest.CreateMemTest;
 begin
   inherited;
   FSemaphore := CreateSemaphore(nil, 0, 9999, nil);
 end;
 
-destructor TNexusBenchmark.Destroy;
+destructor TNexusMemTest.Destroy;
 begin
   CloseHandle(FSemaphore);
   inherited;
 end;
 
-class function TNexusBenchmark.GetBenchmarkDescription: string;
+class function TNexusMemTest.GetMemTestDescription: string;
 begin
-  Result := 'The benchmark taken from www.nexusdb.com. Memory usage was '
+  Result := 'The MemTest taken from www.nexusdb.com. Memory usage was '
     + 'slightly reduced to accommodate machines with 256MB RAM with up to 8 threads.';
 end;
 
-class function TNexusBenchmark.GetBenchmarkName: string;
+class function TNexusMemTest.GetMemTestName: string;
 begin
   Result := 'NexusDB with ' + NumThreads.ToString.PadLeft(2, ' ') + ' thread(s)';
 end;
 
-class function TNexusBenchmark.GetCategory: TBenchmarkCategory;
+class function TNexusMemTest.GetCategory: TMemTestCategory;
 begin
   Result := bmMultiThreadRealloc;
 end;
 
-class function TNexusBenchmark.IterationCount: integer;
+class function TNexusMemTest.IterationCount: integer;
 begin
   raise Exception.Create('Please override the iteration count for ' + ClassName);
 end;
 
-procedure TNexusBenchmark.RunBenchmark;
+procedure TNexusMemTest.RunMemTest;
 var
   PrimeIndex, i: integer;
   T: TTestThread;
@@ -340,7 +340,7 @@ begin
   FThreads := nil;
 end;
 
-class function TNexusBenchmark1Thread.IterationCount: integer;
+class function TNexusMemTest1Thread.IterationCount: integer;
 begin
   // value is decreased to avoid Out of Memory in fuul debug mode
 {$IFDEF FullDebug}
@@ -350,12 +350,12 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark1Thread.NumThreads: integer;
+class function TNexusMemTest1Thread.NumThreads: integer;
 begin
   Result := 1;
 end;
 
-class function TNexusBenchmark2Threads.IterationCount: integer;
+class function TNexusMemTest2Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -366,12 +366,12 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark2Threads.NumThreads: integer;
+class function TNexusMemTest2Threads.NumThreads: integer;
 begin
   Result := 2;
 end;
 
-class function TNexusBenchmark4Threads.IterationCount: integer;
+class function TNexusMemTest4Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -382,12 +382,12 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark4Threads.NumThreads: integer;
+class function TNexusMemTest4Threads.NumThreads: integer;
 begin
   Result := 4;
 end;
 
-class function TNexusBenchmark8Threads.IterationCount: integer;
+class function TNexusMemTest8Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -398,12 +398,12 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark8Threads.NumThreads: integer;
+class function TNexusMemTest8Threads.NumThreads: integer;
 begin
   Result := 8;
 end;
 
-class function TNexusBenchmark12Threads.IterationCount: integer;
+class function TNexusMemTest12Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -414,12 +414,12 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark12Threads.NumThreads: integer;
+class function TNexusMemTest12Threads.NumThreads: integer;
 begin
   Result := 12;
 end;
 
-class function TNexusBenchmark16Threads.IterationCount: integer;
+class function TNexusMemTest16Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -430,12 +430,12 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark16Threads.NumThreads: integer;
+class function TNexusMemTest16Threads.NumThreads: integer;
 begin
   Result := 16;
 end;
 
-class function TNexusBenchmark31Threads.IterationCount: integer;
+class function TNexusMemTest31Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -446,12 +446,12 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark31Threads.NumThreads: integer;
+class function TNexusMemTest31Threads.NumThreads: integer;
 begin
   Result := 32;
 end;
 
-class function TNexusBenchmark64Threads.IterationCount: integer;
+class function TNexusMemTest64Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -462,14 +462,14 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark64Threads.NumThreads: integer;
+class function TNexusMemTest64Threads.NumThreads: integer;
 begin
   Result := 64;
 end;
 
 {$IFDEF NEXUS_UP_TO_512}
 
-class function TNexusBenchmark128Threads.IterationCount: integer;
+class function TNexusMemTest128Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -480,17 +480,17 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark128Threads.NumThreads: integer;
+class function TNexusMemTest128Threads.NumThreads: integer;
 begin
   Result := 128;
 end;
 
-class function TNexusBenchmark128Threads.RunByDefault: Boolean;
+class function TNexusMemTest128Threads.RunByDefault: Boolean;
 begin
   Result := {$IFDEF WIN32}False{$ELSE}True{$ENDIF};
 end;
 
-class function TNexusBenchmark256Threads.IterationCount: integer;
+class function TNexusMemTest256Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -501,17 +501,17 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark256Threads.NumThreads: integer;
+class function TNexusMemTest256Threads.NumThreads: integer;
 begin
   Result := 256;
 end;
 
-class function TNexusBenchmark256Threads.RunByDefault: Boolean;
+class function TNexusMemTest256Threads.RunByDefault: Boolean;
 begin
   Result := {$IFDEF WIN32}False{$ELSE}True{$ENDIF};
 end;
 
-class function TNexusBenchmark512Threads.IterationCount: integer;
+class function TNexusMemTest512Threads.IterationCount: integer;
 begin
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
@@ -522,19 +522,19 @@ begin
 {$ENDIF}
 end;
 
-class function TNexusBenchmark512Threads.NumThreads: integer;
+class function TNexusMemTest512Threads.NumThreads: integer;
 begin
   Result := 512;
 end;
 
-class function TNexusBenchmark512Threads.RunByDefault: Boolean;
+class function TNexusMemTest512Threads.RunByDefault: Boolean;
 begin
   Result := {$IFDEF WIN32}False{$ELSE}True{$ENDIF};
 end;
 
 {$ENDIF}
 
-class function TNexusBenchmarkThread.IsThreadedSpecial: Boolean;
+class function TNexusMemTestThread.IsThreadedSpecial: Boolean;
 begin
   Result := NumThreads > 1;
 end;

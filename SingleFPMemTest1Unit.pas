@@ -1,17 +1,17 @@
-unit SingleFPBenchmark1Unit;
+unit SingleFPMemTest1Unit;
 
 interface
 
-uses Windows, BenchmarkClassUnit, Classes, Math;
+uses Windows, MemTestClassUnit, Classes, Math;
 
 type
 
-  TSingleFPThreads = class(TMMBenchmark)
+  TSingleFPThreads = class(TMemTest)
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -24,7 +24,7 @@ const
 type
 
   TSingleFPThread = class(TThread)
-    FBenchmark: TMMBenchmark;
+    FMemTest: TMemTest;
     procedure Execute; override;
   end;
 
@@ -77,7 +77,7 @@ begin
     SetLength(Src1Array2, BenchArraySize);
     SetLength(Src2Array2, BenchArraySize);
     SetLength(ResultArray2, BenchArraySize);
-    FBenchmark.UpdateUsageStatistics;
+    FMemTest.UpdateUsageStatistics;
     // Fill source arrays
     for I1 := PrevArraySize to BenchArraySize - 1 do
     begin
@@ -104,32 +104,32 @@ begin
   end;
 end;
 
-class function TSingleFPThreads.GetBenchmarkDescription: string;
+class function TSingleFPThreads.GetMemTestDescription: string;
 begin
-  Result := 'A benchmark that tests access to Single FP variables '
+  Result := 'A MemTest that tests access to Single FP variables '
     + 'in a dynamic array. '
     + 'Reveals set associativity related issues.'
-    + 'Benchmark submitted by Dennis Kjaer Christensen.';
+    + 'MemTest submitted by Dennis Kjaer Christensen.';
 end;
 
-class function TSingleFPThreads.GetBenchmarkName: string;
+class function TSingleFPThreads.GetMemTestName: string;
 begin
   Result := 'Single Variables Access  6 arrays at a time';
 end;
 
-class function TSingleFPThreads.GetCategory: TBenchmarkCategory;
+class function TSingleFPThreads.GetCategory: TMemTestCategory;
 begin
   Result := bmMemoryAccessSpeed;
 end;
 
-procedure TSingleFPThreads.RunBenchmark;
+procedure TSingleFPThreads.RunMemTest;
 var
   SingleFPThread: TSingleFPThread;
 begin
   inherited;
   SingleFPThread := TSingleFPThread.Create(True);
   SingleFPThread.FreeOnTerminate := False;
-  SingleFPThread.FBenchmark := Self;
+  SingleFPThread.FMemTest := Self;
   SingleFPThread.Suspended := False;
   SingleFPThread.WaitFor;
   FreeAndNil(SingleFPThread);

@@ -1,11 +1,11 @@
-unit SmallUpsizeBenchmark;
+unit SmallUpsizeMemTest;
 
 interface
 
 {$I MemoryManagerTest.inc}
 
 uses
-  BenchmarkClassUnit;
+  MemTestClassUnit;
 
 const
 {$IFDEF FullDebug}
@@ -20,16 +20,16 @@ const
 
 type
 
-  TSmallUpsizeBench = class(TMMBenchmark)
+  TSmallUpsizeBench = class(TMemTest)
   protected
     FPointers: array [0 .. NumPointers - 1] of PAnsiChar;
   public
-    constructor CreateBenchmark; override;
+    constructor CreateMemTest; override;
     destructor Destroy; override;
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -37,7 +37,7 @@ implementation
 uses
   bvDataTypes, System.SysUtils;
 
-constructor TSmallUpsizeBench.CreateBenchmark;
+constructor TSmallUpsizeBench.CreateMemTest;
 begin
   inherited;
 end;
@@ -47,24 +47,24 @@ begin
   inherited;
 end;
 
-class function TSmallUpsizeBench.GetBenchmarkDescription: string;
+class function TSmallUpsizeBench.GetMemTestDescription: string;
 begin
   Result := 'Allocates a small block and immediately resizes it to a slightly bigger size. This checks '
     + ' that the block upsizing behaviour of the MM is acceptable.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TSmallUpsizeBench.GetBenchmarkName: string;
+class function TSmallUpsizeBench.GetMemTestName: string;
 begin
   Result := 'Small upsize';
 end;
 
-class function TSmallUpsizeBench.GetCategory: TBenchmarkCategory;
+class function TSmallUpsizeBench.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadRealloc;
 end;
 
-procedure TSmallUpsizeBench.RunBenchmark;
+procedure TSmallUpsizeBench.RunMemTest;
 const
   Prime = 43;
 var
@@ -74,7 +74,7 @@ begin
   {Call the inherited handler}
   inherited;
   CurValue := Prime;
-  {Do the benchmark}
+  {Do the MemTest}
   for k := 1 to IterationsCount do
   begin
     for i := low(FPointers) to high(FPointers) do

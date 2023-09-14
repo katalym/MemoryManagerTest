@@ -1,4 +1,4 @@
-{A benchmark demonstrating that never downsizing memory blocks can lead to problems.}
+{A MemTest demonstrating that never downsizing memory blocks can lead to problems.}
 
 unit DownsizeTestUnit;
 
@@ -6,18 +6,18 @@ interface
 
 {$I MemoryManagerTest.inc}
 
-uses BenchmarkClassUnit;
+uses MemTestClassUnit;
 
 type
 
-  TDownsizeTest = class(TMMBenchmark)
+  TDownsizeTest = class(TMemTest)
   protected
     FStrings: array of string;
   public
-    class function GetBenchmarkDescription: string; override;
-    class function GetBenchmarkName: string; override;
-    class function GetCategory: TBenchmarkCategory; override;
-    procedure RunBenchmark; override;
+    class function GetMemTestDescription: string; override;
+    class function GetMemTestName: string; override;
+    class function GetCategory: TMemTestCategory; override;
+    procedure RunMemTest; override;
   end;
 
 implementation
@@ -25,25 +25,25 @@ implementation
 uses
   bvDataTypes, System.SysUtils;
 
-class function TDownsizeTest.GetBenchmarkDescription: string;
+class function TDownsizeTest.GetMemTestDescription: string;
 begin
   Result := 'Allocates large blocks and immediately resizes them to a '
     + 'much smaller size. This checks whether the memory manager downsizes '
     + 'memory blocks correctly.  '
-    + 'Benchmark submitted by Pierre le Riche.';
+    + 'MemTest submitted by Pierre le Riche.';
 end;
 
-class function TDownsizeTest.GetBenchmarkName: string;
+class function TDownsizeTest.GetMemTestName: string;
 begin
   Result := 'Block downsize';
 end;
 
-class function TDownsizeTest.GetCategory: TBenchmarkCategory;
+class function TDownsizeTest.GetCategory: TMemTestCategory;
 begin
   Result := bmSingleThreadRealloc;
 end;
 
-procedure TDownsizeTest.RunBenchmark;
+procedure TDownsizeTest.RunMemTest;
 const
   // full debug mode is used to detect memory leaks - not for actual performance test
   // value is decreased to avoid Out of Memory in fuul debug mode
