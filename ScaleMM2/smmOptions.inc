@@ -1,4 +1,3 @@
-{ __DONT_PROFILE__ }
 {.$DEFINE SCALEMM_DEBUG}    //much(!) slower but better debugging (no inline functions etc)
 {.$DEFINE IntelVTune}       //debug info in release build
 {$DEFINE MMSharingEnabled}  //Share MM with dlls
@@ -83,5 +82,6 @@
 {$WARN UNSAFE_CODE OFF} {Disable warning for unsafe code in Delphi 7}
 
 {$IFDEF 4GB}
-  {$SetPEFlags $0020 (*IMAGE_FILE_LARGE_ADDRESS_AWARE*) }
+	{$SetPEFlags $0020 (*IMAGE_FILE_LARGE_ADDRESS_AWARE*) }
 {$ENDIF}
+

@@ -1,4 +1,3 @@
-{ __DONT_PROFILE__ }
 unit smmGlobal;
 
 interface
@@ -169,6 +168,7 @@ begin
 
     medblock := mednextblock;
   end;
+
 
   // free internal blocks
 //  for i := Low(Self.FFreedMiniMemoryBlocks) to High(Self.FFreedMiniMemoryBlocks) do

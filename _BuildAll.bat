@@ -1,7 +1,7 @@
 @echo off
 
-echo !!! Make sure there is no memory manader defined in MemoryManagerTest.inc !!!
-pause
+echo copying  MemoryManagerTest.inc.for.BuildAll MemoryManagerTest.inc
+copy MemoryManagerTest.inc.for.BuildAll MemoryManagerTest.inc
 
 del MemoryManagerTest*.exe /q /s
 echo ---------------------------------------------------------------

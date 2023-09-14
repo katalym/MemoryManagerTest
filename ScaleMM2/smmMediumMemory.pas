@@ -1,4 +1,3 @@
-{ __DONT_PROFILE__ }
 unit smmMediumMemory;
 
 interface
@@ -618,7 +617,7 @@ begin
 
     {$IFDEF SCALEMM_MAGICTEST}
     header.Magic1 := 0;//free
-    header.Magic2 := -480;
+    header.Magic2 := -480;      
     {$ENDIF}
   end;
 
@@ -674,7 +673,7 @@ begin
       iRemainder := BitScanLast(                    //get highest bit
                                 newsize shr 4);     //div 16 so 1mb fits in 16bit
       //same index? then reposition
-      if (NativeUint(iRemainder) = pnext.ArrayPosition) and
+      if (NativeUint(iRemainder) = pnext.ArrayPosition) and  
          (pnext.BlockMask <> 0) then
       begin
         pheaderremainder.BlockMask     := pnext.BlockMask;
@@ -717,7 +716,7 @@ begin
         pheaderremainder.NextMem := PMediumHeader(pnext);
         {$IFDEF SCALEMM_MAGICTEST}
         //Assert(pnext.Magic1 = 0); //must be free
-        pnext.Magic2  := 616;
+        pnext.Magic2  := 616;  
         {$ENDIF}
 
         {$ifdef SCALEMM_DEBUG}
@@ -737,7 +736,7 @@ begin
       Assert(pnext.OwnerThread.FThreadId = GetCurrentThreadId);
       {$ENDIF}
 
-      if {next.}PrevFreeItem = nil then {first?}
+      if {next.}PrevFreeItem = nil then {first?}            
       begin
         Assert(FFreeMem[{next.}ArrayPosition] = pnext);
 
@@ -1617,6 +1616,7 @@ begin
       //note: nextmem.NextFreeBlock cannot be used, points to other thread mem
     end;
 
+
     //process all mem
     while mem <> nil do
     begin
@@ -1644,6 +1644,7 @@ begin
 
     block := nextblock;
   end;
+
 
   pheaderremainder := FFreeMem[High(FFreeMem)];
   if pheaderremainder <> nil then    //1 (biggest) block is cached

@@ -1,4 +1,3 @@
-{ __DONT_PROFILE__ }
 unit smmTypes;
 
 interface
