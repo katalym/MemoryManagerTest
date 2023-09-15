@@ -2,20 +2,18 @@ object MMUsageLogger_TestForm: TMMUsageLogger_TestForm
   Left = 0
   Top = 0
   Caption = 'FastMM5 Test Form'
-  ClientHeight = 143
-  ClientWidth = 424
+  ClientHeight = 142
+  ClientWidth = 420
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   DesignSize = (
-    424
-    143)
-  PixelsPerInch = 96
+    420
+    142)
   TextHeight = 13
   object Label1: TLabel
     Left = 16
@@ -36,7 +34,7 @@ object MMUsageLogger_TestForm: TMMUsageLogger_TestForm
   object Edit1: TEdit
     Left = 16
     Top = 75
-    Width = 385
+    Width = 381
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     ReadOnly = True

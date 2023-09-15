@@ -29,7 +29,7 @@ interface
 
 const
   // The name of the usage log file
-  LogFileName = 'C:\MemoryManagerUsageLogs\TVSServer.MemoryManager.Usage';
+  LogFileName = 'D:\git\bvsextra\Memory Manager Test\UsageLogger\MMUsageLogger_Test.MemoryManager.Usage';
 
 implementation
 
